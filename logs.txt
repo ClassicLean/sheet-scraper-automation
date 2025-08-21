@@ -1,4 +1,5 @@
-Run python sheet_scraper.py
+Run python -c "print('Python interpreter is working!')" # ADD THIS LINE
+  python -c "print('Python interpreter is working!')" # ADD THIS LINE
   python sheet_scraper.py
   shell: /usr/bin/bash -e ***0***
   env:
@@ -9,5 +10,4 @@ Run python sheet_scraper.py
     Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.7/x64
     LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.13.7/x64/lib
     SPREADSHEET_ID: ***
-  
-Error: The operation was canceled.
+Python interpreter is working!

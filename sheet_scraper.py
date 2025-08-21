@@ -5,9 +5,9 @@ import re
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 from connect import get_service
 
-print("Script started: Initializing...") # ADD THIS
-print(f"Current working directory: {os.getcwd()}") # ADD THIS
-print(f"Contents of current directory: {os.listdir()}") # ADD THIS (Be careful with sensitive files)
+print("Script started: Initializing...")
+print(f"Current working directory: {os.getcwd()}")
+print(f"Contents of current directory: {os.listdir()}")
 
 # --- Configuration ---
 SHEET_NAME = "FBMP"
@@ -56,7 +56,7 @@ def parse_price(text):
     return None
 
 # --- Core Scraping Logic ---
-def scrape_product_details(url):
+def scrape_product_details(url, page): # Modified to accept page
     price = None
     in_stock = False
     error_message = ""
@@ -65,81 +65,76 @@ def scrape_product_details(url):
         return {"price": None, "in_stock": False, "error": "Invalid URL"}
 
     try:
-        with sync_playwright() as p:
-            browser = p.chromium.launch() # You can choose other browsers like firefox or webkit
-            page = browser.new_page()
-            page.goto(url, wait_until="domcontentloaded", timeout=30000) # Increased timeout
+        page.goto(url, wait_until="domcontentloaded", timeout=30000) # Increased timeout
 
-            # --- Price Extraction ---
-            # Common price selectors (add more specific ones as needed)
-            price_selectors = [
-                ".price",
-                "#priceblock_ourprice",
-                ".product-price",
-                "[data-test='product-price']",
-                ".current-price",
-                "span[itemprop='price']",
-                "div.price span",
-                "b.price",
-                "p.price",
-                "span.price-value"
-            ]
-            for selector in price_selectors:
-                try:
-                    price_element = page.query_selector(selector)
-                    if price_element:
-                        price_text = price_element.inner_text()
-                        price = parse_price(price_text)
-                        if price is not None:
-                            break # Found a price, no need to check other selectors
-                except Exception:
-                    continue # Selector not found or other issue, try next
+        # --- Price Extraction ---
+        # Common price selectors (add more specific ones as needed)
+        price_selectors = [
+            ".price",
+            "#priceblock_ourprice",
+            ".product-price",
+            "[data-test='product-price']",
+            ".current-price",
+            "span[itemprop='price']",
+            "div.price span",
+            "b.price",
+            "p.price",
+            "span.price-value"
+        ]
+        for selector in price_selectors:
+            try:
+                price_element = page.query_selector(selector)
+                if price_element:
+                    price_text = price_element.inner_text()
+                    price = parse_price(price_text)
+                    if price is not None:
+                        break # Found a price, no need to check other selectors
+            except Exception:
+                continue # Selector not found or other issue, try next
 
-            # Fallback to regex if no specific selector works
-            if price is None:
-                body_text = page.inner_text("body")
-                price = parse_price(body_text)
+        # Fallback to regex if no specific selector works
+        if price is None:
+            body_text = page.inner_text("body")
+            price = parse_price(body_text)
 
-            # --- In-Stock/Availability Detection ---
-            # Common in-stock indicators (highly site-specific, add more as needed)
-            in_stock_indicators = [
-                "in stock",
-                "add to cart",
-                "add to bag",
-                "buy now",
-                "available",
-                "add to basket"
-            ]
-            out_of_stock_indicators = [
-                "out of stock",
-                "unavailable",
-                "currently unavailable",
-                "backorder"
-            ]
+        # --- In-Stock/Availability Detection ---
+        # Common in-stock indicators (highly site-specific, add more as needed)
+        in_stock_indicators = [
+            "in stock",
+            "add to cart",
+            "add to bag",
+            "buy now",
+            "available",
+            "add to basket"
+        ]
+        out_of_stock_indicators = [
+            "out of stock",
+            "unavailable",
+            "currently unavailable",
+            "backorder"
+        ]
 
-            page_content = page.content().lower() # Get full page content for broader search
+        page_content = page.content().lower() # Get full page content for broader search
 
-            # Check for positive indicators
-            for indicator in in_stock_indicators:
+        # Check for positive indicators
+        for indicator in in_stock_indicators:
+            if indicator in page_content:
+                in_stock = True
+                break
+
+        # If positive indicator found, check for negative ones to override
+        if in_stock:
+            for indicator in out_of_stock_indicators:
                 if indicator in page_content:
-                    in_stock = True
+                    in_stock = False # Overwrite if an out-of-stock message is also present
                     break
-
-            # If positive indicator found, check for negative ones to override
-            if in_stock:
-                for indicator in out_of_stock_indicators:
-                    if indicator in page_content:
-                        in_stock = False # Overwrite if an out-of-stock message is also present
-                        break
-            else: # If no positive indicator, check for explicit out-of-stock
-                for indicator in out_of_stock_indicators:
-                    if indicator in page_content:
-                        in_stock = False
-                        break
-                else: # If no positive or negative, assume in stock for now (can be refined)
-                    in_stock = True # Default to True if no clear indicators, but this is risky
-
-            browser.close()
+        else: # If no positive indicator, check for explicit out-of-stock
+            for indicator in out_of_stock_indicators:
+                if indicator in page_content:
+                    in_stock = False
+                    break
+            else: # If no positive or negative, assume in stock for now (can be refined)
+                in_stock = True # Default to True if no clear indicators, but this is risky
 
     except PlaywrightTimeoutError:
         error_message = "Page load timeout"
@@ -150,6 +145,7 @@ def scrape_product_details(url):
 
 # --- Main Automation Logic ---
 def run_price_update_automation():
+    print("Attempting to get Google Sheets service...") # ADD THIS
     service = get_service()
     if not service:
         print("Error: Could not connect to Google Sheets API. Exiting.") # MODIFY THIS
@@ -176,109 +172,123 @@ def run_price_update_automation():
         updates_to_sheet = [] # To store updates for batch writing
         current_date = datetime.datetime.now().strftime("%Y-%m-%d") # Format: YYYY-MM-DD
 
-        # Iterate through each row (starting from row 5, which is index 4)
-        for row_index, row in enumerate(values):
-            if row_index < 4: # Skip rows 0, 1, 2, 3 (i.e., up to row 4)
-                continue
+        print("Attempting to import Playwright and launch browser...") # ADD THIS
+        from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError # MOVED IT HERE
 
-            product_id = row[PRODUCT_ID_COL] if len(row) > PRODUCT_ID_COL else f"Row_{row_index+1}"
-            old_price_str = row[PRICE_COL] if len(row) > PRICE_COL else "0"
-            old_price = parse_price(old_price_str) or 0.0
+        with sync_playwright() as p:
+            browser = p.chromium.launch() # You can choose other browsers like firefox or webkit
+            page = browser.new_page()
+            print("Playwright browser launched successfully.") # ADD THIS
 
-            best_supplier_url = None
-            lowest_price_found = float('inf')
-            chosen_supplier_name = "N/A"
+            # Iterate through each row (starting from row 5, which is index 4)
+            for row_index, row in enumerate(values):
+                if row_index < 4: # Skip rows 0, 1, 2, 3 (i.e., up to row 4)
+                    continue
 
-            supplier_results = [] # Store results for all suppliers for this product
+                product_id = row[PRODUCT_ID_COL] if len(row) > PRODUCT_ID_COL else f"Row_{row_index+1}"
+                old_price_str = row[PRICE_COL] if len(row) > PRICE_COL else "0"
+                old_price = parse_price(old_price_str) or 0.0
 
-            # Iterate through supplier URL columns
-            for col_index, supplier_name in SUPPLIER_URL_COLS.items():
-                if len(row) > col_index:
-                    supplier_url = row[col_index]
-                    print(f"Scraping Product ID: {product_id}, Supplier: {supplier_name}, URL: {supplier_url}")
-                    scraped_data = scrape_product_details(supplier_url)
-                    supplier_results.append({
-                        "url": supplier_url,
-                        "name": supplier_name,
-                        "price": scraped_data["price"],
-                        "in_stock": scraped_data["in_stock"],
-                        "error": scraped_data["error"]
-                    })
-                    time.sleep(2) # Be polite, add a delay between requests
+                best_supplier_url = None
+                lowest_price_found = float('inf')
+                chosen_supplier_name = "N/A"
 
-            # Process scraped results to find the best supplier
-            for result in supplier_results:
-                if result["in_stock"] and result["price"] is not None:
-                    if result["price"] < lowest_price_found:
-                        lowest_price_found = result["price"]
-                        best_supplier_url = result["url"]
-                        chosen_supplier_name = result["name"]
-                    elif result["price"] == lowest_price_found:
-                        # Tie-breaking: keep the first one encountered (which is implicitly handled by iteration order)
-                        pass
+                supplier_results = [] # Store results for all suppliers for this product
 
-            new_va_note = ""
-            new_price_to_update = ""
-            new_supplier_url_to_update = ""
+                # Iterate through supplier URL columns
+                for col_index, supplier_name in SUPPLIER_URL_COLS.items():
+                    if len(row) > col_index:
+                        supplier_url = row[col_index]
+                        print(f"Scraping Product ID: {product_id}, Supplier: {supplier_name}, URL: {supplier_url}")
+                        scraped_data = scrape_product_details(supplier_url, page) # Pass page to scrape_product_details
+                        supplier_results.append({
+                            "url": supplier_url,
+                            "name": supplier_name,
+                            "price": scraped_data["price"],
+                            "in_stock": scraped_data["in_stock"],
+                            "error": scraped_data["error"]
+                        })
+                        time.sleep(2) # Be polite, add a delay between requests
 
-            if lowest_price_found != float('inf'): # A valid price was found
-                new_price_to_update = str(lowest_price_found)
-                new_supplier_url_to_update = best_supplier_url
+                # Process scraped results to find the best supplier
+                for result in supplier_results:
+                    if result["in_stock"] and result["price"] is not None:
+                        if result["price"] < lowest_price_found:
+                            lowest_price_found = result["price"]
+                            best_supplier_url = result["url"]
+                            chosen_supplier_name = result["name"]
+                        elif result["price"] == lowest_price_found:
+                            # Tie-breaking: keep the first one encountered (which is implicitly handled by iteration order)
+                            pass
 
-                if lowest_price_found < old_price:
-                    new_va_note = "Down"
-                elif lowest_price_found > old_price:
-                    new_va_note = "Up"
+                new_va_note = ""
+                new_price_to_update = ""
+                new_supplier_url_to_update = ""
+
+                if lowest_price_found != float('inf'): # A valid price was found
+                    new_price_to_update = str(lowest_price_found)
+                    new_supplier_url_to_update = best_supplier_url
+
+                    if lowest_price_found < old_price:
+                        new_va_note = "Down"
+                    elif lowest_price_found > old_price:
+                        new_va_note = "Up"
+                    else:
+                        new_va_note = "No change"
+                    log_update(product_id, old_price, lowest_price_found, "Success", f"Chosen supplier: {chosen_supplier_name}")
                 else:
-                    new_va_note = "No change"
-                log_update(product_id, old_price, lowest_price_found, "Success", f"Chosen supplier: {chosen_supplier_name}")
-            else:
-                new_va_note = "Price not found / Out of stock"
-                new_price_to_update = old_price_str # Keep old price if no new valid price found
-                new_supplier_url_to_update = row[PRODUCT_ID_COL] # Keep old supplier URL
-                log_update(product_id, old_price, "N/A", "Failed", "No valid price found from any supplier or all out of stock")
+                    new_va_note = "Price not found / Out of stock"
+                    new_price_to_update = old_price_str # Keep old price if no new valid price found
+                    new_supplier_url_to_update = row[PRODUCT_ID_COL] # Keep old supplier URL
+                    log_update(product_id, old_price, "N/A", "Failed", "No valid price found from any supplier or all out of stock")
 
-            # Prepare updates for the current row
-            # We need to update columns A, X, AF, and D (Last stock check)
-            # The Sheets API update method requires a list of lists for values
-            # We'll update specific cells, so we need to calculate the A1 notation for each.
+                # Prepare updates for the current row
+                # We need to update columns A, X, AF, and D (Last stock check)
+                # The Sheets API update method requires a list of lists for values
+                # We'll update specific cells, so we need to calculate the A1 notation for each.
 
-            # Update VA Notes (Column A)
-            updates_to_sheet.append({
-                'range': f"{SHEET_NAME}!{chr(65 + VA_NOTES_COL)}{row_index + 1}",
-                'values': [[new_va_note]]
-            })
-            # Update Price (Column X)
-            updates_to_sheet.append({
-                'range': f"{SHEET_NAME}!{chr(65 + PRICE_COL)}{row_index + 1}",
-                'values': [[new_price_to_update]]
-            })
-            # Update Supplier in use URL (Column AF)
-            updates_to_sheet.append({
-                'range': f"{SHEET_NAME}!{chr(65 + PRODUCT_ID_COL)}{row_index + 1}",
-                'values': [[new_supplier_url_to_update]]
-            })
-            # Update Last stock check (Column D) - NEW
-            updates_to_sheet.append({
-                'range': f"{SHEET_NAME}!{chr(65 + LAST_STOCK_CHECK_COL)}{row_index + 1}",
-                'values': [[current_date]]
-            })
+                # Update VA Notes (Column A)
+                updates_to_sheet.append({
+                    'range': f"{SHEET_NAME}!{chr(65 + VA_NOTES_COL)}{row_index + 1}",
+                    'values': [[new_va_note]]
+                })
+                # Update Price (Column X)
+                updates_to_sheet.append({
+                    'range': f"{SHEET_NAME}!{chr(65 + PRICE_COL)}{row_index + 1}",
+                    'values': [[new_price_to_update]]
+                })
+                # Update Supplier in use URL (Column AF)
+                updates_to_sheet.append({
+                    'range': f"{SHEET_NAME}!{chr(65 + PRODUCT_ID_COL)}{row_index + 1}",
+                    'values': [[new_supplier_url_to_update]]
+                })
+                # Update Last stock check (Column D) - NEW
+                updates_to_sheet.append({
+                    'range': f"{SHEET_NAME}!{chr(65 + LAST_STOCK_CHECK_COL)}{row_index + 1}",
+                    'values': [[current_date]]
+                })
 
-        # Perform batch update to minimize API calls
-        if updates_to_sheet:
-            body = {
-                'valueInputOption': 'RAW',
-                'data': updates_to_sheet
-            }
-            service.spreadsheets().values().batchUpdateByDataRange(
-                spreadsheetId=os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw",
-                body=body
-            ).execute()
-            print(f"Successfully updated {len(updates_to_sheet)} cells in the sheet.")
+            browser.close()
+            print("Playwright browser closed.") # ADD THIS
 
+    except PlaywrightTimeoutError:
+        error_message = "Page load timeout"
+        print(f"Playwright Timeout Error: {error_message}") # ADD THIS
     except Exception as e:
-        print(f"An error occurred during automation: {e}")
-        log_update("N/A", "N/A", "N/A", "Failed", f"Automation error: {e}")
+        error_message = f"Scraping error: {e}"
+        print(f"General Scraping Error: {error_message}") # ADD THIS
+
+    # Perform batch update to minimize API calls
+    if updates_to_sheet:
+        body = {
+            'valueInputOption': 'RAW',
+            'data': updates_to_sheet
+        }
+        service.spreadsheets().values().batchUpdateByDataRange(
+            spreadsheetId=os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw",
+            body=body
+        ).execute()
+        print(f"Successfully updated {len(updates_to_sheet)} cells in the sheet.")
 
 if __name__ == '__main__':
     # Example usage:
