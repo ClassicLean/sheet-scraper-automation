@@ -2,7 +2,7 @@ name: Scheduled Price Scraper
 
 on:
   schedule:
-    # Runs every day at 00:00 UTC
+    # Runs every day at 0:00 UTC
     - cron: '0 0 * * *'
   workflow_dispatch: # Allows manual triggering from GitHub UI
 
@@ -21,7 +21,12 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install playwright google-api-python-client google-auth-oauthlib google-auth-httplib2
-          playwright install --with-deps chromium # Install Chromium browser for Playwright
+        timeout-minutes: 5 # Give pip install more time, though it's usually fast
+
+      - name: Install Playwright browsers
+        run: |
+          playwright install chromium # Explicitly install only chromium
+        timeout-minutes: 10 # Give Playwright browser download/install more time
 
       - name: Create Service Account Key File
         env:
