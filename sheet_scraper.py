@@ -2,7 +2,7 @@ import os
 import datetime
 import time
 import re
-# from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError # MOVED THIS
+from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError # MOVED BACK TO TOP
 from connect import get_service
 
 print("Script started: Initializing...")
@@ -164,20 +164,19 @@ def run_price_update_automation():
             print("No data found in the sheet.")
             return
 
-        updates_to_sheet = [] # To store updates for batch writing
+        # updates_to_sheet = [] # REMOVE THIS - no longer batching this way
         current_date = datetime.datetime.now().strftime("%Y-%m-%d") # Format: YYYY-MM-DD
 
         print("Attempting to import Playwright and launch browser...")
-        from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+        # from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError # REMOVE THIS LINE
 
         with sync_playwright() as p:
-            # ADD THIS ARGUMENT: args=["--disable-dev-shm-usage"]
             browser = p.chromium.launch(args=[
-                "--disable-dev-shm-usage",  # Already added
-                "--no-sandbox",             # NEW: Common fix for CI
-                "--single-process",         # NEW: Can help with resource limits
-                "--disable-setuid-sandbox", # NEW: Another sandbox-related fix
-                "--disable-gpu"             # NEW: Disable GPU acceleration
+                "--disable-dev-shm-usage",
+                "--no-sandbox",
+                "--single-process",
+                "--disable-setuid-sandbox",
+                "--disable-gpu"
             ])
             page = browser.new_page()
             print("Playwright browser launched successfully.")
@@ -244,31 +243,42 @@ def run_price_update_automation():
                     new_supplier_url_to_update = row[PRODUCT_ID_COL] # Keep old supplier URL
                     log_update(product_id, old_price, "N/A", "Failed", "No valid price found from any supplier or all out of stock")
 
-                # Prepare updates for the current row
-                # We need to update columns A, X, AF, and D (Last stock check)
-                # The Sheets API update method requires a list of lists for values
-                # We'll update specific cells, so we need to calculate the A1 notation for each.
-
+                # --- PERFORM INDIVIDUAL CELL UPDATES HERE ---
                 # Update VA Notes (Column A)
-                updates_to_sheet.append({
-                    'range': f"{SHEET_NAME}!{chr(65 + VA_NOTES_COL)}{row_index + 1}",
-                    'values': [[new_va_note]]
-                })
+                range_va_notes = f"{SHEET_NAME}!{chr(65 + VA_NOTES_COL)}{row_index + 1}"
+                service.spreadsheets().values().update(
+                    spreadsheetId=os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw",
+                    range=range_va_notes,
+                    valueInputOption='RAW',
+                    body={'values': [[new_va_note]]}
+                ).execute()
+
                 # Update Price (Column X)
-                updates_to_sheet.append({
-                    'range': f"{SHEET_NAME}!{chr(65 + PRICE_COL)}{row_index + 1}",
-                    'values': [[new_price_to_update]]
-                })
+                range_price = f"{SHEET_NAME}!{chr(65 + PRICE_COL)}{row_index + 1}"
+                service.spreadsheets().values().update(
+                    spreadsheetId=os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw",
+                    range=range_price,
+                    valueInputOption='RAW',
+                    body={'values': [[new_price_to_update]]}
+                ).execute()
+
                 # Update Supplier in use URL (Column AF)
-                updates_to_sheet.append({
-                    'range': f"{SHEET_NAME}!{chr(65 + PRODUCT_ID_COL)}{row_index + 1}",
-                    'values': [[new_supplier_url_to_update]]
-                })
-                # Update Last stock check (Column D) - NEW
-                updates_to_sheet.append({
-                    'range': f"{SHEET_NAME}!{chr(65 + LAST_STOCK_CHECK_COL)}{row_index + 1}",
-                    'values': [[current_date]]
-                })
+                range_supplier_url = f"{SHEET_NAME}!{chr(65 + PRODUCT_ID_COL)}{row_index + 1}"
+                service.spreadsheets().values().update(
+                    spreadsheetId=os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw",
+                    range=range_supplier_url,
+                    valueInputOption='RAW',
+                    body={'values': [[new_supplier_url_to_update]]}
+                ).execute()
+
+                # Update Last stock check (Column D)
+                range_last_check = f"{SHEET_NAME}!{chr(65 + LAST_STOCK_CHECK_COL)}{row_index + 1}"
+                service.spreadsheets().values().update(
+                    spreadsheetId=os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw",
+                    range=range_last_check,
+                    valueInputOption='RAW',
+                    body={'values': [[current_date]]}
+                ).execute()
 
             browser.close()
             print("Playwright browser closed.")
@@ -280,17 +290,17 @@ def run_price_update_automation():
         error_message = f"Scraping error: {e}"
         print(f"General Scraping Error: {error_message}")
 
-    # Perform batch update to minimize API calls
-    if updates_to_sheet:
-        body = {
-            'valueInputOption': 'RAW',
-            'data': updates_to_sheet
-        }
-        service.spreadsheets().values().batchUpdateByDataRange(
-            spreadsheetId=os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw",
-            body=body
-        ).execute()
-        print(f"Successfully updated {len(updates_to_sheet)} cells in the sheet.")
+    # REMOVE BATCH UPDATE BLOCK - no longer needed with individual updates
+    # if updates_to_sheet:
+    #     body = {
+    #         'valueInputOption': 'RAW',
+    #         'data': updates_to_sheet
+    #     }
+    #     service.spreadsheets().values().batchUpdateByDataRange(
+    #         spreadsheetId=os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw",
+    #         body=body
+    #     ).execute()
+    #     print(f"Successfully updated {len(updates_to_sheet)} cells in the sheet.")
 
 if __name__ == '__main__':
     # Example usage:
