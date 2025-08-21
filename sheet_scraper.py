@@ -2,7 +2,7 @@ import os
 import datetime
 import time
 import re
-from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+# from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError # MOVED THIS
 from connect import get_service
 
 print("Script started: Initializing...")
@@ -70,17 +70,17 @@ def scrape_product_details(url, page): # Modified to accept page
         # --- Price Extraction ---
         # Common price selectors (add more specific ones as needed)
         price_selectors = [
-            ".price",
-            "#priceblock_ourprice",
-            ".product-price",
-            "[data-test='product-price']",
-            ".current-price",
-            "span[itemprop='price']",
-            "div.price span",
-            "b.price",
-            "p.price",
-            "span.price-value"
-        ]
+                ".price",
+                "#priceblock_ourprice",
+                ".product-price",
+                "[data-test='product-price']",
+                ".current-price",
+                "span[itemprop='price']",
+                "div.price span",
+                "b.price",
+                "p.price",
+                "span.price-value"
+            ]
         for selector in price_selectors:
             try:
                 price_element = page.query_selector(selector)
@@ -128,11 +128,6 @@ def scrape_product_details(url, page): # Modified to accept page
                 if indicator in page_content:
                     in_stock = False # Overwrite if an out-of-stock message is also present
                     break
-        else: # If no positive indicator, check for explicit out-of-stock
-            for indicator in out_of_stock_indicators:
-                if indicator in page_content:
-                    in_stock = False
-                    break
             else: # If no positive or negative, assume in stock for now (can be refined)
                 in_stock = True # Default to True if no clear indicators, but this is risky
 
@@ -145,15 +140,15 @@ def scrape_product_details(url, page): # Modified to accept page
 
 # --- Main Automation Logic ---
 def run_price_update_automation():
-    print("Attempting to get Google Sheets service...") # ADD THIS
+    print("Attempting to get Google Sheets service...")
     service = get_service()
     if not service:
-        print("Error: Could not connect to Google Sheets API. Exiting.") # MODIFY THIS
+        print("Error: Could not connect to Google Sheets API. Exiting.")
         log_update("N/A", "N/A", "N/A", "Failed", "API Connection Error")
         return
 
-    print("Successfully connected to Google Sheets API.") # ADD THIS
-    print(f"Attempting to read sheet: {SHEET_NAME}") # ADD THIS
+    print("Successfully connected to Google Sheets API.")
+    print(f"Attempting to read sheet: {SHEET_NAME}")
 
     try:
         # Read all data from the sheet
@@ -172,13 +167,20 @@ def run_price_update_automation():
         updates_to_sheet = [] # To store updates for batch writing
         current_date = datetime.datetime.now().strftime("%Y-%m-%d") # Format: YYYY-MM-DD
 
-        print("Attempting to import Playwright and launch browser...") # ADD THIS
-        from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError # MOVED IT HERE
+        print("Attempting to import Playwright and launch browser...")
+        from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
         with sync_playwright() as p:
-            browser = p.chromium.launch() # You can choose other browsers like firefox or webkit
+            # ADD THIS ARGUMENT: args=["--disable-dev-shm-usage"]
+            browser = p.chromium.launch(args=[
+                "--disable-dev-shm-usage",  # Already added
+                "--no-sandbox",             # NEW: Common fix for CI
+                "--single-process",         # NEW: Can help with resource limits
+                "--disable-setuid-sandbox", # NEW: Another sandbox-related fix
+                "--disable-gpu"             # NEW: Disable GPU acceleration
+            ])
             page = browser.new_page()
-            print("Playwright browser launched successfully.") # ADD THIS
+            print("Playwright browser launched successfully.")
 
             # Iterate through each row (starting from row 5, which is index 4)
             for row_index, row in enumerate(values):
@@ -269,14 +271,14 @@ def run_price_update_automation():
                 })
 
             browser.close()
-            print("Playwright browser closed.") # ADD THIS
+            print("Playwright browser closed.")
 
     except PlaywrightTimeoutError:
         error_message = "Page load timeout"
-        print(f"Playwright Timeout Error: {error_message}") # ADD THIS
+        print(f"Playwright Timeout Error: {error_message}")
     except Exception as e:
         error_message = f"Scraping error: {e}"
-        print(f"General Scraping Error: {error_message}") # ADD THIS
+        print(f"General Scraping Error: {error_message}")
 
     # Perform batch update to minimize API calls
     if updates_to_sheet:
