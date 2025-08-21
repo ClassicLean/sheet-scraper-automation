@@ -10,9 +10,10 @@ SHEET_NAME = "Sheet Scraping"
 LOG_FILE = "price_update_log.txt"
 
 # Column Mappings (0-indexed)
-PRODUCT_ID_COL = 31  # AF: "Supplier in use" (also acts as product ID for the row)
-PRICE_COL = 23       # X: "Supplier Price For ONE Unit"
 VA_NOTES_COL = 0     # A: "VA Notes"
+LAST_STOCK_CHECK_COL = 3 # D: "Last stock check" - NEW
+PRICE_COL = 23       # X: "Supplier Price For ONE Unit"
+PRODUCT_ID_COL = 31  # AF: "Supplier in use" (also acts as product ID for the row)
 
 # Define supplier URL columns and their corresponding price update columns (if different from PRICE_COL)
 # For now, all prices go to PRICE_COL (X)
@@ -166,11 +167,11 @@ def run_price_update_automation():
             return
 
         updates_to_sheet = [] # To store updates for batch writing
+        current_date = datetime.datetime.now().strftime("%Y-%m-%d") # Format: YYYY-MM-DD
 
-        # Iterate through each row (starting from the second row if header exists)
-        # Assuming the first row is a header
+        # Iterate through each row (starting from row 5, which is index 4)
         for row_index, row in enumerate(values):
-            if row_index == 0: # Skip header row
+            if row_index < 4: # Skip rows 0, 1, 2, 3 (i.e., up to row 4)
                 continue
 
             product_id = row[PRODUCT_ID_COL] if len(row) > PRODUCT_ID_COL else f"Row_{row_index+1}"
@@ -231,7 +232,7 @@ def run_price_update_automation():
                 log_update(product_id, old_price, "N/A", "Failed", "No valid price found from any supplier or all out of stock")
 
             # Prepare updates for the current row
-            # We need to update columns A, X, and AF
+            # We need to update columns A, X, AF, and D (Last stock check)
             # The Sheets API update method requires a list of lists for values
             # We'll update specific cells, so we need to calculate the A1 notation for each.
 
@@ -249,6 +250,11 @@ def run_price_update_automation():
             updates_to_sheet.append({
                 'range': f"{SHEET_NAME}!{chr(65 + PRODUCT_ID_COL)}{row_index + 1}",
                 'values': [[new_supplier_url_to_update]]
+            })
+            # Update Last stock check (Column D) - NEW
+            updates_to_sheet.append({
+                'range': f"{SHEET_NAME}!{chr(65 + LAST_STOCK_CHECK_COL)}{row_index + 1}",
+                'values': [[current_date]]
             })
 
         # Perform batch update to minimize API calls
