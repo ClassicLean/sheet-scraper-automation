@@ -38,5 +38,12 @@ jobs:
         env:
           SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
         run: |
-          python -c "print('Python interpreter is working!')" # ADD THIS LINE
-          python sheet_scraper.py
+          python -c "print('Python interpreter is working!')"
+          # Try running the script with -v (verbose imports) and redirecting output
+          python -v sheet_scraper.py > script_output.log 2>&1 & # ADDED THIS LINE
+          # Give it some time to produce output before checking
+          sleep 30
+          cat script_output.log # ADDED THIS LINE to print the log content
+          # If the script is still running, kill it after a certain time
+          # This is a safeguard to prevent infinite hangs during diagnosis
+          timeout 120 python sheet_scraper.py || true # ADDED THIS LINE
