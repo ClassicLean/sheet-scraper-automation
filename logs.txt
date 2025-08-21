@@ -1,0 +1,13 @@
+Run python sheet_scraper.py
+  python sheet_scraper.py
+  shell: /usr/bin/bash -e ***0***
+  env:
+    pythonLocation: /opt/hostedtoolcache/Python/3.13.7/x64
+    PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.13.7/x64/lib/pkgconfig
+    Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.7/x64
+    Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.7/x64
+    Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.7/x64
+    LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.13.7/x64/lib
+    SPREADSHEET_ID: ***
+  
+Error: The operation was canceled.

@@ -3,10 +3,14 @@ import datetime
 import time
 import re
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
-from connect import get_service # Assuming get_service will return the authenticated sheets service
+from connect import get_service
+
+print("Script started: Initializing...") # ADD THIS
+print(f"Current working directory: {os.getcwd()}") # ADD THIS
+print(f"Contents of current directory: {os.listdir()}") # ADD THIS (Be careful with sensitive files)
 
 # --- Configuration ---
-SHEET_NAME = "FBMP" # Changed from "Sheet Scraping"
+SHEET_NAME = "FBMP"
 LOG_FILE = "price_update_log.txt"
 
 # Column Mappings (0-indexed)
@@ -148,9 +152,12 @@ def scrape_product_details(url):
 def run_price_update_automation():
     service = get_service()
     if not service:
-        print("Error: Could not connect to Google Sheets API.")
+        print("Error: Could not connect to Google Sheets API. Exiting.") # MODIFY THIS
         log_update("N/A", "N/A", "N/A", "Failed", "API Connection Error")
         return
+
+    print("Successfully connected to Google Sheets API.") # ADD THIS
+    print(f"Attempting to read sheet: {SHEET_NAME}") # ADD THIS
 
     try:
         # Read all data from the sheet
