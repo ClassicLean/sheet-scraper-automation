@@ -6,7 +6,7 @@ from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeo
 from connect import get_service # Assuming get_service will return the authenticated sheets service
 
 # --- Configuration ---
-SHEET_NAME = "Sheet Scraping"
+SHEET_NAME = "FBMP" # Changed from "Sheet Scraping"
 LOG_FILE = "price_update_log.txt"
 
 # Column Mappings (0-indexed)
