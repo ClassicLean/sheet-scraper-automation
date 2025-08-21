@@ -38,4 +38,5 @@ jobs:
         env:
           SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
         run: |
+          python -c "print('Python interpreter is working!')" # ADD THIS LINE
           python sheet_scraper.py
