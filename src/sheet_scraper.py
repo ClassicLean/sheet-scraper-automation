@@ -3,7 +3,7 @@ import datetime
 import time
 import re
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError # MOVED BACK TO TOP
-from connect import get_service
+from src.connect import get_service
 
 print("Script started: Initializing...")
 print(f"Current working directory: {os.getcwd()}")
@@ -11,7 +11,8 @@ print(f"Contents of current directory: {os.listdir()}")
 
 # --- Configuration ---
 SHEET_NAME = "FBMP"
-LOG_FILE = "price_update_log.txt"
+LOG_FILE = "logs/price_update_log.txt"
+ROW_LIMIT = 5 # Limit the number of rows processed for testing
 
 # Column Mappings (0-indexed)
 VA_NOTES_COL = 0     # A: "VA Notes"
@@ -38,12 +39,23 @@ SUPPLIER_URL_COLS = {
 }
 
 # --- Helper Functions ---
-ERROR_LOG_FILE = "error_log.txt" # Define new error log file
+ERROR_LOG_FILE = "logs/error_log.txt" # Define new error log file
+
+def truncate_log_file(file_path, max_lines=100):
+    try:
+        with open(file_path, "r") as f:
+            lines = f.readlines()
+        if len(lines) > max_lines:
+            with open(file_path, "w") as f:
+                f.writelines(lines[-max_lines:])
+    except FileNotFoundError:
+        print(f"Log file not found: {file_path}")
+    except Exception as e:
+        print(f"Error truncating log file {file_path}: {e}")
 
 def log_update(product_id, old_price, new_price, status, message=""):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    log_entry = f"[{timestamp}] Product ID: {product_id}, Old Price: {old_price}, New Price: {new_price}, Status: {status}, Message: {message}
-"
+    log_entry = f"[{timestamp}] Product ID: {product_id}, Old Price: {old_price}, New Price: {new_price}, Status: {status}, Message: {message}\n"
     with open(LOG_FILE, "a") as f:
         f.write(log_entry)
     
@@ -51,6 +63,7 @@ def log_update(product_id, old_price, new_price, status, message=""):
     if status == "Failed" and ("blocked" in message.lower() or "captcha" in message.lower() or "timeout" in message.lower() or "error" in message.lower()):
         with open(ERROR_LOG_FILE, "a") as f_error:
             f_error.write(log_entry)
+
 
 
 def parse_price(text):
@@ -76,6 +89,26 @@ def scrape_product_details(url, page): # Modified to accept page
 
     try:
         page.goto(url, wait_until="domcontentloaded", timeout=30000) # Increased timeout
+        page_content = page.content().lower() # Get full page content for broader search
+
+        # --- Blocked Detection ---
+        blocked_indicators = [
+            "robot or human activate and hold the button to confirm that you’re human. thank you",
+            "captcha" # General captcha detection
+        ]
+        for indicator in blocked_indicators:
+            if indicator in page_content:
+                return {"price": None, "in_stock": False, "error": "Blocked: Robot/Human verification or Captcha"}
+
+        # --- Out of Stock / Page Not Found Detection ---
+        out_of_stock_page_indicators = [
+            "sorry we couldn't find that page. try searching or go to amazon's home page.",
+            "currently unavailable. we don't know when or if this item will be back in stock.",
+            "404 page not found the page you requested does not exist."
+        ]
+        for indicator in out_of_stock_page_indicators:
+            if indicator in page_content:
+                return {"price": None, "in_stock": False, "error": "Out of Stock: Page not found or item unavailable"}
 
         # --- Price Extraction ---
         # Amazon-specific selectors often include 'span.a-price-whole' and 'span.a-price-fraction'
@@ -102,6 +135,7 @@ def scrape_product_details(url, page): # Modified to accept page
             page.wait_for_selector(" | ".join(price_selectors), timeout=10000) # Wait for any of the selectors
         except PlaywrightTimeoutError:
             print(f"Warning: Price selector not found within timeout for {url}")
+            error_message = "Price selector timeout"
             # Continue without price, it will be handled as not found
 
         for selector in price_selectors:
@@ -120,7 +154,7 @@ def scrape_product_details(url, page): # Modified to accept page
             body_text = page.inner_text("body")
             price = parse_price(body_text)
 
-        # --- In-Stock/Availability Detection ---
+        # --- In-Stock/Availability Detection (after price, as price implies availability) ---
         # Common in-stock indicators (highly site-specific, add more as needed)
         in_stock_indicators = [
             "in stock",
@@ -137,8 +171,6 @@ def scrape_product_details(url, page): # Modified to accept page
             "backorder"
         ]
 
-        page_content = page.content().lower() # Get full page content for broader search
-
         # Check for positive indicators
         for indicator in in_stock_indicators:
             if indicator in page_content:
@@ -151,8 +183,11 @@ def scrape_product_details(url, page): # Modified to accept page
                 if indicator in page_content:
                     in_stock = False # Overwrite if an out-of-stock message is also present
                     break
-            else: # If no positive or negative, assume in stock for now (can be refined)
-                in_stock = True # Default to True if no clear indicators, but this is risky
+            else: # If no clear positive or negative, assume in stock if price was found
+                if price is not None: # If a price was found, it's likely in stock
+                    in_stock = True
+                else: # If no price and no clear indicators, default to False (safer)
+                    in_stock = False
 
     except PlaywrightTimeoutError:
         error_message = "Page load timeout"
@@ -205,7 +240,7 @@ def run_price_update_automation():
             print("Playwright browser launched successfully.")
 
             # Iterate through each row (starting from row 5, which is index 4)
-            for row_index, row in enumerate(values):
+            for row_index, row in enumerate(values[:ROW_LIMIT]): # Process only up to ROW_LIMIT rows
                 if row_index < 4: # Skip rows 0, 1, 2, 3 (i.e., up to row 4)
                     continue
 
@@ -264,14 +299,6 @@ def run_price_update_automation():
                     log_update(product_id, old_price, lowest_price_found, "Success", f"Chosen supplier: {chosen_supplier_name}")
                 else:
                     # Check for specific error messages from scraping
-                    all_suppliers_blocked = True
-                    for result in supplier_results:
-                        if result["error"] and ("blocked" in result["error"].lower() or "captcha" in result["error"].lower()):
-                            new_va_note = "Blocked"
-                            break
-                        else:
-                            all_suppliers_blocked = False
-
                     if new_va_note != "Blocked": # If not blocked, then it's genuinely not found or out of stock
                         new_va_note = ""
 
@@ -365,33 +392,34 @@ def run_price_update_automation():
                                         'red': 1.0,
                                         'green': 0.0,
                                         'blue': 0.0
+                                    },
+                                    'textFormat': {
+                                        'foregroundColor': {
+                                            'red': 1.0,
+                                            'green': 1.0,
+                                            'blue': 1.0
+                                        }
                                     }
-                                }
-                            },
-                            'blue': 0.0
-                                }
-                            },
-                            'textFormat': {
-                                'foregroundColor': {
-                                    'red': 1.0,
-                                    'green': 1.0,
-                                    'blue': 1.0
                                 }
                             },
                             'fields': 'userEnteredFormat.backgroundColor,userEnteredFormat.textFormat.foregroundColor'
                         }
                     })
 
-                # Execute batch update for the current row
-                try:
-                    service.spreadsheets().batchUpdate(
-                        spreadsheetId=os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw",
-                        body={'requests': requests}
-                    ).execute()
-                    print(f"Successfully updated row {row_index + 1} for Product ID: {product_id}")
-                except Exception as e:
-                    print(f"Error updating row {row_index + 1} for Product ID: {product_id}: {e}")
-                    log_update(product_id, old_price, "N/A", "Failed", f"Sheet update error: {e}")
+                # Execute batch update for the current row only if there's a change
+                if new_va_note != "No change":
+                    try:
+                        service.spreadsheets().batchUpdate(
+                            spreadsheetId=os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw",
+                            body={'requests': requests}
+                        ).execute()
+                        print(f"Successfully updated row {row_index + 1} for Product ID: {product_id}")
+                        log_update(product_id, old_price, new_price_to_update, "Success", f"Chosen supplier: {chosen_supplier_name}") # Log success here
+                    except Exception as e:
+                        print(f"Error updating row {row_index + 1} for Product ID: {product_id}: {e}")
+                        log_update(product_id, old_price, "N/A", "Failed", f"Sheet update error: {e}")
+                else:
+                    print(f"No change for Product ID: {product_id}. Skipping update.")
 
             browser.close()
             print("Playwright browser closed.")
@@ -414,6 +442,8 @@ def run_price_update_automation():
     #         body=body
     #     ).execute()
     #     print(f"Successfully updated {len(updates_to_sheet)} cells in the sheet.")
+
+    truncate_log_file(LOG_FILE) # Truncate the price update log after automation run
 
 if __name__ == '__main__':
     # Example usage:

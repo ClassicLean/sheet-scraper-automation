@@ -32,11 +32,11 @@ jobs:
         env:
           SA_KEY_JSON: ${{ secrets.SA_KEY_JSON }}
         run: |
-          echo "$SA_KEY_JSON" > sheet-scraper-as.json
+          echo "$SA_KEY_JSON" > config/sheet-scraper-as.json
 
       - name: Run Price Scraper
         env:
           SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
         run: |
           python -c "print('Python interpreter is working!')"
-          timeout 120 python sheet_scraper.py || true
+          timeout 120           python src/sheet_scraper.py || true

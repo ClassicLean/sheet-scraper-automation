@@ -84,7 +84,7 @@ These mappings are crucial for the script to correctly read from and write to yo
     *   Create a new service account.
     *   Grant it the "Google Sheets API Editor" role (or a more restrictive role if preferred, but Editor ensures write access).
     *   Create a new JSON key for the service account and download it.
-2.  **Secure the JSON Key:** Rename the downloaded JSON file to `sheet-scraper-as.json` and place it in the project's root directory. **Ensure this file is NOT committed to public repositories.** For GitHub Actions, you will store its content as a GitHub Secret.
+2.  **Secure the JSON Key:** Rename the downloaded JSON file to `sheet-scraper-as.json` and place it in the project's `config/` directory. **Ensure this file is NOT committed to public repositories.** For GitHub Actions, you will store its content as a GitHub Secret.
 3.  **Share Google Sheet:** Share your "Sheet Scraping" Google Sheet with the email address of the newly created service account (found in the JSON key file, typically `your-service-account-name@your-project-id.iam.gserviceaccount.com`).
 
 ### Web Scraping Selectors:
@@ -117,9 +117,30 @@ The `scrape_product_details` function in `sheet_scraper.py` contains generic CSS
     ```
 3.  **Run the Script:**
     ```bash
-    python sheet_scraper.py
+    python src/sheet_scraper.py
     ```
-    Observe console output and check `price_update_log.txt` for results.
+    Observe console output and check `logs/price_update_log.txt` for results.
+
+### Running Tests:
+
+To ensure the correctness of the code, unit tests have been implemented using `pytest`.
+
+1.  **Install Testing Dependencies:**
+    ```bash
+    pip install pytest ruff
+    ```
+2.  **Execute Tests:**
+    From the project root directory, run:
+    ```bash
+    pytest
+    ```
+    `pytest` will automatically discover and run tests in files named `test_*.py` or `*_test.py`.
+
+3.  **Run Linter (Ruff):**
+    To check for code style and common errors, you can run the `ruff` linter:
+    ```bash
+    ruff check .
+    ```
 
 ### Scheduled Execution with GitHub Actions:
 
@@ -180,7 +201,7 @@ The `scrape_product_details` function in `sheet_scraper.py` contains generic CSS
 
 ## 6. Logging
 
-All price update attempts, including successes, failures, and errors, are logged to `price_update_log.txt` in the project's root directory. This file provides an audit trail and helps in debugging. The script also includes `print` statements for real-time progress tracking in the GitHub Actions logs.
+All price update attempts, including successes, failures, and errors, are logged to `logs/price_update_log.txt` in the project's root directory. This file provides an audit trail and helps in debugging. The script also includes `print` statements for real-time progress tracking in the GitHub Actions logs.
 
 ## 7. Limitations & Gotchas
 

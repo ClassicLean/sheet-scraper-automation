@@ -9,10 +9,6 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 def get_service():
     """Authenticates and returns the Google Sheets API service object."""
     try:
-        # Use environment variable for SPREADSHEET_ID if available, otherwise use hardcoded
-        # This is for consistency with sheet_scraper.py's use of SPREADSHEET_ID
-        spreadsheet_id = os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw"
-
         creds = service_account.Credentials.from_service_account_file(
             SERVICE_ACCOUNT_FILE, scopes=SCOPES
         )
