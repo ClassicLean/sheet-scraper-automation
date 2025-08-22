@@ -13,9 +13,9 @@ As a user, I want to:
 *   **Handle price ties:** In case of a tie for the lowest price among multiple in-stock suppliers, the tool should select the first supplier encountered in the predefined column order.
 *   **Update "Supplier in use" URL:** The Google Sheet's "Supplier in use" column should be updated with the URL of the supplier that provided the chosen lowest in-stock price.
 *   **Update "Supplier Price For ONE Unit":** The Google Sheet's "Supplier Price For ONE Unit" column should be updated with the actual lowest price found.
-*   **Track price changes:** The tool should update a "VA Notes" column to indicate if the new price is "Up", "Down", or "No change" compared to the previous price.
+*   **Track price changes:** The tool should update a "VA Notes" column to indicate if the new price is "Up", "Down", or "$$" compared to the previous price.  - Update with "$$" if the price is greater than or equal to $299.99
 *   **Receive status feedback:** The tool should log all price updates, including product ID, old price, new price, status (Success/Failed), and a descriptive message for auditing and debugging.
-*   **Be notified of issues:** If a product is not found, is out of stock across all suppliers, or if there are scraping errors, the tool should reflect this in the "VA Notes" column and logs.
+*   **Be notified of issues:** If a product is not found, is out of stock across all suppliers, or if there are scraping errors, the tool should reflect this in the "VA Notes" column and logs.  - If a product is not found because we are blocked or because of captcha issues, we put "Blocked" in the "VA Notes" column  - If a product is out of stock across all suppliers, we fill the entire row with the color red
 *   **Start checking from a specific row:** The tool should begin processing data from row 5 onwards in the Google Sheet.
 *   **Record last check date:** After processing each product, the tool should update the "Last stock check" column (Column D) with the current date.
 
