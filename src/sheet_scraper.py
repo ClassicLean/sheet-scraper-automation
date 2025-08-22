@@ -264,7 +264,7 @@ def run_price_update_automation():
 
         print("Attempting to import Playwright and launch browser...")
         from playwright.sync_api import sync_playwright # Import sync_playwright directly
-        from undetected_playwright import stealth_sync # Import stealth_sync
+        from undetected_playwright.stealth import stealth_sync # Import stealth_sync from submodule
 
         with sync_playwright() as p: # Use sync_playwright directly
             print("DEBUG: Attempting to launch browser...")
