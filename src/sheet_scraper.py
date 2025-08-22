@@ -3,7 +3,7 @@ import datetime
 import time
 import re
 import random
-from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from src.connect import get_service
 
@@ -287,7 +287,7 @@ def run_price_update_automation():
             ])
             print("DEBUG: Browser launched successfully.")
             print("DEBUG: Attempting to create new page context...")
-            context = browser.new_context(user_agent=random.choice(USER_AGENTS)) # Create context with user agent
+            context = browser.new_context(user_agent=random.choice(USER_AGENTS), viewport={'width': 1366, 'height': 768}) # Create context with user agent and viewport
             stealth_sync(context) # Apply stealth to the context (correct usage)
             # Add the init script to hide webdriver flag to the context
             context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")

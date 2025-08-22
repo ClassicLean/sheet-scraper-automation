@@ -1,4 +1,16 @@
 Run python -c "print('Python interpreter is working!')"
+  python -c "print('Python interpreter is working!')"
+  timeout 600           python src/sheet_scraper.py || true
+  shell: /usr/bin/bash -e ***0***
+  env:
+    pythonLocation: /opt/hostedtoolcache/Python/3.13.7/x64
+    PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.13.7/x64/lib/pkgconfig
+    Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.7/x64
+    Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.7/x64
+    Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.7/x64
+    LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.13.7/x64/lib
+    SPREADSHEET_ID: ***
+    PYTHONPATH: /home/runner/work/sheet-scraper-automation/sheet-scraper-automation
 Python interpreter is working!
 Script started: Initializing...
 Current working directory: /home/runner/work/sheet-scraper-automation/sheet-scraper-automation
@@ -30,7 +42,7 @@ if (true === true) ***
         ue_mid = "atvpdkikx0der",
         ue_sid = (document.cookie.match(/session-id=([0-9-]+)/) || [])[1],
         ue_sn = "opfcaptcha.amazon.com",
-        ue_id = '4atkvfbsrw4fpeehadzx';
+        ue_id = 'v6hppc1camrjgz34pb04';
 ***
 </script>
 <script src="https://images-na.ssl-images-amazon.com/images/g/01/csminstrumentation/csm-captcha-instrumentation.min... (truncated)
@@ -53,7 +65,7 @@ if (true === true) ***
         ue_mid = "atvpdkikx0der",
         ue_sid = (document.cookie.match(/session-id=([0-9-]+)/) || [])[1],
         ue_sn = "opfcaptcha.amazon.com",
-        ue_id = '9d7y6fy6yy80r8q7egg3';
+        ue_id = '59rg52waszh790bqcvpr';
 ***
 </script>
 <script src="https://images-na.ssl-images-amazon.com/images/g/01/csminstrumentation/csm-captcha-instrumentation.min... (truncated)
@@ -64,10 +76,7 @@ DEBUG: Page content for https://www.costzon.com/products/costzon-2-in-1-kids-tab
   
   <meta name="google-site-verification" content="7fsnotmpqcbrvxyvg4mstyuusmdrmenmayrqfv90rb8">
   <!-- google tag manager -->
-<script type="text/javascript" id="ftr__script" async="" src="https://5cbacac6d793.cdn4.forter.com/sn/5cbacac6d793/script.js"></script><script type="text/javascript" id="ftr__script" async="" src="https://5cbacac6d793.cdn4.forter.com/sn/5cbacac6d793/script.js"></script><script type="text/javascript" async="" src="//www.costzon.com/cdn/s/trekkie.storefront.5a4f78eb26ea594ba1b5d72f179d68114c7cf8ca.min.js"></script><script async="" src="https://www.googletagmanager.com/gtm.js?id=gtm-5s9zjhf"></script><script>(function(w,d,s,l,i)***w[l]=w[l]||[];w[l].push(***'gtm.start':
-new date().gettime(),event:'gtm.js'***);var f=d.getelementsbytagname(s)[0],
-j=d.createelement(s),dl=l!='datalayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+... (truncated)
+<script type="text/javascript" async="" src="https://cdn.shopify.com/s/files/1/0449/2568/1820/t/4/assets/booster_currency.js?v=1624978055&amp;shop=costzon.myshopify.com"></script><script type="text/javascript" async="" src="https://static.shareasale.com/json/shopify/shareasale-tracking.js?sasmid=120644&amp;ssmtid=1&amp;shop=costzon.myshopify.com"></script><script type="text/javascript" async="" src="https://static.shareasale.com/json/shopify/deduplication.js?shop=costzon.myshopify.com"></script><script type="text/javascript" async="" src="https://seo.apps.avada.io/avada-seo-installed.js?shop=costzon.myshopify.com"></script><script type="text/javascript" async="" src="https://www.googletagmanager.com/gtag/js?id=g-h90cl8wmrl&amp;cx=c&amp;gtm=4e58k1"></sc... (truncated)
 DEBUG: Detected blocked for https://www.costzon.com/products/costzon-2-in-1-kids-table-and-chair-set-wood-art-table-easel-set-with-2-chairs-6-storage-bins-paper-rolle-natural
 Scraping Product ID: https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1, Supplier: Supplier C, URL: https://www.walmart.com/blocked?url=L2lwL0d5bWF4LTItaW4tMS1LaWRzLVdvb2Rlbi1BcnQtVGFibGUtYW5kLUFydC1FYXNlbC1TZXQtdy1DaGFpcnMtUGFwZXItUm9sbC1TdG9yYWdlLUJpbnMvMTQ1OTM2MzQ5ND93bWxzcGFydG5lcj13bHBhJnNlbGVjdGVkU2VsbGVySWQ9MTMwMjk=&uuid=2dd7a330-69c3-11ee-90e3-6f6ba9bac349&vid=98330337-ad08-11ed-bbc2-4d084122cd7e&g=b
 DEBUG: Page content for https://www.walmart.com/blocked?url=L2lwL0d5bWF4LTItaW4tMS1LaWRzLVdvb2Rlbi1BcnQtVGFibGUtYW5kLUFydC1FYXNlbC1TZXQtdy1DaGFpcnMtUGFwZXItUm9sbC1TdG9yYWdlLUJpbnMvMTQ1OTM2MzQ5ND93bWxzcGFydG5lcj13bHBhJnNlbGVjdGVkU2VsbGVySWQ9MTMwMjk=&uuid=2dd7a330-69c3-11ee-90e3-6f6ba9bac349&vid=98330337-ad08-11ed-bbc2-4d084122cd7e&g=b:
@@ -131,7 +140,7 @@ if (true === true) ***
         ue_mid = "atvpdkikx0der",
         ue_sid = (document.cookie.match(/session-id=([0-9-]+)/) || [])[1],
         ue_sn = "opfcaptcha.amazon.com",
-        ue_id = 'ggyvgfeer7zr24gk6av8';
+        ue_id = 'fh2yvpqvycbvs777vaxw';
 ***
 </script>
 <script src="https://images-na.ssl-images-amazon.com/images/g/01/csminstrumentation/csm-captcha-instrumentation.min... (truncated)
@@ -155,7 +164,7 @@ if (true === true) ***
         ue_mid = "atvpdkikx0der",
         ue_sid = (document.cookie.match(/session-id=([0-9-]+)/) || [])[1],
         ue_sn = "opfcaptcha.amazon.com",
-        ue_id = 'n2pp4d7cxgsvk3cz8bqa';
+        ue_id = 'exd0dpfx3dnm711xjsb2';
 ***
 </script>
 <script src="https://images-na.ssl-images-amazon.com/images/g/01/csminstrumentation/csm-captcha-instrumentation.min... (truncated)
@@ -178,25 +187,14 @@ if (true === true) ***
         ue_mid = "atvpdkikx0der",
         ue_sid = (document.cookie.match(/session-id=([0-9-]+)/) || [])[1],
         ue_sn = "opfcaptcha.amazon.com",
-        ue_id = '6pz0crjxw43m8tgh073c';
+        ue_id = 'rfdwe86p0z3qhp2gmc2j';
 ***
 </script>
 <script src="https://images-na.ssl-images-amazon.com/images/g/01/csminstrumentation/csm-captcha-instrumentation.min... (truncated)
 DEBUG: Detected blocked for https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/ref=asc_df_B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1
 Scraping Product ID: https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1, Supplier: Supplier B, URL: https://www.kohls.com/product/prd-3774810/step2-great-creations-art-center.jsp?skuId=37583047&search=3774810&submit-search=web-regular
-DEBUG: Page content for https://www.kohls.com/product/prd-3774810/step2-great-creations-art-center.jsp?skuId=37583047&search=3774810&submit-search=web-regular:
-<html><head>
-<title>access denied</title>
-<style type="text/css">
-#oo_invitation_company_logo img#oo_waypoint_company_logo img *** max-height: 100%; max-width: 100%; height: auto; width: auto9; /* ie8 */ ***
-#oo_feedback_fl_spacer *** display: block; height: 1px; position: absolute; top: 0; width: 100px; ***
-.oo_feedback_float *** width: 100px; height: 50px; overflow: hidden; font: 12px tahoma, arial, helvetica, sans-serif; text-align: center; color: #252525; cursor: pointer; z-index: 999997; position: fixed; bottom: 5px; border: 1px solid #cccccc; border-radius: 9px; -moz-border-radius: 9px; -webkit-border-radius: 9px; right: 10px; -webkit-transition: -webkit-transform 0.3s ease; ***
-.oo_feedback_float .screen_reader *** position: absolute; clip: rect(1px 1px 1px 1px); /* for internet explorer */ clip: rect(1px, 1px, 1px, 1px); padding: 0; border: 0; height: 1px; width: 1px; overflow: hidden; ***
-.oo_feedback_float .olup *** width: 100%; height: 100%; background: url(/onlineopinionv5/oo_float_icon.gif)... (truncated)
-Warning: Price selector not found within timeout for https://www.kohls.com/product/prd-3774810/step2-great-creations-art-center.jsp?skuId=37583047&search=3774810&submit-search=web-regular
-DEBUG: Price found for https://www.kohls.com/product/prd-3774810/step2-great-creations-art-center.jsp?skuId=37583047&search=3774810&submit-search=web-regular using regex fallback: 377.0
-DEBUG: No positive stock indicators found for https://www.kohls.com/product/prd-3774810/step2-great-creations-art-center.jsp?skuId=37583047&search=3774810&submit-search=web-regular
-DEBUG: Final scraped data for https://www.kohls.com/product/prd-3774810/step2-great-creations-art-center.jsp?skuId=37583047&search=3774810&submit-search=web-regular: ***'price': 377.0, 'in_stock': False, 'error': 'Price selector timeout'***
+DEBUG: Page load timeout for https://www.kohls.com/product/prd-3774810/step2-great-creations-art-center.jsp?skuId=37583047&search=3774810&submit-search=web-regular
+DEBUG: Final scraped data for https://www.kohls.com/product/prd-3774810/step2-great-creations-art-center.jsp?skuId=37583047&search=3774810&submit-search=web-regular: ***'price': None, 'in_stock': False, 'error': 'Page load timeout'***
 Successfully updated row 7 for Product ID: https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1
 Scraping Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE, Supplier: Supplier in use, URL: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE
 DEBUG: Page content for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE:
@@ -216,7 +214,7 @@ if (true === true) ***
         ue_mid = "atvpdkikx0der",
         ue_sid = (document.cookie.match(/session-id=([0-9-]+)/) || [])[1],
         ue_sn = "opfcaptcha.amazon.com",
-        ue_id = 'khk93rn2ed79gam19zdt';
+        ue_id = 'gqv9mbc22cx7q43jt6kq';
 ***
 </script>
 <script src="https://images-na.ssl-images-amazon.com/images/g/01/csminstrumentation/csm-captcha-instrumentation.min... (truncated)
@@ -266,17 +264,9 @@ DEBUG: Page content for https://www.walmart.com/product/149530585:
 DEBUG: Detected blocked for https://www.walmart.com/product/149530585
 Scraping Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE, Supplier: Supplier B, URL: https://vivo-us.com/products/desk-v201g?variant=33294412251235
 DEBUG: Page content for https://vivo-us.com/products/desk-v201g?variant=33294412251235:
-<!doctype html><html class="js no-touch" lang="en" dir="ltr" style="--header-height: 76px;"><head>
+<!doctype html><html class="js no-touch" lang="en" dir="ltr" style="--header-height: 76px; --sticky-header-height: 85px;"><head>
   <!-- google tag manager -->
-<script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script><script type="text/javascript" async="" src="//vivo-us.com/cdn/s/trekkie.storefront.5a4f78eb26ea594ba1b5d72f179d68114c7cf8ca.min.js"></script><script async="" src="https://www.googletagmanager.com/gtm.js?id=gtm-nfd6xmg"></script><script>(function(w,d,s,l,i)***w[l]=w[l]||[];w[l].push(***'gtm.start':
-new date().gettime(),event:'gtm.js'***);var f=d.getelementsbytagname(s)[0],
-j=d.createelement(s),dl=l!='datalayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentnode.insertbefore(j,f);
-***)(window,document,'script','datalayer','gtm-nfd6xmg');</script>
-<!-- end google tag manager -->
-  <!-- google analytics tag (gtag.js) -->
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=g-6bx23ygkrk"></script>
-<script... (truncated)
+<script async="" src="https://snap.licdn.com/li.lms-analytics/insight.old.min.js"></script><script id="swym-ext-shopify-script" type="text/javascript" async="" defer="" src="https://cdn.shopify.com/extensions/4415a5e8-f121-4312-a12d-c78f715ca165/wishlist-plus-510/assets/swym-ext-shopify.js"></script><script src="https://connect.facebook.net/signals/config/199898792339121?v=2.9.225&amp;r=stable&amp;domain=vivo-us.com&amp;hme=3d54ce6fd3d1c49c2c5a1c077deeae25962d09eced833b49457e6337402d21c8&amp;ex_m=84%2c145%2c126%2c18%2c119%2c59%2c40%2c120%2c65%2c58%2c133%2c73%2c13%2c83%2c26%2c114%2c105%2c63%2c66%2c113%2c130%2c92%2c135%2c7%2c3%2c4%2c6%2c5%2c2%2c74%2c82%2c136%2c210%2c157%2c53%2c215%2c212%2c213%2c46%2c172%2c25%2c62%2c219%2c218%2c160%2c28%2c52%2c8%2c55%2c78%2c79%2c80%2c85%2c109%2c27%2c24%2c112%2c108%2c107%2c127%2c64%2c129%2c128%2c42%... (truncated)
 DEBUG: Detected blocked for https://vivo-us.com/products/desk-v201g?variant=33294412251235
 Successfully updated row 8 for Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE
 Scraping Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE?th=1, Supplier: Supplier in use, URL: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE?th=1
@@ -297,7 +287,7 @@ if (true === true) ***
         ue_mid = "atvpdkikx0der",
         ue_sid = (document.cookie.match(/session-id=([0-9-]+)/) || [])[1],
         ue_sn = "opfcaptcha.amazon.com",
-        ue_id = 'trprgzg90nd4m33zdvcb';
+        ue_id = 'xvh45tm6a8sqefqsb0q2';
 ***
 </script>
 <script src="https://images-na.ssl-images-amazon.com/images/g/01/csminstrumentation/csm-captcha-instrumentation.min... (truncated)
@@ -347,16 +337,9 @@ DEBUG: Page content for https://www.walmart.com/product/149530585:
 DEBUG: Detected blocked for https://www.walmart.com/product/149530585
 Scraping Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE?th=1, Supplier: Supplier B, URL: https://vivo-us.com/products/desk-v201g?variant=33294412218467
 DEBUG: Page content for https://vivo-us.com/products/desk-v201g?variant=33294412218467:
-<!doctype html><html class="js no-touch" lang="en" dir="ltr" style="--header-height: 76px;"><head>
+<!doctype html><html class="js no-touch" lang="en" dir="ltr" style="--header-height: 76px; --sticky-header-height: 85px;"><head>
   <!-- google tag manager -->
-<script async="true" src="https://connect.facebook.net/en_us/fbevents.js"></script><script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script><script type="text/javascript" async="" src="//vivo-us.com/cdn/s/trekkie.storefront.5a4f78eb26ea594ba1b5d72f179d68114c7cf8ca.min.js"></script><script async="" src="https://www.googletagmanager.com/gtm.js?id=gtm-nfd6xmg"></script><script>(function(w,d,s,l,i)***w[l]=w[l]||[];w[l].push(***'gtm.start':
-new date().gettime(),event:'gtm.js'***);var f=d.getelementsbytagname(s)[0],
-j=d.createelement(s),dl=l!='datalayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentnode.insertbefore(j,f);
-***)(window,document,'script','datalayer','gtm-nfd6xmg');</script>
-<!-- end google tag manager -->
-  <!-- google analytics tag (gtag.js) -->
-<script async=... (truncated)
+<script async="" src="https://snap.licdn.com/li.lms-analytics/insight.old.min.js"></script><script id="swym-ext-shopify-script" type="text/javascript" async="" defer="" src="https://cdn.shopify.com/extensions/4415a5e8-f121-4312-a12d-c78f715ca165/wishlist-plus-510/assets/swym-ext-shopify.js"></script><script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script><script src="https://connect.facebook.net/signals/config/199898792339121?v=2.9.225&amp;r=stable&amp;domain=vivo-us.com&amp;hme=3d54ce6fd3d1c49c2c5a1c077deeae25962d09eced833b49457e6337402d21c8&amp;ex_m=84%2c145%2c126%2c18%2c119%2c59%2c40%2c120%2c65%2c58%2c133%2c73%2c13%2c83%2c26%2c114%2c105%2c63%2c66%2c113%2c130%2c92%2c135%2c7%2c3%2c4%2c6%2c5%2c2%2c74%2c82%2c136%2c210%2c157%2c53%2c215%2c212%2c213%2c46%2c172%2c25%2c62%2c219%2c2... (truncated)
 DEBUG: Detected blocked for https://vivo-us.com/products/desk-v201g?variant=33294412218467
 Successfully updated row 9 for Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE?th=1
 Scraping Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017J3PE6K?th=1, Supplier: Supplier in use, URL: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017J3PE6K?th=1
@@ -377,7 +360,7 @@ if (true === true) ***
         ue_mid = "atvpdkikx0der",
         ue_sid = (document.cookie.match(/session-id=([0-9-]+)/) || [])[1],
         ue_sn = "opfcaptcha.amazon.com",
-        ue_id = 'qyab08n632s545ynz18g';
+        ue_id = 'q73vqkcrzwqtn509qz7a';
 ***
 </script>
 <script src="https://images-na.ssl-images-amazon.com/images/g/01/csminstrumentation/csm-captcha-instrumentation.min... (truncated)
@@ -427,16 +410,9 @@ DEBUG: Page content for https://www.walmart.com/product/149530585:
 DEBUG: Detected blocked for https://www.walmart.com/product/149530585
 Scraping Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017J3PE6K?th=1, Supplier: Supplier B, URL: https://vivo-us.com/products/desk-v201g?variant=33294412284003
 DEBUG: Page content for https://vivo-us.com/products/desk-v201g?variant=33294412284003:
-<!doctype html><html class="js no-touch" lang="en" dir="ltr" style="--header-height: 76px;"><head>
+<!doctype html><html class="js no-touch" lang="en" dir="ltr" style="--header-height: 76px; --sticky-header-height: 85px;"><head>
   <!-- google tag manager -->
-<script async="true" src="https://connect.facebook.net/en_us/fbevents.js"></script><script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script><script type="text/javascript" async="" src="//vivo-us.com/cdn/s/trekkie.storefront.5a4f78eb26ea594ba1b5d72f179d68114c7cf8ca.min.js"></script><script async="" src="https://www.googletagmanager.com/gtm.js?id=gtm-nfd6xmg"></script><script>(function(w,d,s,l,i)***w[l]=w[l]||[];w[l].push(***'gtm.start':
-new date().gettime(),event:'gtm.js'***);var f=d.getelementsbytagname(s)[0],
-j=d.createelement(s),dl=l!='datalayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentnode.insertbefore(j,f);
-***)(window,document,'script','datalayer','gtm-nfd6xmg');</script>
-<!-- end google tag manager -->
-  <!-- google analytics tag (gtag.js) -->
-<script async=... (truncated)
+<script type="text/javascript" async="" src="https://beacon-v2.helpscout.net"></script><script type="text/javascript" async="" src="//cdn.shopify.com/proxy/5608b8dbf45b2cf28628c46024ff7eaca7f5c4a30a19f9e5cc9bc347466d6fef/quotify.dev/js/widget.js?shop=vivous.myshopify.com&amp;sp-cache-control=chvibgljlcbtyxgtywdlptkwma"></script><script type="text/javascript" async="" src="//searchserverapi1.com/widgets/shopify/init.js?a=1p8n1h3w5z&amp;shop=vivous.myshopify.com"></script><script type="text/javascript" async="" src="https://cdn.api.better-replay.com/replay.js?unique_id=vivous.myshopify.com&amp;replayapikey=1f382660-ff67-11eb-b3f9-64b86bd2fa69&amp;proof_ignore_admin_visits=true&amp;proof_has_custom_js=false&amp;shop=vivous.myshopify.com"></script><script type="text/javascript" async="" src="https://cdn.shopify.com/s/files/1/1190/25... (truncated)
 DEBUG: Detected blocked for https://vivo-us.com/products/desk-v201g?variant=33294412284003
 Successfully updated row 10 for Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017J3PE6K?th=1
 Playwright browser closed.

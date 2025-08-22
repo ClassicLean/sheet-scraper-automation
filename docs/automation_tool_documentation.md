@@ -24,7 +24,7 @@ As a user, I want to:
 ### Technologies Used:
 
 *   **Python:** Core scripting language.
-*   **Playwright (Python Library):** For headless browser automation to scrape dynamic website content (prices and availability).
+*   **Undetected Playwright (Python Library):** For headless browser automation to scrape dynamic website content (prices and availability).
 *   **Google Sheets API (Python Client Library):** For reading data from and writing data to the Google Sheet.
 *   **Google Cloud Service Account:** For secure and automated authentication with the Google Sheets API.
 *   **GitHub Actions:** For scheduling and running the automation workflow in a serverless environment.
@@ -49,6 +49,8 @@ To mitigate detection by websites, the scraper employs several free anti-blockin
 *   **Undetected Playwright:** Integrates `undetected-playwright` to modify browser fingerprints and behaviors, making the scraper less detectable by anti-bot systems. This library aims to mimic human browser behavior more closely.
 *   **User-Agent Rotation:** The script rotates through a list of common browser User-Agents for each request, making it harder for websites to identify automated traffic based on a consistent User-Agent.
 *   **Randomized Delays:** Delays between requests are randomized within a specified range to mimic human browsing patterns and avoid rate-limiting.
+*   **Human-like Interaction Simulation:** Implements basic random mouse movements before navigation and scrolling after page load to mimic human browsing patterns.
+*   **Realistic Viewport:** Sets a common desktop resolution for the browser viewport to appear more like a typical user.
 
 **Limitations:** While these free strategies enhance the scraper's stealth, they may not be sufficient to bypass highly sophisticated anti-bot systems employed by major e-commerce sites. Consistent and reliable scraping of such sites often requires more advanced techniques (e.g., proxies, CAPTCHA solving services) which typically involve external paid services. This project prioritizes free and open-source solutions for anti-detection.
 

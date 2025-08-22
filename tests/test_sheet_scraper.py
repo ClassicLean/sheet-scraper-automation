@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from src.sheet_scraper import truncate_log_file, scrape_product_details
 
 # Test for truncate_log_file
