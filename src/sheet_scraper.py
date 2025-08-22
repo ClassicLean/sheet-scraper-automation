@@ -263,9 +263,10 @@ def run_price_update_automation():
         current_date = datetime.datetime.now().strftime("%m/%d") # Format: MM/DD
 
         print("Attempting to import Playwright and launch browser...")
-        from undetected_playwright import stealth_sync
+        from playwright.sync_api import sync_playwright # Import sync_playwright directly
+        from undetected_playwright import stealth_sync # Import stealth_sync
 
-        with stealth_sync.sync_playwright() as p:
+        with sync_playwright() as p: # Use sync_playwright directly
             print("DEBUG: Attempting to launch browser...")
             browser = p.chromium.launch(headless=True, args=[
                 "--disable-dev-shm-usage",
@@ -273,10 +274,12 @@ def run_price_update_automation():
                 "--disable-setuid-sandbox"
             ])
             print("DEBUG: Browser launched successfully.")
-            print("DEBUG: Attempting to create new page...")
-            page = browser.new_page(user_agent=random.choice(USER_AGENTS))
-            # Add the init script to hide webdriver flag
-            page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
+            print("DEBUG: Attempting to create new page context...")
+            context = browser.new_context(user_agent=random.choice(USER_AGENTS)) # Create context with user agent
+            stealth_sync.apply_stealth(context) # Apply stealth to the context
+            # Add the init script to hide webdriver flag to the context
+            context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
+            page = context.new_page() # Create page from context
             print("DEBUG: Page created successfully.")
             print("Playwright browser launched successfully.")
 
