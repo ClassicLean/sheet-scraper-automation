@@ -46,11 +46,11 @@ As a user, I want to:
 
 To mitigate detection by websites, the scraper employs several free anti-blocking techniques:
 
+*   **Undetected Playwright:** Integrates `undetected-playwright` to modify browser fingerprints and behaviors, making the scraper less detectable by anti-bot systems. This library aims to mimic human browser behavior more closely.
 *   **User-Agent Rotation:** The script rotates through a list of common browser User-Agents for each request, making it harder for websites to identify automated traffic based on a consistent User-Agent.
 *   **Randomized Delays:** Delays between requests are randomized within a specified range to mimic human browsing patterns and avoid rate-limiting.
-*   **Resource Blocking:** Unnecessary resources like images, stylesheets, and fonts are blocked from loading. This reduces the browser's fingerprint, speeds up scraping, and conserves bandwidth.
 
-**Limitations:** While these strategies enhance the scraper's stealth, they may not be sufficient to bypass highly sophisticated anti-bot systems employed by major e-commerce sites. More advanced techniques (e.g., proxies, CAPTCHA solving services) typically require external paid services.
+**Limitations:** While these free strategies enhance the scraper's stealth, they may not be sufficient to bypass highly sophisticated anti-bot systems employed by major e-commerce sites. Consistent and reliable scraping of such sites often requires more advanced techniques (e.g., proxies, CAPTCHA solving services) which typically involve external paid services. This project prioritizes free and open-source solutions for anti-detection.
 
 
 ## 4. Configuration
@@ -123,7 +123,7 @@ The `scrape_product_details` function in `sheet_scraper.py` contains generic CSS
     *   Google Sheet shared with the service account.
 2.  **Install Dependencies:**
     ```bash
-    pip install playwright google-api-python-client google-auth-oauthlib google-auth-httplib2
+    pip install -r requirements.txt
     playwright install
     ```
 3.  **Run the Script:**
@@ -180,7 +180,7 @@ To ensure the correctness of the code, unit tests have been implemented using `p
 
           - name: Install Python dependencies
             run: |
-              pip install playwright google-api-python-client google-auth-oauthlib google-auth-httplib2
+              pip install -r requirements.txt
             timeout-minutes: 5
 
           - name: Install Playwright browsers
@@ -200,7 +200,7 @@ To ensure the correctness of the code, unit tests have been implemented using `p
               PYTHONPATH: ${{ github.workspace }} # Add project root to PYTHONPATH
             run: |
               python -c "print('Python interpreter is working!')"
-              timeout 120           python src/sheet_scraper.py || true
+              timeout 600           python src/sheet_scraper.py || true
     ```
 2.  **Configure GitHub Secrets:**
     *   In your GitHub repository, go to `Settings` -> `Secrets and variables` -> `Actions`.
@@ -220,6 +220,7 @@ All price update attempts, including successes, failures, and errors, are logged
 *   **Dynamic Content Loading:** While Playwright handles JavaScript-rendered content, very complex or lazy-loaded content might require more advanced waiting strategies (e.g., `page.wait_for_selector`, `page.wait_for_load_state`).
 *   **Error Handling:** The current error handling is basic. More granular error handling and retry mechanisms could be implemented for robustness.
 *   **Google Sheets API Quotas:** Be mindful of Google Sheets API daily quotas. For very large numbers of updates, batching (which we temporarily removed for debugging) is crucial to stay within limits.
+*   **Free Solution Focus:** This project prioritizes free and open-source anti-detection techniques. While effective for many sites, consistent scraping of highly protected websites (e.g., major e-commerce platforms) may still require paid services like premium proxies or CAPTCHA-solving solutions.
 
 ## 8. Future Enhancements
 

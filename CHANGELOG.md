@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.1.0] - 2025-08-22
+
+### Added
 - Integrated `playwright-stealth` for bot detection evasion.
 - Implemented User-Agent rotation for each page request.
 - Created `requirements.txt` for dependency management.
@@ -19,9 +33,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Corrected CSS selector syntax in `src/sheet_scraper.py`.
 - Updated GitHub Actions workflow to install dependencies from `requirements.txt`.
-
-### Deprecated
-
-### Removed
-
-### Security

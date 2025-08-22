@@ -263,9 +263,9 @@ def run_price_update_automation():
         current_date = datetime.datetime.now().strftime("%m/%d") # Format: MM/DD
 
         print("Attempting to import Playwright and launch browser...")
-        from playwright_stealth import Stealth
+        from undetected_playwright import stealth_sync
 
-        with Stealth().use_sync(sync_playwright()) as p:
+        with stealth_sync.sync_playwright() as p:
             print("DEBUG: Attempting to launch browser...")
             browser = p.chromium.launch(headless=True, args=[
                 "--disable-dev-shm-usage",
@@ -275,8 +275,10 @@ def run_price_update_automation():
             print("DEBUG: Browser launched successfully.")
             print("DEBUG: Attempting to create new page...")
             page = browser.new_page(user_agent=random.choice(USER_AGENTS))
+            # Add the init script to hide webdriver flag
+            page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
             print("DEBUG: Page created successfully.")
-            print("Playwright browser launched successfully.") # This line already exists, keeping it for now
+            print("Playwright browser launched successfully.")
 
             # Iterate through each row (starting from row 5, which is index 4)
             for row_index, row in enumerate(values[:10]): # Process only up to ROW_LIMIT rows
