@@ -136,7 +136,7 @@ def scrape_product_details(url, page): # Modified to accept page
         # Wait for at least one of the price selectors to be visible
         # This helps with dynamic content loading
         try:
-            page.wait_for_selector(" | ".join(price_selectors), timeout=10000) # Wait for any of the selectors
+            page.wait_for_selector(", ".join(price_selectors), timeout=10000) # Wait for any of the selectors
         except PlaywrightTimeoutError:
             print(f"Warning: Price selector not found within timeout for {url}")
             error_message = "Price selector timeout"
@@ -244,9 +244,9 @@ def run_price_update_automation():
         current_date = datetime.datetime.now().strftime("%m/%d") # Format: MM/DD
 
         print("Attempting to import Playwright and launch browser...")
-        # from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError # REMOVE THIS LINE
+        from playwright_stealth import Stealth
 
-        with sync_playwright() as p:
+        with Stealth().use_sync(sync_playwright()) as p:
             browser = p.chromium.launch(args=[
                 "--disable-dev-shm-usage",
                 "--no-sandbox",
