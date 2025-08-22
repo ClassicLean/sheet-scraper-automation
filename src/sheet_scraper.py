@@ -264,7 +264,7 @@ def run_price_update_automation():
 
         print("Attempting to import Playwright and launch browser...")
         from playwright.sync_api import sync_playwright # Import sync_playwright directly
-        from undetected_playwright.stealth import stealth_sync # Import stealth_sync from submodule
+        from undetected_playwright import stealth_sync # Import stealth_sync (correct import)
 
         with sync_playwright() as p: # Use sync_playwright directly
             print("DEBUG: Attempting to launch browser...")
@@ -276,7 +276,7 @@ def run_price_update_automation():
             print("DEBUG: Browser launched successfully.")
             print("DEBUG: Attempting to create new page context...")
             context = browser.new_context(user_agent=random.choice(USER_AGENTS)) # Create context with user agent
-            stealth_sync.apply_stealth(context) # Apply stealth to the context
+            stealth_sync(context) # Apply stealth to the context (correct usage)
             # Add the init script to hide webdriver flag to the context
             context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
             page = context.new_page() # Create page from context
