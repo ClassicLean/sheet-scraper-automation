@@ -99,7 +99,7 @@ def parse_price(text):
     return None
 
 # --- Core Scraping Logic ---
-def scrape_product_details(url, page): # Modified to accept page
+def scrape_product_details(url, page): # Reverted to original
     price = None
     in_stock = False
     error_message = ""
@@ -108,7 +108,19 @@ def scrape_product_details(url, page): # Modified to accept page
         return {"price": None, "in_stock": False, "error": "Invalid URL"}
 
     try:
-        page.goto(url, wait_until="domcontentloaded", timeout=30000) # Increased timeout
+        # Simulate human-like mouse movements before navigation
+        for _ in range(random.randint(3, 7)): # Perform 3 to 7 random mouse movements
+            x = random.randint(0, page.viewport_size['width'])
+            y = random.randint(0, page.viewport_size['height'])
+            page.mouse.move(x, y, steps=random.randint(5, 15)) # Move with random steps
+            time.sleep(random.uniform(0.1, 0.5)) # Short random delay between movements
+
+        page.goto(url, wait_until="domcontentloaded", timeout=30000) # Reverted to page.goto
+        
+        # Simulate human-like scrolling after page load
+        page.evaluate("window.scrollTo(0, document.body.scrollHeight)") # Scroll to bottom
+        time.sleep(random.uniform(1, 3)) # Add a random delay after scroll
+
         page_content = page.content().lower() # Get full page content for broader search
         print(f"DEBUG: Page content for {url}:\n{page_content[:1000]}... (truncated)") # Log first 1000 chars
 
