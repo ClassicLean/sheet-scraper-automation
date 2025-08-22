@@ -4,5 +4,13 @@ Script started: Initializing...
 Current working directory: /home/runner/work/sheet-scraper-automation/sheet-scraper-automation
 Contents of current directory: ['logs', 'config', 'docs', '__pycache__', 'tests', 'src', 'pytest.ini', '.github', '.git']
 Attempting to get Google Sheets service...
-Error getting Google Sheets service: [Errno 2] No such file or directory: 'sheet-scraper-as.json'
-Error: Could not connect to Google Sheets API. Exiting.
+Successfully connected to Google Sheets API.
+Attempting to read sheet: FBMP
+Attempting to import Playwright and launch browser...
+Playwright browser launched successfully.
+Scraping Product ID: https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1, Supplier: Supplier in use, URL: https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1
+Scraping Product ID: https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1, Supplier: Supplier A, URL: https://www.amazon.com/Milliard-Playroom-Toddler-Activity-Storage/dp/B09TD97QP2/ref=psdc_1063306_t4_B0C58LJ9NF
+Scraping Product ID: https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1, Supplier: Supplier B, URL: https://www.costzon.com/products/costzon-2-in-1-kids-table-and-chair-set-wood-art-table-easel-set-with-2-chairs-6-storage-bins-paper-rolle-natural
+Scraping Product ID: https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1, Supplier: Supplier C, URL: https://www.walmart.com/blocked?url=L2lwL0d5bWF4LTItaW4tMS1LaWRzLVdvb2Rlbi1BcnQtVGFibGUtYW5kLUFydC1FYXNlbC1TZXQtdy1DaGFpcnMtUGFwZXItUm9sbC1TdG9yYWdlLUJpbnMvMTQ1OTM2MzQ5ND93bWxzcGFydG5lcj13bHBhJnNlbGVjdGVkU2VsbGVySWQ9MTMwMjk=&uuid=2dd7a330-69c3-11ee-90e3-6f6ba9bac349&vid=98330337-ad08-11ed-bbc2-4d084122cd7e&g=b
+Successfully updated row 5 for Product ID: https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1
+Playwright browser closed.

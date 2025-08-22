@@ -223,7 +223,7 @@ def run_price_update_automation():
             return
 
         # updates_to_sheet = [] # REMOVE THIS - no longer batching this way
-        current_date = datetime.datetime.now().strftime("%Y-%m-%d") # Format: YYYY-MM-DD
+        current_date = datetime.datetime.now().strftime("%m/%d/%Y") # Format: MM/DD/YYYY
 
         print("Attempting to import Playwright and launch browser...")
         # from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError # REMOVE THIS LINE
@@ -240,7 +240,7 @@ def run_price_update_automation():
             print("Playwright browser launched successfully.")
 
             # Iterate through each row (starting from row 5, which is index 4)
-            for row_index, row in enumerate(values[:ROW_LIMIT]): # Process only up to ROW_LIMIT rows
+            for row_index, row in enumerate(values[:10]): # Process only up to ROW_LIMIT rows
                 if row_index < 4: # Skip rows 0, 1, 2, 3 (i.e., up to row 4)
                     continue
 
