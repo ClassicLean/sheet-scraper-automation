@@ -37,6 +37,7 @@ jobs:
       - name: Run Price Scraper
         env:
           SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
+          PYTHONPATH: ${{ github.workspace }} # Add project root to PYTHONPATH
         run: |
           python -c "print('Python interpreter is working!')"
           timeout 120           python src/sheet_scraper.py || true

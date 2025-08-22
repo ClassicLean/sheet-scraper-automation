@@ -1,0 +1,6 @@
+Run python -c "print('Python interpreter is working!')"
+Python interpreter is working!
+Traceback (most recent call last):
+  File "/home/runner/work/sheet-scraper-automation/sheet-scraper-automation/src/sheet_scraper.py", line 6, in <module>
+    from src.connect import get_service
+ModuleNotFoundError: No module named 'src'
