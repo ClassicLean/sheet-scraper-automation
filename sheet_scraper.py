@@ -231,7 +231,7 @@ def run_price_update_automation():
                     new_supplier_url_to_update = best_supplier_url
 
                     if lowest_price_found >= 299.99:
-                        new_va_note = "$$"
+                        new_va_note = "$$$"
                     elif lowest_price_found < old_price:
                         new_va_note = "Down"
                     elif lowest_price_found > old_price:
