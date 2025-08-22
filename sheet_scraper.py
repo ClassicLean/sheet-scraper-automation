@@ -38,10 +38,20 @@ SUPPLIER_URL_COLS = {
 }
 
 # --- Helper Functions ---
+ERROR_LOG_FILE = "error_log.txt" # Define new error log file
+
 def log_update(product_id, old_price, new_price, status, message=""):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    log_entry = f"[{timestamp}] Product ID: {product_id}, Old Price: {old_price}, New Price: {new_price}, Status: {status}, Message: {message}
+"
     with open(LOG_FILE, "a") as f:
-        f.write(f"[{timestamp}] Product ID: {product_id}, Old Price: {old_price}, New Price: {new_price}, Status: {status}, Message: {message}\n")
+        f.write(log_entry)
+    
+    # Log specific errors to a separate file
+    if status == "Failed" and ("blocked" in message.lower() or "captcha" in message.lower() or "timeout" in message.lower() or "error" in message.lower()):
+        with open(ERROR_LOG_FILE, "a") as f_error:
+            f_error.write(log_entry)
+
 
 def parse_price(text):
     # Extracts a price from text, handling various formats (e.g., $1,234.56, 1.234,56, 1234.56)
@@ -68,10 +78,14 @@ def scrape_product_details(url, page): # Modified to accept page
         page.goto(url, wait_until="domcontentloaded", timeout=30000) # Increased timeout
 
         # --- Price Extraction ---
-        # Common price selectors (add more specific ones as needed)
+        # Amazon-specific selectors often include 'span.a-price-whole' and 'span.a-price-fraction'
+        # or '#priceblock_ourprice', '#priceblock_dealprice'
+        # It's crucial to use robust selectors and wait for them to be present.
         price_selectors = [
-                ".price",
+                "span.a-price span.a-offscreen", # Common Amazon price selector
                 "#priceblock_ourprice",
+                "#priceblock_dealprice",
+                ".price",
                 ".product-price",
                 "[data-test='product-price']",
                 ".current-price",
@@ -81,6 +95,15 @@ def scrape_product_details(url, page): # Modified to accept page
                 "p.price",
                 "span.price-value"
             ]
+        
+        # Wait for at least one of the price selectors to be visible
+        # This helps with dynamic content loading
+        try:
+            page.wait_for_selector(" | ".join(price_selectors), timeout=10000) # Wait for any of the selectors
+        except PlaywrightTimeoutError:
+            print(f"Warning: Price selector not found within timeout for {url}")
+            # Continue without price, it will be handled as not found
+
         for selector in price_selectors:
             try:
                 price_element = page.query_selector(selector)
@@ -250,7 +273,7 @@ def run_price_update_automation():
                             all_suppliers_blocked = False
 
                     if new_va_note != "Blocked": # If not blocked, then it's genuinely not found or out of stock
-                        new_va_note = "Price not found / Out of stock"
+                        new_va_note = ""
 
                     new_price_to_update = old_price_str # Keep old price if no new valid price found
                     new_supplier_url_to_update = row[PRODUCT_ID_COL] # Keep old supplier URL
@@ -345,7 +368,17 @@ def run_price_update_automation():
                                     }
                                 }
                             },
-                            'fields': 'userEnteredFormat.backgroundColor'
+                            'blue': 0.0
+                                }
+                            },
+                            'textFormat': {
+                                'foregroundColor': {
+                                    'red': 1.0,
+                                    'green': 1.0,
+                                    'blue': 1.0
+                                }
+                            },
+                            'fields': 'userEnteredFormat.backgroundColor,userEnteredFormat.textFormat.foregroundColor'
                         }
                     })
 
