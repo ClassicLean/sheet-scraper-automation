@@ -230,7 +230,9 @@ def run_price_update_automation():
                     new_price_to_update = str(lowest_price_found)
                     new_supplier_url_to_update = best_supplier_url
 
-                    if lowest_price_found < old_price:
+                    if lowest_price_found >= 299.99:
+                        new_va_note = "$$"
+                    elif lowest_price_found < old_price:
                         new_va_note = "Down"
                     elif lowest_price_found > old_price:
                         new_va_note = "Up"
@@ -238,47 +240,125 @@ def run_price_update_automation():
                         new_va_note = "No change"
                     log_update(product_id, old_price, lowest_price_found, "Success", f"Chosen supplier: {chosen_supplier_name}")
                 else:
-                    new_va_note = "Price not found / Out of stock"
+                    # Check for specific error messages from scraping
+                    all_suppliers_blocked = True
+                    for result in supplier_results:
+                        if result["error"] and ("blocked" in result["error"].lower() or "captcha" in result["error"].lower()):
+                            new_va_note = "Blocked"
+                            break
+                        else:
+                            all_suppliers_blocked = False
+
+                    if new_va_note != "Blocked": # If not blocked, then it's genuinely not found or out of stock
+                        new_va_note = "Price not found / Out of stock"
+
                     new_price_to_update = old_price_str # Keep old price if no new valid price found
                     new_supplier_url_to_update = row[PRODUCT_ID_COL] # Keep old supplier URL
                     log_update(product_id, old_price, "N/A", "Failed", "No valid price found from any supplier or all out of stock")
 
-                # --- PERFORM INDIVIDUAL CELL UPDATES HERE ---
+                # --- COLLECT UPDATES FOR BATCH UPDATE ---
+                requests = []
+
                 # Update VA Notes (Column A)
-                range_va_notes = f"{SHEET_NAME}!{chr(65 + VA_NOTES_COL)}{row_index + 1}"
-                service.spreadsheets().values().update(
-                    spreadsheetId=os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw",
-                    range=range_va_notes,
-                    valueInputOption='RAW',
-                    body={'values': [[new_va_note]]}
-                ).execute()
+                requests.append({
+                    'updateCells': {
+                        'rows': [
+                            {'values': [{'userEnteredValue': {'stringValue': new_va_note}}]}
+                        ],
+                        'fields': 'userEnteredValue',
+                        'range': {
+                            'sheetId': 0, # Assuming sheetId 0 for the first sheet, or get it dynamically
+                            'startRowIndex': row_index,
+                            'endRowIndex': row_index + 1,
+                            'startColumnIndex': VA_NOTES_COL,
+                            'endColumnIndex': VA_NOTES_COL + 1
+                        }
+                    }
+                })
 
                 # Update Price (Column X)
-                range_price = f"{SHEET_NAME}!{chr(65 + PRICE_COL)}{row_index + 1}"
-                service.spreadsheets().values().update(
-                    spreadsheetId=os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw",
-                    range=range_price,
-                    valueInputOption='RAW',
-                    body={'values': [[new_price_to_update]]}
-                ).execute()
+                requests.append({
+                    'updateCells': {
+                        'rows': [
+                            {'values': [{'userEnteredValue': {'stringValue': new_price_to_update}}]}
+                        ],
+                        'fields': 'userEnteredValue',
+                        'range': {
+                            'sheetId': 0,
+                            'startRowIndex': row_index,
+                            'endRowIndex': row_index + 1,
+                            'startColumnIndex': PRICE_COL,
+                            'endColumnIndex': PRICE_COL + 1
+                        }
+                    }
+                })
 
                 # Update Supplier in use URL (Column AF)
-                range_supplier_url = f"{SHEET_NAME}!{chr(65 + PRODUCT_ID_COL)}{row_index + 1}"
-                service.spreadsheets().values().update(
-                    spreadsheetId=os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw",
-                    range=range_supplier_url,
-                    valueInputOption='RAW',
-                    body={'values': [[new_supplier_url_to_update]]}
-                ).execute()
+                requests.append({
+                    'updateCells': {
+                        'rows': [
+                            {'values': [{'userEnteredValue': {'stringValue': new_supplier_url_to_update}}]}
+                        ],
+                        'fields': 'userEnteredValue',
+                        'range': {
+                            'sheetId': 0,
+                            'startRowIndex': row_index,
+                            'endRowIndex': row_index + 1,
+                            'startColumnIndex': PRODUCT_ID_COL,
+                            'endColumnIndex': PRODUCT_ID_COL + 1
+                        }
+                    }
+                })
 
                 # Update Last stock check (Column D)
-                range_last_check = f"{SHEET_NAME}!{chr(65 + LAST_STOCK_CHECK_COL)}{row_index + 1}"
-                service.spreadsheets().values().update(
-                    spreadsheetId=os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw",
-                    range=range_last_check,
-                    valueInputOption='RAW',
-                    body={'values': [[current_date]]}
-                ).execute()
+                requests.append({
+                    'updateCells': {
+                        'rows': [
+                            {'values': [{'userEnteredValue': {'stringValue': current_date}}]}
+                        ],
+                        'fields': 'userEnteredValue',
+                        'range': {
+                            'sheetId': 0,
+                            'startRowIndex': row_index,
+                            'endRowIndex': row_index + 1,
+                            'startColumnIndex': LAST_STOCK_CHECK_COL,
+                            'endColumnIndex': LAST_STOCK_CHECK_COL + 1
+                        }
+                    }
+                })
+
+                # Add row coloring if out of stock across all suppliers and not blocked
+                if lowest_price_found == float('inf') and new_va_note != "Blocked":
+                    requests.append({
+                        'repeatCell': {
+                            'range': {
+                                'sheetId': 0,
+                                'startRowIndex': row_index,
+                                'endRowIndex': row_index + 1
+                            },
+                            'cell': {
+                                'userEnteredFormat': {
+                                    'backgroundColor': {
+                                        'red': 1.0,
+                                        'green': 0.0,
+                                        'blue': 0.0
+                                    }
+                                }
+                            },
+                            'fields': 'userEnteredFormat.backgroundColor'
+                        }
+                    })
+
+                # Execute batch update for the current row
+                try:
+                    service.spreadsheets().batchUpdate(
+                        spreadsheetId=os.environ.get('SPREADSHEET_ID') or "15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw",
+                        body={'requests': requests}
+                    ).execute()
+                    print(f"Successfully updated row {row_index + 1} for Product ID: {product_id}")
+                except Exception as e:
+                    print(f"Error updating row {row_index + 1} for Product ID: {product_id}: {e}")
+                    log_update(product_id, old_price, "N/A", "Failed", f"Sheet update error: {e}")
 
             browser.close()
             print("Playwright browser closed.")
