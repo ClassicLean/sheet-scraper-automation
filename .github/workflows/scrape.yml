@@ -40,4 +40,4 @@ jobs:
           PYTHONPATH: ${{ github.workspace }} # Add project root to PYTHONPATH
         run: |
           python -c "print('Python interpreter is working!')"
-          timeout 120           python src/sheet_scraper.py || true
+          timeout 600           python src/sheet_scraper.py || true
