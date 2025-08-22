@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from src.sheet_scraper import truncate_log_file, scrape_product_details
 
 # Test for truncate_log_file
@@ -39,7 +39,13 @@ def test_truncate_log_file_non_existent(tmp_path):
 # Tests for scrape_product_details
 @pytest.fixture
 def mock_page():
-    return MagicMock()
+    mock = MagicMock()
+    mock.content.return_value = """<html><body><span class=\"a-price-whole\">12</span><span class=\"a-price-fraction\">.99</span> in stock</body></html>"""
+    mock.query_selector.return_value = MagicMock(inner_text=lambda: "$12.99")
+    mock.inner_text.return_value = "some text for fallback"
+    mock.wait_for_selector.return_value = None
+    mock.goto.return_value = None
+    return mock
 
 def test_scrape_product_details_blocked(mock_page):
     mock_page.content.return_value = "robot or human activate and hold the button to confirm that you’re human. thank you"
@@ -66,7 +72,7 @@ def test_scrape_product_details_out_of_stock_unavailable(mock_page):
     assert "Out of Stock" in result["error"]
 
 def test_scrape_product_details_valid_price_and_in_stock(mock_page):
-    mock_page.content.return_value = "<span class=\"a-price-whole\">12</span><span class=\"a-price-fraction\">.99</span> in stock"
+    mock_page.content.return_value = """<html><body><span class=\"a-price-whole\">12</span><span class=\"a-price-fraction\">.99</span> in stock</body></html>"""
     mock_page.query_selector.return_value = MagicMock(inner_text=lambda: "$12.99")
     mock_page.wait_for_selector.return_value = None
     mock_page.goto.return_value = None

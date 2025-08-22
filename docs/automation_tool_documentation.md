@@ -42,6 +42,17 @@ As a user, I want to:
 4.  **Update Google Sheet:** All prepared updates for the current product's row are sent to the Google Sheet via individual API calls for each cell (VA Notes, Price, Supplier URL, Last Stock Check Date).
 5.  **Logging:** All significant actions and outcomes (successes, failures, errors) are logged to a local file (`price_update_log.txt`).
 
+### Anti-Blocking Strategies:
+
+To mitigate detection by websites, the scraper employs several free anti-blocking techniques:
+
+*   **User-Agent Rotation:** The script rotates through a list of common browser User-Agents for each request, making it harder for websites to identify automated traffic based on a consistent User-Agent.
+*   **Randomized Delays:** Delays between requests are randomized within a specified range to mimic human browsing patterns and avoid rate-limiting.
+*   **Resource Blocking:** Unnecessary resources like images, stylesheets, and fonts are blocked from loading. This reduces the browser's fingerprint, speeds up scraping, and conserves bandwidth.
+
+**Limitations:** While these strategies enhance the scraper's stealth, they may not be sufficient to bypass highly sophisticated anti-bot systems employed by major e-commerce sites. More advanced techniques (e.g., proxies, CAPTCHA solving services) typically require external paid services.
+
+
 ## 4. Configuration
 
 ### Google Sheet Details:

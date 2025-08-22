@@ -2,7 +2,8 @@ import os
 import datetime
 import time
 import re
-from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError # MOVED BACK TO TOP
+from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+
 from src.connect import get_service
 
 print("Script started: Initializing...")
