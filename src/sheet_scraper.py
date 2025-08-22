@@ -90,6 +90,7 @@ def scrape_product_details(url, page): # Modified to accept page
     try:
         page.goto(url, wait_until="domcontentloaded", timeout=30000) # Increased timeout
         page_content = page.content().lower() # Get full page content for broader search
+        print(f"DEBUG: Page content for {url}:\n{page_content[:1000]}... (truncated)") # Log first 1000 chars
 
         # --- Blocked Detection ---
         blocked_indicators = [
@@ -98,16 +99,18 @@ def scrape_product_details(url, page): # Modified to accept page
         ]
         for indicator in blocked_indicators:
             if indicator in page_content:
+                print(f"DEBUG: Detected blocked for {url}")
                 return {"price": None, "in_stock": False, "error": "Blocked: Robot/Human verification or Captcha"}
 
         # --- Out of Stock / Page Not Found Detection ---
         out_of_stock_page_indicators = [
-            "sorry we couldn't find that page. try searching or go to amazon's home page.",
-            "currently unavailable. we don't know when or if this item will be back in stock.",
+            "sorry we couldn\'t find that page. try searching or go to amazon\'s home page.",
+            "currently unavailable. we don\'t know when or if this item will be back in stock.",
             "404 page not found the page you requested does not exist."
         ]
         for indicator in out_of_stock_page_indicators:
             if indicator in page_content:
+                print(f"DEBUG: Detected out of stock/404 for {url}")
                 return {"price": None, "in_stock": False, "error": "Out of Stock: Page not found or item unavailable"}
 
         # --- Price Extraction ---
@@ -145,14 +148,20 @@ def scrape_product_details(url, page): # Modified to accept page
                     price_text = price_element.inner_text()
                     price = parse_price(price_text)
                     if price is not None:
+                        print(f"DEBUG: Price found for {url} using selector {selector}: {price}")
                         break # Found a price, no need to check other selectors
-            except Exception:
+            except Exception as e:
+                print(f"DEBUG: Error with selector {selector} for {url}: {e}")
                 continue # Selector not found or other issue, try next
 
         # Fallback to regex if no specific selector works
         if price is None:
             body_text = page.inner_text("body")
             price = parse_price(body_text)
+            if price is not None:
+                print(f"DEBUG: Price found for {url} using regex fallback: {price}")
+            else:
+                print(f"DEBUG: No price found for {url} even with regex fallback.")
 
         # --- In-Stock/Availability Detection (after price, as price implies availability) ---
         # Common in-stock indicators (highly site-specific, add more as needed)
@@ -175,6 +184,7 @@ def scrape_product_details(url, page): # Modified to accept page
         for indicator in in_stock_indicators:
             if indicator in page_content:
                 in_stock = True
+                print(f"DEBUG: Positive stock indicator \"{indicator}\" found for {url}")
                 break
 
         # If positive indicator found, check for negative ones to override
@@ -182,19 +192,26 @@ def scrape_product_details(url, page): # Modified to accept page
             for indicator in out_of_stock_indicators:
                 if indicator in page_content:
                     in_stock = False # Overwrite if an out-of-stock message is also present
+                    print(f"DEBUG: Negative stock indicator \"{indicator}\" found for {url}, overriding to out of stock.")
                     break
             else: # If no clear positive or negative, assume in stock if price was found
                 if price is not None: # If a price was found, it's likely in stock
                     in_stock = True
                 else: # If no price and no clear indicators, default to False (safer)
                     in_stock = False
+        else:
+            print(f"DEBUG: No positive stock indicators found for {url}")
 
     except PlaywrightTimeoutError:
         error_message = "Page load timeout"
+        print(f"DEBUG: Page load timeout for {url}")
     except Exception as e:
         error_message = f"Scraping error: {e}"
+        print(f"DEBUG: General scraping error for {url}: {e}")
 
-    return {"price": price, "in_stock": in_stock, "error": error_message}
+    final_result = {"price": price, "in_stock": in_stock, "error": error_message}
+    print(f"DEBUG: Final scraped data for {url}: {final_result}")
+    return final_result
 
 # --- Main Automation Logic ---
 def run_price_update_automation():
@@ -223,7 +240,7 @@ def run_price_update_automation():
             return
 
         # updates_to_sheet = [] # REMOVE THIS - no longer batching this way
-        current_date = datetime.datetime.now().strftime("%m/%d/%Y") # Format: MM/DD/YYYY
+        current_date = datetime.datetime.now().strftime("%m/%d") # Format: MM/DD
 
         print("Attempting to import Playwright and launch browser...")
         # from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError # REMOVE THIS LINE
