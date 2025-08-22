@@ -181,17 +181,15 @@ To ensure the correctness of the code, unit tests have been implemented using `p
             env:
               SA_KEY_JSON: ${{ secrets.SA_KEY_JSON }}
             run: |
-              echo "$SA_KEY_JSON" > sheet-scraper-as.json
+              echo "$SA_KEY_JSON" > config/sheet-scraper-as.json
 
           - name: Run Price Scraper
             env:
               SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
+              PYTHONPATH: ${{ github.workspace }} # Add project root to PYTHONPATH
             run: |
               python -c "print('Python interpreter is working!')"
-              python -v sheet_scraper.py > script_output.log 2>&1 & # Run in background
-              sleep 30 # Give time for output
-              cat script_output.log # Print output to console
-              # The timeout for the step itself will handle the overall execution time
+              timeout 120           python src/sheet_scraper.py || true
     ```
 2.  **Configure GitHub Secrets:**
     *   In your GitHub repository, go to `Settings` -> `Secrets and variables` -> `Actions`.

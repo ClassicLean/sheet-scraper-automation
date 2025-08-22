@@ -3,7 +3,7 @@ from google.oauth2 import service_account
 import os # Import os to use environment variables
 
 # Path to your service account key file
-SERVICE_ACCOUNT_FILE = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "sheet-scraper-as.json")
+SERVICE_ACCOUNT_FILE = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "config/sheet-scraper-as.json")
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 def get_service():

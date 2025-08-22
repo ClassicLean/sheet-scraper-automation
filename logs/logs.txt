@@ -1,6 +1,8 @@
 Run python -c "print('Python interpreter is working!')"
 Python interpreter is working!
-Traceback (most recent call last):
-  File "/home/runner/work/sheet-scraper-automation/sheet-scraper-automation/src/sheet_scraper.py", line 6, in <module>
-    from src.connect import get_service
-ModuleNotFoundError: No module named 'src'
+Script started: Initializing...
+Current working directory: /home/runner/work/sheet-scraper-automation/sheet-scraper-automation
+Contents of current directory: ['logs', 'config', 'docs', '__pycache__', 'tests', 'src', 'pytest.ini', '.github', '.git']
+Attempting to get Google Sheets service...
+Error getting Google Sheets service: [Errno 2] No such file or directory: 'sheet-scraper-as.json'
+Error: Could not connect to Google Sheets API. Exiting.
