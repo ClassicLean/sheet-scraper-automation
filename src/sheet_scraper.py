@@ -247,15 +247,17 @@ def run_price_update_automation():
         from playwright_stealth import Stealth
 
         with Stealth().use_sync(sync_playwright()) as p:
-            browser = p.chromium.launch(args=[
+            print("DEBUG: Attempting to launch browser...")
+            browser = p.chromium.launch(headless=True, args=[
                 "--disable-dev-shm-usage",
                 "--no-sandbox",
-                "--single-process",
-                "--disable-setuid-sandbox",
-                "--disable-gpu"
+                "--disable-setuid-sandbox"
             ])
+            print("DEBUG: Browser launched successfully.")
+            print("DEBUG: Attempting to create new page...")
             page = browser.new_page()
-            print("Playwright browser launched successfully.")
+            print("DEBUG: Page created successfully.")
+            print("Playwright browser launched successfully.") # This line already exists, keeping it for now
 
             # Iterate through each row (starting from row 5, which is index 4)
             for row_index, row in enumerate(values[:10]): # Process only up to ROW_LIMIT rows
