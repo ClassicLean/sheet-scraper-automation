@@ -2,9 +2,28 @@ import os
 import datetime
 import time
 import re
+import random
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
 from src.connect import get_service
+
+# --- User-Agent List ---
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/119.0.0.0",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Firefox/119.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Firefox/119.0",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Firefox/119.0"
+]
 
 print("Script started: Initializing...")
 print(f"Current working directory: {os.getcwd()}")
@@ -255,7 +274,7 @@ def run_price_update_automation():
             ])
             print("DEBUG: Browser launched successfully.")
             print("DEBUG: Attempting to create new page...")
-            page = browser.new_page()
+            page = browser.new_page(user_agent=random.choice(USER_AGENTS))
             print("DEBUG: Page created successfully.")
             print("Playwright browser launched successfully.") # This line already exists, keeping it for now
 
@@ -287,7 +306,7 @@ def run_price_update_automation():
                             "in_stock": scraped_data["in_stock"],
                             "error": scraped_data["error"]
                         })
-                        time.sleep(2) # Be polite, add a delay between requests
+                        time.sleep(random.uniform(2, 5)) # Be polite, add a delay between requests
 
                 # Process scraped results to find the best supplier
                 for result in supplier_results:

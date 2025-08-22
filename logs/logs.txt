@@ -7,4 +7,395 @@ Attempting to get Google Sheets service...
 Successfully connected to Google Sheets API.
 Attempting to read sheet: FBMP
 Attempting to import Playwright and launch browser...
-General Scraping Error: Scraping error: Stealth.hooked_new_page_sync: Target page, context or browser has been closed
+DEBUG: Attempting to launch browser...
+DEBUG: Browser launched successfully.
+DEBUG: Attempting to create new page...
+DEBUG: Page created successfully.
+Playwright browser launched successfully.
+Scraping Product ID: https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1, Supplier: Supplier in use, URL: https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1
+DEBUG: Page content for https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1:
+<!doctype html><html><head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>
+      page not found
+    </title>
+    <style>
+      html,body***padding:0;margin:0***img***border:0***#a***background:#232f3e;padding:11px 11px 11px 192px***#b***position:absolute;left:22px;top:12px***#c***position:relative;max-width:800px;padding:0 40px 0 0***#e,#f***height:35px;border:0;font-size:1em***#e***width:100%;margin:0;padding:0 10px;border-radius:4px 0 0 4px***#f***cursor:pointer;background:#febd69;font-weight:bold;border-radius:0 4px 4px 0;-webkit-appearance:none;position:absolute;top:0;right:0;padding:0 12px***@media(max-width:500px)***#a***padding:55px 10px 10px***#b***left:6px***#g***text-align:center;margin:30px 0***#g img***max-width:90%***#d***display:none***#d[src]***display:inline***
+    </style>
+  </head>
+  <body>
+    <!--
+    to discuss automated access to amazon data please contact api-services-support@amaz... (truncated)
+Warning: Price selector not found within timeout for https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1
+DEBUG: No price found for https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1 even with regex fallback.
+DEBUG: No positive stock indicators found for https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1
+DEBUG: Final scraped data for https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1: ***'price': None, 'in_stock': False, 'error': 'Price selector timeout'***
+Scraping Product ID: https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1, Supplier: Supplier A, URL: https://www.amazon.com/Milliard-Playroom-Toddler-Activity-Storage/dp/B09TD97QP2/ref=psdc_1063306_t4_B0C58LJ9NF
+DEBUG: Page content for https://www.amazon.com/Milliard-Playroom-Toddler-Activity-Storage/dp/B09TD97QP2/ref=psdc_1063306_t4_B0C58LJ9NF:
+<!doctype html><html lang="en-us" class="a-ws a-js a-audio a-video a-canvas a-svg a-drag-drop a-geolocation a-history a-webworker a-autofocus a-input-placeholder a-textarea-placeholder a-local-storage a-gradients a-transform3d a-touch-scrolling a-text-shadow a-text-stroke a-box-shadow a-border-radius a-border-image a-opacity a-transform a-transition null" data-19ax5a9jf="dingo" data-aui-build-date="3.25.5-2025-08-16"><!-- sp:feature:head-start --><head><style class="vjs-styles-defaults">
+      .video-js ***
+        width: 300px;
+        height: 150px;
+      ***
+      .vjs-fluid ***
+        padding-top: 56.25%
+      ***
+    </style><style class="vjs-styles-dimensions">
+      .detailpage-imageblock-player-43028db8-1d7c-4541-b8d3-6ce93249d57c-container-element-dimensions ***
+        width: 300px;
+        height: 168.75px;
+      ***
+      .detailpage-imageblock-player-43028db8-1d7c-4541-b8d3-6ce93249d57c-container-element-dimensions.vjs-fluid ***
+        padding-top: 56.25%;
+      ***
+    </style><style... (truncated)
+DEBUG: Price found for https://www.amazon.com/Milliard-Playroom-Toddler-Activity-Storage/dp/B09TD97QP2/ref=psdc_1063306_t4_B0C58LJ9NF using selector span.a-price span.a-offscreen: 134.99
+DEBUG: Positive stock indicator "in stock" found for https://www.amazon.com/Milliard-Playroom-Toddler-Activity-Storage/dp/B09TD97QP2/ref=psdc_1063306_t4_B0C58LJ9NF
+DEBUG: Negative stock indicator "unavailable" found for https://www.amazon.com/Milliard-Playroom-Toddler-Activity-Storage/dp/B09TD97QP2/ref=psdc_1063306_t4_B0C58LJ9NF, overriding to out of stock.
+DEBUG: Final scraped data for https://www.amazon.com/Milliard-Playroom-Toddler-Activity-Storage/dp/B09TD97QP2/ref=psdc_1063306_t4_B0C58LJ9NF: ***'price': 134.99, 'in_stock': False, 'error': ''***
+Scraping Product ID: https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1, Supplier: Supplier B, URL: https://www.costzon.com/products/costzon-2-in-1-kids-table-and-chair-set-wood-art-table-easel-set-with-2-chairs-6-storage-bins-paper-rolle-natural
+DEBUG: Page content for https://www.costzon.com/products/costzon-2-in-1-kids-table-and-chair-set-wood-art-table-easel-set-with-2-chairs-6-storage-bins-paper-rolle-natural:
+<!doctype html><html class="js supports-cookies" lang="en" style="--theme-sticky-header-height: 52px;"><head>
+  
+  <meta name="google-site-verification" content="7fsnotmpqcbrvxyvg4mstyuusmdrmenmayrqfv90rb8">
+  <!-- google tag manager -->
+<script async="true" src="https://connect.facebook.net/en_us/fbevents.js"></script><script type="text/javascript" id="ftr__script" async="" src="https://5cbacac6d793.cdn4.forter.com/sn/5cbacac6d793/script.js"></script><script type="text/javascript" id="ftr__script" async="" src="https://5cbacac6d793.cdn4.forter.com/sn/5cbacac6d793/script.js"></script><script type="text/javascript" async="" src="//www.costzon.com/cdn/s/trekkie.storefront.5a4f78eb26ea594ba1b5d72f179d68114c7cf8ca.min.js"></script><script async="" src="https://www.googletagmanager.com/gtm.js?id=gtm-5s9zjhf"></script><script>(function(w,d,s,l,i)***w[l]=w[l]||[];w[l].push(***'gtm.start':
+new date().gettime(),event:'gtm.js'***);var f=d.getelementsbytagname(s)[0],
+j=d.createelement(s),dl=l!='datalay... (truncated)
+DEBUG: Detected blocked for https://www.costzon.com/products/costzon-2-in-1-kids-table-and-chair-set-wood-art-table-easel-set-with-2-chairs-6-storage-bins-paper-rolle-natural
+Scraping Product ID: https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1, Supplier: Supplier C, URL: https://www.walmart.com/blocked?url=L2lwL0d5bWF4LTItaW4tMS1LaWRzLVdvb2Rlbi1BcnQtVGFibGUtYW5kLUFydC1FYXNlbC1TZXQtdy1DaGFpcnMtUGFwZXItUm9sbC1TdG9yYWdlLUJpbnMvMTQ1OTM2MzQ5ND93bWxzcGFydG5lcj13bHBhJnNlbGVjdGVkU2VsbGVySWQ9MTMwMjk=&uuid=2dd7a330-69c3-11ee-90e3-6f6ba9bac349&vid=98330337-ad08-11ed-bbc2-4d084122cd7e&g=b
+DEBUG: Page content for https://www.walmart.com/blocked?url=L2lwL0d5bWF4LTItaW4tMS1LaWRzLVdvb2Rlbi1BcnQtVGFibGUtYW5kLUFydC1FYXNlbC1TZXQtdy1DaGFpcnMtUGFwZXItUm9sbC1TdG9yYWdlLUJpbnMvMTQ1OTM2MzQ5ND93bWxzcGFydG5lcj13bHBhJnNlbGVjdGVkU2VsbGVySWQ9MTMwMjk=&uuid=2dd7a330-69c3-11ee-90e3-6f6ba9bac349&vid=98330337-ad08-11ed-bbc2-4d084122cd7e&g=b:
+<html lang="en"><head>
+    <title>robot or human?</title>
+    <meta name="viewport" content="width=device-width">
+    <style>
+    #sign-in-widget a,
+    #sign-in-widget a:active,
+    #sign-in-widget a:hover ***
+        color: #000
+    ***
+    #sign-in-widget h1 ***
+        font-weight: 500;
+        font-size: 20px;
+        font-size: 1.25rem;
+        letter-spacing: -.6px;
+        margin: 1px auto
+    ***
+    @media (min-width:30em) ***
+        #sign-in-widget h1 ***
+            margin-top: 24px;
+            font-size: 24px;
+            font-size: 1.5rem
+        ***
+    ***
+    #sign-in-widget ***
+        font-family: bogleweb, helvetica neue, helvetica, arial, sans-serif
+    ***
+    #sign-in-widget * ***
+        box-sizing: border-box
+    ***
+    #sign-in-widget .text-right ***
+        text-align: right
+    ***
+    @font-face ***
+        font-family: newyorkicons;
+        src: url(6255ed72d86ece856725a2d80878bce6.eot);
+        font-weight: 400;
+        font-style: normal
+    ***
+    @font-face ***
+        font-... (truncated)
+DEBUG: Detected blocked for https://www.walmart.com/blocked?url=L2lwL0d5bWF4LTItaW4tMS1LaWRzLVdvb2Rlbi1BcnQtVGFibGUtYW5kLUFydC1FYXNlbC1TZXQtdy1DaGFpcnMtUGFwZXItUm9sbC1TdG9yYWdlLUJpbnMvMTQ1OTM2MzQ5ND93bWxzcGFydG5lcj13bHBhJnNlbGVjdGVkU2VsbGVySWQ9MTMwMjk=&uuid=2dd7a330-69c3-11ee-90e3-6f6ba9bac349&vid=98330337-ad08-11ed-bbc2-4d084122cd7e&g=b
+Successfully updated row 5 for Product ID: https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1
+Scraping Product ID: https://www.amazon.com/INFANS-Toddler-Activity-Children-Furniture/dp/B0C57WV3BN/ref=psdc_1063306_t1_B0C58LJ9NF, Supplier: Supplier in use, URL: https://www.amazon.com/INFANS-Toddler-Activity-Children-Furniture/dp/B0C57WV3BN/ref=psdc_1063306_t1_B0C58LJ9NF
+DEBUG: Page content for https://www.amazon.com/INFANS-Toddler-Activity-Children-Furniture/dp/B0C57WV3BN/ref=psdc_1063306_t1_B0C58LJ9NF:
+<!doctype html><html><head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>
+      page not found
+    </title>
+    <style>
+      html,body***padding:0;margin:0***img***border:0***#a***background:#232f3e;padding:11px 11px 11px 192px***#b***position:absolute;left:22px;top:12px***#c***position:relative;max-width:800px;padding:0 40px 0 0***#e,#f***height:35px;border:0;font-size:1em***#e***width:100%;margin:0;padding:0 10px;border-radius:4px 0 0 4px***#f***cursor:pointer;background:#febd69;font-weight:bold;border-radius:0 4px 4px 0;-webkit-appearance:none;position:absolute;top:0;right:0;padding:0 12px***@media(max-width:500px)***#a***padding:55px 10px 10px***#b***left:6px***#g***text-align:center;margin:30px 0***#g img***max-width:90%***#d***display:none***#d[src]***display:inline***
+    </style>
+  </head>
+  <body>
+    <!--
+    to discuss automated access to amazon data please contact api-services-support@amaz... (truncated)
+Warning: Price selector not found within timeout for https://www.amazon.com/INFANS-Toddler-Activity-Children-Furniture/dp/B0C57WV3BN/ref=psdc_1063306_t1_B0C58LJ9NF
+DEBUG: No price found for https://www.amazon.com/INFANS-Toddler-Activity-Children-Furniture/dp/B0C57WV3BN/ref=psdc_1063306_t1_B0C58LJ9NF even with regex fallback.
+DEBUG: No positive stock indicators found for https://www.amazon.com/INFANS-Toddler-Activity-Children-Furniture/dp/B0C57WV3BN/ref=psdc_1063306_t1_B0C58LJ9NF
+DEBUG: Final scraped data for https://www.amazon.com/INFANS-Toddler-Activity-Children-Furniture/dp/B0C57WV3BN/ref=psdc_1063306_t1_B0C58LJ9NF: ***'price': None, 'in_stock': False, 'error': 'Price selector timeout'***
+Successfully updated row 6 for Product ID: https://www.amazon.com/INFANS-Toddler-Activity-Children-Furniture/dp/B0C57WV3BN/ref=psdc_1063306_t1_B0C58LJ9NF
+Scraping Product ID: https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1, Supplier: Supplier in use, URL: https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1
+DEBUG: Page content for https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1:
+<!doctype html><html lang="en-us" class="a-ws a-js a-audio a-video a-canvas a-svg a-drag-drop a-geolocation a-history a-webworker a-autofocus a-input-placeholder a-textarea-placeholder a-local-storage a-gradients a-transform3d a-touch-scrolling a-text-shadow a-text-stroke a-box-shadow a-border-radius a-border-image a-opacity a-transform a-transition a-ember a-ember-modern-display a-ember-modern-text" data-19ax5a9jf="dingo" data-aui-build-date="3.25.5-2025-08-16"><!-- sp:feature:head-start --><head><script>var apagestart = (new date()).gettime();</script><meta charset="utf-8">
+<!-- sp:end-feature:head-start -->
+<!-- sp:feature:csm:head-open-part1 -->
+<script type="text/javascript">var ue_t0=ue_t0||+new date();</script>
+<!-- sp:end-feature:csm:head-open-part1 -->
+<!-- sp:feature:cs-optimization -->
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="https://images-na.ssl-images-amazon.com">
+<link rel="dns-prefetch" href="https://m.media-amazon.com">
+<l... (truncated)
+DEBUG: Price found for https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1 using selector span.a-price span.a-offscreen: 130.99
+DEBUG: Positive stock indicator "in stock" found for https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1
+DEBUG: Negative stock indicator "unavailable" found for https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1, overriding to out of stock.
+DEBUG: Final scraped data for https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1: ***'price': 130.99, 'in_stock': False, 'error': ''***
+Scraping Product ID: https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1, Supplier: Supplier A, URL: https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/ref=asc_df_B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1
+DEBUG: Page content for https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/ref=asc_df_B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1:
+<!doctype html><html lang="en-us" class="a-ws a-js a-audio a-video a-canvas a-svg a-drag-drop a-geolocation a-history a-webworker a-autofocus a-input-placeholder a-textarea-placeholder a-local-storage a-gradients a-transform3d a-touch-scrolling a-text-shadow a-text-stroke a-box-shadow a-border-radius a-border-image a-opacity a-transform a-transition a-ember a-ember-modern-display a-ember-modern-text" data-19ax5a9jf="dingo" data-aui-build-date="3.25.5-2025-08-16"><!-- sp:feature:head-start --><head><style class="vjs-styles-defaults">
+      .video-js ***
+        width: 300px;
+        height: 150px;
+      ***
+      .vjs-fluid ***
+        padding-top: 56.25%
+      ***
+    </style><style class="vjs-styles-dimensions">
+      .detailpage-imageblock-player-a5fd3532-bcea-4f35-af7b-ad0541e6c4e9-container-element-dimensions ***
+        width: 300px;
+        height: 168.75px;
+      ***
+      .detailpage-imageblock-player-a5fd3532-bcea-4f35-af7b-ad0541e6c4e9-container-element-dimensions.vjs-fluid ***
+        p... (truncated)
+DEBUG: Price found for https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/ref=asc_df_B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1 using selector span.a-price span.a-offscreen: 130.99
+DEBUG: Positive stock indicator "in stock" found for https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/ref=asc_df_B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1
+DEBUG: Negative stock indicator "unavailable" found for https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/ref=asc_df_B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1, overriding to out of stock.
+DEBUG: Final scraped data for https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/ref=asc_df_B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1: ***'price': 130.99, 'in_stock': False, 'error': ''***
+Scraping Product ID: https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1, Supplier: Supplier B, URL: https://www.kohls.com/product/prd-3774810/step2-great-creations-art-center.jsp?skuId=37583047&search=3774810&submit-search=web-regular
+DEBUG: Page content for https://www.kohls.com/product/prd-3774810/step2-great-creations-art-center.jsp?skuId=37583047&search=3774810&submit-search=web-regular:
+<!doctype html><html lang="en"><head>
+		<title>step2 great creations art center</title>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+		
+		
+		
+			<script id="amigo-js-dyn-sdk-1755845738711" fetchpriority="high" src="https://tag.getamigo.io/sdk/d901bdeef8dea7e7cdf209f97d4f34679d1027e869fe30f1fbfc85bcfcd05790/1755845738714/amigo.min.js?d=n4igzibcoaoe4hsc2blmbtkaxobxdancagbpydgaftnosafyck+canlmqiya2gr5cobeg58rab4arzjxqa7aeroajvjbyopdaf8inkke6oa5ggmhoabxqbpdo0ggajge4adaeyark-tpiaby+nads6chktsqatg4uxc4htgasxadmyqbsis5ohm7ryqgz8ehpbsqexf7e5aearf7ktu5u9tluietccoscwcgiclaglfhylmcqapttao4lahqa1giuviscsnowie645fg7ce4atgkhickb+dpq6jbrp8zw6p2n5k-9g3jgp5xwlafdbyldooclehgswafjay1waeknabec71allzihabkgabvdrl2u+txuc8qcb+lghlm6c8p1exlw3abxrapt6aygadkjjhhablmgpaaeahevlhrqbhku-mcigccgnlilbchzr1icfemsc7iecgwkhqyaaonjof5uogncnrjgijzomz0aazbccjzikyezjpnlkcj5f6cdzou6pcqnfz1uknnxoeorikryj1dkdjdoabeqwfie6rgi8jdcf28g0jniytkiu8nfohgciqcufayvon2ixhole8h... (truncated)
+Warning: Price selector not found within timeout for https://www.kohls.com/product/prd-3774810/step2-great-creations-art-center.jsp?skuId=37583047&search=3774810&submit-search=web-regular
+DEBUG: Price found for https://www.kohls.com/product/prd-3774810/step2-great-creations-art-center.jsp?skuId=37583047&search=3774810&submit-search=web-regular using regex fallback: 49.0
+DEBUG: Positive stock indicator "in stock" found for https://www.kohls.com/product/prd-3774810/step2-great-creations-art-center.jsp?skuId=37583047&search=3774810&submit-search=web-regular
+DEBUG: Negative stock indicator "out of stock" found for https://www.kohls.com/product/prd-3774810/step2-great-creations-art-center.jsp?skuId=37583047&search=3774810&submit-search=web-regular, overriding to out of stock.
+DEBUG: Final scraped data for https://www.kohls.com/product/prd-3774810/step2-great-creations-art-center.jsp?skuId=37583047&search=3774810&submit-search=web-regular: ***'price': 49.0, 'in_stock': False, 'error': 'Price selector timeout'***
+Successfully updated row 7 for Product ID: https://www.amazon.com/Step2-Great-Creations-Center-Easel/dp/B06XJT23F4/?tag=hyprod-20&linkCode=df0&hvadid=309849796535&hvpos=&hvnetw=g&hvrand=1481776460445366098&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9004364&hvtargid=pla-523670915209&psc=1
+Scraping Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE, Supplier: Supplier in use, URL: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE
+DEBUG: Page content for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE:
+<!doctype html><html lang="en-us" class="a-ws a-js a-audio a-video a-canvas a-svg a-drag-drop a-geolocation a-history a-webworker a-autofocus a-input-placeholder a-textarea-placeholder a-local-storage a-gradients a-transform3d a-touch-scrolling a-text-shadow a-text-stroke a-box-shadow a-border-radius a-border-image a-opacity a-transform a-transition a-ember a-ember-modern-display a-ember-modern-text" data-19ax5a9jf="dingo" data-aui-build-date="3.25.5-2025-08-16"><!-- sp:feature:head-start --><head><script>var apagestart = (new date()).gettime();</script><meta charset="utf-8">
+<!-- sp:end-feature:head-start -->
+<!-- sp:feature:csm:head-open-part1 -->
+<script type="text/javascript">var ue_t0=ue_t0||+new date();</script>
+<!-- sp:end-feature:csm:head-open-part1 -->
+<!-- sp:feature:cs-optimization -->
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="https://images-na.ssl-images-amazon.com">
+<link rel="dns-prefetch" href="https://m.media-amazon.com">
+<l... (truncated)
+DEBUG: Price found for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE using selector span.a-price span.a-offscreen: 119.99
+DEBUG: Positive stock indicator "in stock" found for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE
+DEBUG: Negative stock indicator "out of stock" found for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE, overriding to out of stock.
+DEBUG: Final scraped data for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE: ***'price': 119.99, 'in_stock': False, 'error': ''***
+Scraping Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE, Supplier: Supplier A, URL: https://www.walmart.com/product/149530585
+DEBUG: Page content for https://www.walmart.com/product/149530585:
+<html lang="en"><head>
+    <title>robot or human?</title>
+    <meta name="viewport" content="width=device-width">
+    <style>
+    #sign-in-widget a,
+    #sign-in-widget a:active,
+    #sign-in-widget a:hover ***
+        color: #000
+    ***
+    #sign-in-widget h1 ***
+        font-weight: 500;
+        font-size: 20px;
+        font-size: 1.25rem;
+        letter-spacing: -.6px;
+        margin: 1px auto
+    ***
+    @media (min-width:30em) ***
+        #sign-in-widget h1 ***
+            margin-top: 24px;
+            font-size: 24px;
+            font-size: 1.5rem
+        ***
+    ***
+    #sign-in-widget ***
+        font-family: bogleweb, helvetica neue, helvetica, arial, sans-serif
+    ***
+    #sign-in-widget * ***
+        box-sizing: border-box
+    ***
+    #sign-in-widget .text-right ***
+        text-align: right
+    ***
+    @font-face ***
+        font-family: newyorkicons;
+        src: url(6255ed72d86ece856725a2d80878bce6.eot);
+        font-weight: 400;
+        font-style: normal
+    ***
+    @font-face ***
+        font-... (truncated)
+DEBUG: Detected blocked for https://www.walmart.com/product/149530585
+Scraping Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE, Supplier: Supplier B, URL: https://vivo-us.com/products/desk-v201g?variant=33294412251235
+DEBUG: Page content for https://vivo-us.com/products/desk-v201g?variant=33294412251235:
+<!doctype html><html class="js no-touch" lang="en" dir="ltr" style="--header-height: 76px;"><head>
+  <!-- google tag manager -->
+<script async="" src="https://snap.licdn.com/li.lms-analytics/insight.old.min.js"></script><script async="true" src="https://connect.facebook.net/en_us/fbevents.js"></script><script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script><script type="text/javascript" async="" src="//vivo-us.com/cdn/s/trekkie.storefront.5a4f78eb26ea594ba1b5d72f179d68114c7cf8ca.min.js"></script><script async="" src="https://www.googletagmanager.com/gtm.js?id=gtm-nfd6xmg"></script><script>(function(w,d,s,l,i)***w[l]=w[l]||[];w[l].push(***'gtm.start':
+new date().gettime(),event:'gtm.js'***);var f=d.getelementsbytagname(s)[0],
+j=d.createelement(s),dl=l!='datalayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentnode.insertbefore(j,f);
+***)(window,document,'script','datalayer','gtm-nfd6xmg');</script... (truncated)
+DEBUG: Detected blocked for https://vivo-us.com/products/desk-v201g?variant=33294412251235
+Successfully updated row 8 for Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE
+Scraping Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE?th=1, Supplier: Supplier in use, URL: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE?th=1
+DEBUG: Page content for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE?th=1:
+<!doctype html><html lang="en-us" class="a-ws a-js a-audio a-video a-canvas a-svg a-drag-drop a-geolocation a-history a-webworker a-autofocus a-input-placeholder a-textarea-placeholder a-local-storage a-gradients a-transform3d a-touch-scrolling a-text-shadow a-text-stroke a-box-shadow a-border-radius a-border-image a-opacity a-transform a-transition a-ember a-ember-modern-display a-ember-modern-text" data-19ax5a9jf="dingo" data-aui-build-date="3.25.5-2025-08-16"><!-- sp:feature:head-start --><head><script>var apagestart = (new date()).gettime();</script><meta charset="utf-8">
+<!-- sp:end-feature:head-start -->
+<!-- sp:feature:csm:head-open-part1 -->
+<script type="text/javascript">var ue_t0=ue_t0||+new date();</script>
+<!-- sp:end-feature:csm:head-open-part1 -->
+<!-- sp:feature:cs-optimization -->
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="https://images-na.ssl-images-amazon.com">
+<link rel="dns-prefetch" href="https://m.media-amazon.com">
+<l... (truncated)
+DEBUG: Price found for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE?th=1 using selector span.a-price span.a-offscreen: 119.99
+DEBUG: Positive stock indicator "in stock" found for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE?th=1
+DEBUG: Negative stock indicator "out of stock" found for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE?th=1, overriding to out of stock.
+DEBUG: Final scraped data for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE?th=1: ***'price': 119.99, 'in_stock': False, 'error': ''***
+Scraping Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE?th=1, Supplier: Supplier A, URL: https://www.walmart.com/product/149530585
+DEBUG: Page content for https://www.walmart.com/product/149530585:
+<html lang="en"><head>
+    <title>robot or human?</title>
+    <meta name="viewport" content="width=device-width">
+    <style>
+    #sign-in-widget a,
+    #sign-in-widget a:active,
+    #sign-in-widget a:hover ***
+        color: #000
+    ***
+    #sign-in-widget h1 ***
+        font-weight: 500;
+        font-size: 20px;
+        font-size: 1.25rem;
+        letter-spacing: -.6px;
+        margin: 1px auto
+    ***
+    @media (min-width:30em) ***
+        #sign-in-widget h1 ***
+            margin-top: 24px;
+            font-size: 24px;
+            font-size: 1.5rem
+        ***
+    ***
+    #sign-in-widget ***
+        font-family: bogleweb, helvetica neue, helvetica, arial, sans-serif
+    ***
+    #sign-in-widget * ***
+        box-sizing: border-box
+    ***
+    #sign-in-widget .text-right ***
+        text-align: right
+    ***
+    @font-face ***
+        font-family: newyorkicons;
+        src: url(6255ed72d86ece856725a2d80878bce6.eot);
+        font-weight: 400;
+        font-style: normal
+    ***
+    @font-face ***
+        font-... (truncated)
+DEBUG: Detected blocked for https://www.walmart.com/product/149530585
+Scraping Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE?th=1, Supplier: Supplier B, URL: https://vivo-us.com/products/desk-v201g?variant=33294412218467
+DEBUG: Page content for https://vivo-us.com/products/desk-v201g?variant=33294412218467:
+<!doctype html><html class="js no-touch" lang="en" dir="ltr" style="--header-height: 76px;"><head>
+  <!-- google tag manager -->
+<script async="true" src="https://connect.facebook.net/en_us/fbevents.js"></script><script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script><script type="text/javascript" async="" src="//vivo-us.com/cdn/s/trekkie.storefront.5a4f78eb26ea594ba1b5d72f179d68114c7cf8ca.min.js"></script><script async="" src="https://www.googletagmanager.com/gtm.js?id=gtm-nfd6xmg"></script><script>(function(w,d,s,l,i)***w[l]=w[l]||[];w[l].push(***'gtm.start':
+new date().gettime(),event:'gtm.js'***);var f=d.getelementsbytagname(s)[0],
+j=d.createelement(s),dl=l!='datalayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentnode.insertbefore(j,f);
+***)(window,document,'script','datalayer','gtm-nfd6xmg');</script>
+<!-- end google tag manager -->
+  <!-- google analytics tag (gtag.js) -->
+<script async=... (truncated)
+DEBUG: Detected blocked for https://vivo-us.com/products/desk-v201g?variant=33294412218467
+Successfully updated row 9 for Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE?th=1
+Scraping Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017J3PE6K?th=1, Supplier: Supplier in use, URL: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017J3PE6K?th=1
+DEBUG: Page content for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017J3PE6K?th=1:
+<!doctype html><html lang="en-us" class="a-ws a-js a-audio a-video a-canvas a-svg a-drag-drop a-geolocation a-history a-webworker a-autofocus a-input-placeholder a-textarea-placeholder a-local-storage a-gradients a-transform3d a-touch-scrolling a-text-shadow a-text-stroke a-box-shadow a-border-radius a-border-image a-opacity a-transform a-transition a-ember a-ember-modern-display a-ember-modern-text" data-19ax5a9jf="dingo" data-aui-build-date="3.25.5-2025-08-16"><!-- sp:feature:head-start --><head><script>var apagestart = (new date()).gettime();</script><meta charset="utf-8">
+<!-- sp:end-feature:head-start -->
+<!-- sp:feature:csm:head-open-part1 -->
+<script type="text/javascript">var ue_t0=ue_t0||+new date();</script>
+<!-- sp:end-feature:csm:head-open-part1 -->
+<!-- sp:feature:cs-optimization -->
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<link rel="dns-prefetch" href="https://images-na.ssl-images-amazon.com">
+<link rel="dns-prefetch" href="https://m.media-amazon.com">
+<l... (truncated)
+DEBUG: Price found for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017J3PE6K?th=1 using selector span.a-price span.a-offscreen: 119.99
+DEBUG: Positive stock indicator "in stock" found for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017J3PE6K?th=1
+DEBUG: Negative stock indicator "out of stock" found for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017J3PE6K?th=1, overriding to out of stock.
+DEBUG: Final scraped data for https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017J3PE6K?th=1: ***'price': 119.99, 'in_stock': False, 'error': ''***
+Scraping Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017J3PE6K?th=1, Supplier: Supplier A, URL: https://www.walmart.com/product/149530585
+DEBUG: Page content for https://www.walmart.com/product/149530585:
+<html lang="en"><head>
+    <title>robot or human?</title>
+    <meta name="viewport" content="width=device-width">
+    <style>
+    #sign-in-widget a,
+    #sign-in-widget a:active,
+    #sign-in-widget a:hover ***
+        color: #000
+    ***
+    #sign-in-widget h1 ***
+        font-weight: 500;
+        font-size: 20px;
+        font-size: 1.25rem;
+        letter-spacing: -.6px;
+        margin: 1px auto
+    ***
+    @media (min-width:30em) ***
+        #sign-in-widget h1 ***
+            margin-top: 24px;
+            font-size: 24px;
+            font-size: 1.5rem
+        ***
+    ***
+    #sign-in-widget ***
+        font-family: bogleweb, helvetica neue, helvetica, arial, sans-serif
+    ***
+    #sign-in-widget * ***
+        box-sizing: border-box
+    ***
+    #sign-in-widget .text-right ***
+        text-align: right
+    ***
+    @font-face ***
+        font-family: newyorkicons;
+        src: url(6255ed72d86ece856725a2d80878bce6.eot);
+        font-weight: 400;
+        font-style: normal
+    ***
+    @font-face ***
+        font-... (truncated)
+DEBUG: Detected blocked for https://www.walmart.com/product/149530585
+Scraping Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017J3PE6K?th=1, Supplier: Supplier B, URL: https://vivo-us.com/products/desk-v201g?variant=33294412284003
+DEBUG: Page content for https://vivo-us.com/products/desk-v201g?variant=33294412284003:
+<!doctype html><html class="js no-touch" lang="en" dir="ltr" style="--header-height: 76px;"><head>
+  <!-- google tag manager -->
+<script async="true" src="https://connect.facebook.net/en_us/fbevents.js"></script><script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script><script type="text/javascript" async="" src="//vivo-us.com/cdn/s/trekkie.storefront.5a4f78eb26ea594ba1b5d72f179d68114c7cf8ca.min.js"></script><script async="" src="https://www.googletagmanager.com/gtm.js?id=gtm-nfd6xmg"></script><script>(function(w,d,s,l,i)***w[l]=w[l]||[];w[l].push(***'gtm.start':
+new date().gettime(),event:'gtm.js'***);var f=d.getelementsbytagname(s)[0],
+j=d.createelement(s),dl=l!='datalayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentnode.insertbefore(j,f);
+***)(window,document,'script','datalayer','gtm-nfd6xmg');</script>
+<!-- end google tag manager -->
+  <!-- google analytics tag (gtag.js) -->
+<script async=... (truncated)
+DEBUG: Detected blocked for https://vivo-us.com/products/desk-v201g?variant=33294412284003
+Successfully updated row 10 for Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017J3PE6K?th=1
+Playwright browser closed.
