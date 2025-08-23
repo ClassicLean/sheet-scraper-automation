@@ -7,15 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
 ### Changed
+- Shifted execution strategy from GitHub Workflow to local machine for enhanced anti-bot evasion.
+- Configured Playwright to run in headful mode (`headless=False`) for more human-like browsing.
+- Disabled GitHub Actions workflow (`scrape.yml` renamed to `scrape.yml.disabled`).
+
+### Fixed
+- Resolved issue where items appeared unavailable due to incorrect location by setting Playwright locale to `en-US`.
+- Fixed Google Sheets `batchUpdate` not sending updates (including coloring, price, VA notes, and last stock check) by correctly populating the `requests` list.
+
+### Added
 
 ### Deprecated
 
 ### Removed
-
-### Fixed
+- Removed desktop notification pop-up (tkinter) due to test suite hanging issues.
 
 ### Security
 

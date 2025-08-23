@@ -4,7 +4,8 @@ This file outlines future enhancements and ongoing tasks for the Sheet-Scraper p
 
 ## High-Priority / Immediate Goals
 
-*   **Address Anti-Bot Measures:** Continue to research and implement free anti-detection techniques for highly protected websites (e.g., Amazon, Walmart, Kohl's). Acknowledge that consistent scraping of these sites may eventually require exploring paid proxy or CAPTCHA-solving services.
+*   **Fix Test Suite (Critical):** Resolve persistent `IndentationError` and `AttributeError` issues in unit tests, particularly those related to mocking Google Sheets API and Playwright components. A fully functional and reliable test suite is crucial for ensuring code quality, preventing regressions, and enabling future development.
+*   **Address Anti-Bot Measures (Local Headful Browsing Focus):** Continue to research and implement anti-detection techniques, primarily leveraging local headful browser execution. Acknowledge that consistent scraping of highly protected websites (e.g., Amazon, Walmart, Kohl's) may eventually require exploring paid proxy or CAPTCHA-solving services.
 
 ## Future Enhancements (from Documentation)
 

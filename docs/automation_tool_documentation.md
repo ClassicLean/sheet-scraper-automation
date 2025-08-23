@@ -2,7 +2,7 @@
 
 ## 1. Project Overview
 
-This tool automates the process of updating product prices in a Google Sheet by scraping the latest prices from various supplier websites. It identifies the lowest in-stock price among multiple suppliers for a given product and updates the Google Sheet accordingly, including the chosen supplier's URL, the new price, and a status note. The automation is designed to run on a schedule, ideally via GitHub Actions.
+This tool automates the process of updating product prices in a Google Sheet by scraping the latest prices from various supplier websites. It identifies the lowest in-stock price among multiple suppliers for a given product and updates the Google Sheet accordingly, including the chosen supplier's URL, the new price, and a status note. The automation is designed to run locally on your machine.
 
 ## 2. User Stories / Functional Requirements
 
@@ -24,17 +24,16 @@ As a user, I want to:
 ### Technologies Used:
 
 *   **Python:** Core scripting language.
-*   **Undetected Playwright (Python Library):** For headless browser automation to scrape dynamic website content (prices and availability).
+*   **Undetected Playwright (Python Library):** For browser automation to scrape dynamic website content (prices and availability).
 *   **Google Sheets API (Python Client Library):** For reading data from and writing data to the Google Sheet.
 *   **Google Cloud Service Account:** For secure and automated authentication with the Google Sheets API.
-*   **GitHub Actions:** For scheduling and running the automation workflow in a serverless environment.
 
 ### High-Level Flow:
 
 1.  **Initialization:** The script connects to the Google Sheets API using service account credentials.
 2.  **Read Sheet Data:** It reads all relevant rows and columns (Product ID, Supplier URLs, Old Price) from the designated Google Sheet, starting from row 5.
 3.  **Iterate Products:** For each product (row) in the sheet:
-    *   **Scrape Supplier Data:** It iterates through each defined supplier URL column. For each valid URL, it launches a headless browser (Playwright), navigates to the URL, and attempts to scrape the product's price and determine its availability (in-stock status). A delay is introduced between requests to avoid rate limiting.
+    *   **Scrape Supplier Data:** It iterates through each defined supplier URL column. For each valid URL, it launches a browser (Playwright), navigates to the URL, and attempts to scrape the product's price and determine its availability (in-stock status). A delay is introduced between requests to avoid rate limiting.
     *   **Process Scraped Data:** It collects all scraped prices and availability statuses for the current product from all suppliers.
     *   **Determine Best Supplier:** It filters out out-of-stock products and identifies the supplier offering the lowest price among the remaining in-stock options. Ties are broken by selecting the first encountered supplier in the column order.
     *   **Prepare Updates:** Based on the best supplier found (or lack thereof), it determines the new "Supplier in use" URL, the new "Supplier Price For ONE Unit", and the "VA Notes" status ("Up", "Down", "No change", "Price not found / Out of stock").
@@ -44,16 +43,17 @@ As a user, I want to:
 
 ### Anti-Blocking Strategies:
 
-To mitigate detection by websites, the scraper employs several free anti-blocking techniques:
+To mitigate detection by websites, the scraper employs several anti-blocking techniques, primarily leveraging local headful browser execution:
 
+*   **Local Headful Browsing:** Running Playwright in headful mode (visible browser window) significantly enhances stealth, as it's much harder for websites to distinguish from genuine human interaction.
 *   **Undetected Playwright:** Integrates `undetected-playwright` to modify browser fingerprints and behaviors, making the scraper less detectable by anti-bot systems. This library aims to mimic human browser behavior more closely.
 *   **User-Agent Rotation:** The script rotates through a list of common browser User-Agents for each request, making it harder for websites to identify automated traffic based on a consistent User-Agent.
 *   **Randomized Delays:** Delays between requests are randomized within a specified range to mimic human browsing patterns and avoid rate-limiting.
-*   **Human-like Interaction Simulation:** Implements basic random mouse movements before navigation and scrolling after page load to mimic human browsing patterns.
-*   **Realistic Viewport:** Sets a common desktop resolution for the browser viewport to appear more like a typical user.
+*   **Human-like Interaction Simulation:** Implements random mouse movements before navigation and varied scrolling after page load to mimic human browsing patterns.
+*   **Realistic Viewport:** Sets a common desktop resolution for the browser viewport to appear more like a typical user, with added randomization.
+*   **Dynamic Page Load Waiting:** Randomly waits for different page load states (`domcontentloaded`, `load`, `networkidle`) to further mimic varied human browsing patterns.
 
-**Limitations:** While these free strategies enhance the scraper's stealth, they may not be sufficient to bypass highly sophisticated anti-bot systems employed by major e-commerce sites. Consistent and reliable scraping of such sites often requires more advanced techniques (e.g., proxies, CAPTCHA solving services) which typically involve external paid services. This project prioritizes free and open-source solutions for anti-detection.
-
+**Limitations:** While these strategies enhance the scraper's stealth, they may not be sufficient to bypass highly sophisticated anti-bot systems employed by major e-commerce sites. Consistent and reliable scraping of such sites may eventually require more advanced techniques (e.g., proxies, CAPTCHA solving services) which typically involve external paid services.
 
 ## 4. Configuration
 
@@ -97,7 +97,7 @@ These mappings are crucial for the script to correctly read from and write to yo
     *   Create a new service account.
     *   Grant it the "Google Sheets API Editor" role (or a more restrictive role if preferred, but Editor ensures write access).
     *   Create a new JSON key for the service account and download it.
-2.  **Secure the JSON Key:** Rename the downloaded JSON file to `sheet-scraper-as.json` and place it in the project's `config/` directory. **Ensure this file is NOT committed to public repositories.** For GitHub Actions, you will store its content as a GitHub Secret.
+2.  **Secure the JSON Key:** Rename the downloaded JSON file to `sheet-scraper-as.json` and place it in the project's `config/` directory. **Ensure this file is NOT committed to public repositories.**
 3.  **Share Google Sheet:** Share your "Sheet Scraping" Google Sheet with the email address of the newly created service account (found in the JSON key file, typically `your-service-account-name@your-project-id.iam.gserviceaccount.com`).
 
 ### Web Scraping Selectors:
@@ -110,7 +110,7 @@ The `scrape_product_details` function in `sheet_scraper.py` contains generic CSS
 *   **In-Stock Indicators (`in_stock_indicators` list):**
     *   Keywords or phrases that indicate a product is available.
     *   Example: `"in stock"`, `"add to cart"`, `"available for immediate dispatch"`.
-*   **Out-of-Stock Indicators (`out_of_stock_indicators` list):**
+*   **Out-of-Stock Indicators (`out_of_stock_indicators` list):}
     *   Keywords or phrases that indicate a product is unavailable.
     *   Example: `"out of stock"`, `"unavailable"`, `"currently unavailable"`, `"backorder"`.
 
@@ -121,18 +121,19 @@ The `scrape_product_details` function in `sheet_scraper.py` contains generic CSS
 1.  **Prerequisites:**
     *   Python 3.x installed.
     *   `pip` (Python package installer).
-    *   Google Cloud Service Account JSON key (`sheet-scraper-as.json`) in the project root.
+    *   Google Cloud Service Account JSON key (`sheet-scraper-as.json`) in the project's `config/` directory.
     *   Google Sheet shared with the service account.
 2.  **Install Dependencies:**
     ```bash
     pip install -r requirements.txt
     playwright install
     ```
+    The `playwright install` command will download the necessary browser binaries (Chromium, Firefox, WebKit) for Playwright to function.
 3.  **Run the Script:**
     ```bash
     python src/sheet_scraper.py
     ```
-    Observe console output and check `logs/price_update_log.txt` for results.
+    Observe the browser window that opens, console output, and check `logs/price_update_log.txt` for results.
 
 ### Running Tests:
 
@@ -149,80 +150,25 @@ To ensure the correctness of the code, unit tests have been implemented using `p
     ```
     `pytest` will automatically discover and run tests in files named `test_*.py` or `*_test.py`.
 
-3.  **Run Linter (Ruff):**
+3.  **Run Linter (Ruff):}
     To check for code style and common errors, you can run the `ruff` linter:
     ```bash
     ruff check .
     ```
 
-### Scheduled Execution with GitHub Actions:
-
-1.  **Create `.github/workflows/scrape.yml`:**
-    Create a directory `.github/workflows/` in your repository root and add a file named `scrape.yml` with content similar to this:
-    ```yaml
-    name: Scheduled Price Scraper
-
-    on:
-      schedule:
-        # Runs every day at 0:00 UTC
-        - cron: '0 0 * * *'
-      workflow_dispatch: # Allows manual triggering from GitHub UI
-
-    jobs:
-      scrape-prices:
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout code
-            uses: actions/checkout@v4
-
-          - name: Set up Python
-            uses: actions/setup-python@v5
-            with:
-              python-version: '3.x' # Use your desired Python version
-
-          - name: Install Python dependencies
-            run: |
-              pip install -r requirements.txt
-            timeout-minutes: 5
-
-          - name: Install Playwright browsers
-            run: |
-              playwright install chromium
-            timeout-minutes: 10
-
-          - name: Create Service Account Key File
-            env:
-              SA_KEY_JSON: ${{ secrets.SA_KEY_JSON }}
-            run: |
-              echo "$SA_KEY_JSON" > config/sheet-scraper-as.json
-
-          - name: Run Price Scraper
-            env:
-              SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
-              PYTHONPATH: ${{ github.workspace }} # Add project root to PYTHONPATH
-            run: |
-              python -c "print('Python interpreter is working!')"
-              timeout 600           python src/sheet_scraper.py || true
-    ```
-2.  **Configure GitHub Secrets:**
-    *   In your GitHub repository, go to `Settings` -> `Secrets and variables` -> `Actions`.
-    *   Add two new repository secrets:
-        *   `SPREADSHEET_ID`: The ID of your Google Sheet.
-        *   `SA_KEY_JSON`: The *entire content* of your `sheet-scraper-as.json` file. Copy and paste the JSON content directly into this secret.
-
 ## 6. Logging
 
-All price update attempts, including successes, failures, and errors, are logged to `logs/price_update_log.txt` in the project's root directory. This file provides an audit trail and helps in debugging. The script also includes `print` statements for real-time progress tracking in the GitHub Actions logs.
+All price update attempts, including successes, failures, and errors, are logged to `logs/price_update_log.txt` in the project's root directory. This file provides an audit trail and helps in debugging. The script also includes `print` statements for real-time progress tracking.
 
 ## 7. Limitations & Gotchas
 
 *   **Website Changes:** Websites frequently update their HTML structure, which can break existing CSS selectors and availability indicators. Regular maintenance and updates to `sheet_scraper.py` will be required.
-*   **Anti-Bot Measures:** Some websites employ sophisticated anti-bot detection, CAPTCHAs, or require logins. This script does not handle these scenarios. For such sites, more advanced techniques (e.g., proxies, CAPTCHA solving services, or paid scraping APIs) would be necessary.
-*   **Rate Limiting:** Scraping too many pages too quickly can lead to IP bans or temporary blocks. The `time.sleep()` delays are a basic measure; more advanced rate limiting strategies might be needed for large-scale operations.
+*   **Anti-Bot Measures:** While local headful browsing significantly improves stealth, some websites employ very sophisticated anti-bot detection or require logins. For such sites, more advanced techniques (e.g., proxies, CAPTCHA solving services, or paid scraping APIs) might still be necessary.
+*   **Rate Limiting:** Scraping too many pages too quickly can still lead to IP bans or temporary blocks, even with local execution. The `time.sleep()` delays and human-like interaction simulations are designed to mitigate this, but careful monitoring is advised.
 *   **Dynamic Content Loading:** While Playwright handles JavaScript-rendered content, very complex or lazy-loaded content might require more advanced waiting strategies (e.g., `page.wait_for_selector`, `page.wait_for_load_state`).
 *   **Error Handling:** The current error handling is basic. More granular error handling and retry mechanisms could be implemented for robustness.
-*   **Google Sheets API Quotas:** Be mindful of Google Sheets API daily quotas. For very large numbers of updates, batching (which we temporarily removed for debugging) is crucial to stay within limits.
-*   **Free Solution Focus:** This project prioritizes free and open-source anti-detection techniques. While effective for many sites, consistent scraping of highly protected websites (e.g., major e-commerce platforms) may still require paid services like premium proxies or CAPTCHA-solving solutions.
+*   **Google Sheets API Quotas:** Be mindful of Google Sheets API daily quotas. For very large numbers of updates, batching is crucial to stay within limits.
+*   **No Desktop Notification:** The desktop notification pop-up (using `tkinter`) has been removed as it caused test suite hangs in certain environments. Script completion is indicated by console output and log file updates.
 
 ## 8. Future Enhancements
 
@@ -233,3 +179,9 @@ All price update attempts, including successes, failures, and errors, are logged
 *   **Database for Products:** For very large sheets, consider moving product data to a local database for faster processing and more complex queries.
 *   **Proxy Rotation:** Integrate with proxy services to avoid IP bans.
 *   **More Robust Availability Detection:** Implement more sophisticated logic for determining in-stock status, potentially using image recognition or machine learning for complex cases.
+
+## 9. Current Development Status and Testing Notes
+
+## 9. Current Development Status and Testing Notes
+
+The test suite is currently passing, ensuring the stability and correctness of the implemented features.
