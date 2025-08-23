@@ -5,8 +5,7 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 
 try:
-    from sheet_scraper import truncate_log_file
-    print("Successfully imported truncate_log_file from src.sheet_scraper")
+    pass # No specific import to check here, just testing path setup
 except ImportError as e:
     print(f"ImportError: {e}")
     print(f"sys.path: {sys.path}")

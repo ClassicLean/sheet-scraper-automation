@@ -61,3 +61,29 @@ e": {"numberValue": Infinity}}]}], "fiel
                     ^". Details: "Invalid JSON payload received. Unexpected token.
 e": {"numberValue": Infinity}}]}], "fiel
                     ^">
+[2025-08-23 12:43:48] Product ID: N/A, Old Price: N/A, New Price: N/A, Status: Failed, Message: API Connection Error
+[2025-08-23 12:53:23] Product ID: https://www.amazon.com/Costzon-Chairs-Storage-Toddler-Natural/dp/B0C58LJ9NF?th=1, Old Price: 179.99, New Price: inf, Status: Failed, Message: Sheet update error: <HttpError 400 when requesting https://sheets.googleapis.com/v4/spreadsheets/15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw:batchUpdate?alt=json returned "Invalid JSON payload received. Unexpected token.
+e": {"numberValue": Infinity}}]}], "fiel
+                    ^". Details: "Invalid JSON payload received. Unexpected token.
+e": {"numberValue": Infinity}}]}], "fiel
+                    ^">
+[2025-08-23 12:53:42] Product ID: https://www.amazon.com/INFANS-Toddler-Activity-Children-Furniture/dp/B0C57WV3BN/ref=psdc_1063306_t1_B0C58LJ9NF, Old Price: 159.99, New Price: inf, Status: Failed, Message: Sheet update error: <HttpError 400 when requesting https://sheets.googleapis.com/v4/spreadsheets/15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw:batchUpdate?alt=json returned "Invalid JSON payload received. Unexpected token.
+e": {"numberValue": Infinity}}]}], "fiel
+                    ^". Details: "Invalid JSON payload received. Unexpected token.
+e": {"numberValue": Infinity}}]}], "fiel
+                    ^">
+[2025-08-23 12:56:30] Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE, Old Price: 119.99, New Price: inf, Status: Failed, Message: Sheet update error: <HttpError 400 when requesting https://sheets.googleapis.com/v4/spreadsheets/15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw:batchUpdate?alt=json returned "Invalid JSON payload received. Unexpected token.
+e": {"numberValue": Infinity}}]}], "fiel
+                    ^". Details: "Invalid JSON payload received. Unexpected token.
+e": {"numberValue": Infinity}}]}], "fiel
+                    ^">
+[2025-08-23 12:57:16] Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017BOILEE?th=1, Old Price: 119.99, New Price: inf, Status: Failed, Message: Sheet update error: <HttpError 400 when requesting https://sheets.googleapis.com/v4/spreadsheets/15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw:batchUpdate?alt=json returned "Invalid JSON payload received. Unexpected token.
+e": {"numberValue": Infinity}}]}], "fiel
+                    ^". Details: "Invalid JSON payload received. Unexpected token.
+e": {"numberValue": Infinity}}]}], "fiel
+                    ^">
+[2025-08-23 12:58:26] Product ID: https://www.amazon.com/VIVO-Height-Adjustable-Childrens-Chair/dp/B017J3PE6K?th=1, Old Price: 119.99, New Price: inf, Status: Failed, Message: Sheet update error: <HttpError 400 when requesting https://sheets.googleapis.com/v4/spreadsheets/15CLPMfBtu0atxtWWh0Hyr92AWkMdauG0ONJ0X7EUsMw:batchUpdate?alt=json returned "Invalid JSON payload received. Unexpected token.
+e": {"numberValue": Infinity}}]}], "fiel
+                    ^". Details: "Invalid JSON payload received. Unexpected token.
+e": {"numberValue": Infinity}}]}], "fiel
+                    ^">

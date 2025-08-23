@@ -24,9 +24,37 @@ As a user, I want to:
 ### Technologies Used:
 
 *   **Python:** Core scripting language.
-*   **Undetected Playwright (Python Library):** For browser automation to scrape dynamic website content (prices and availability).
+*   **`requests` (Python Library):** For making HTTP requests.
+*   **Undetected Playwright (Python Library) (via ninja.py for stealth_sync):** For browser automation to scrape dynamic website content (prices and availability).
+*   **`twocaptcha` (Python Library):** For CAPTCHA solving.
 *   **Google Sheets API (Python Client Library):** For reading data from and writing data to the Google Sheet.
 *   **Google Cloud Service Account:** For secure and automated authentication with the Google Sheets API.
+
+### File Structure
+
+```
+Sheet-Scraper/
+├── .gitignore
+├── LICENSE
+├── README.md
+├── pyproject.toml
+├── proxies.txt
+├── TODO.md
+├── CHANGELOG.md
+├── docs/
+│   └── automation_tool_documentation.md
+├── src/
+│   └── sheet_scraper/
+│       ├── __init__.py
+│       ├── connect.py
+│       ├── sheet_scraper.py
+│       ├── proxy_manager.py
+│       ├── captcha_solver.py
+│       └── scraping_utils.py
+└── tests/
+    ├── __init__.py
+    └── test_sheet_scraper.py
+```
 
 ### High-Level Flow:
 
@@ -54,6 +82,7 @@ To mitigate detection by websites, the scraper employs several anti-blocking tec
 *   **Dynamic Page Load Waiting:** Randomly waits for different page load states (`domcontentloaded`, `load`, `networkidle`) to further mimic varied human browsing patterns.
 
 **Limitations:** While these strategies enhance the scraper's stealth, they may not be sufficient to bypass highly sophisticated anti-bot systems employed by major e-commerce sites. Consistent and reliable scraping of such sites may eventually require more advanced techniques (e.g., proxies, CAPTCHA solving services) which typically involve external paid services.
+*   **Availability Detection Challenges:** Despite ongoing efforts to refine price and stock detection (e.g., adding specific CSS selectors for sites like Amazon and Vivo), reliably identifying item availability remains a significant challenge on highly dynamic and anti-bot protected websites. Further research into more robust detection methods is required.
 
 ## 4. Configuration
 
@@ -97,7 +126,7 @@ These mappings are crucial for the script to correctly read from and write to yo
     *   Create a new service account.
     *   Grant it the "Google Sheets API Editor" role (or a more restrictive role if preferred, but Editor ensures write access).
     *   Create a new JSON key for the service account and download it.
-2.  **Secure the JSON Key:** Rename the downloaded JSON file to `sheet-scraper-as.json` and place it in the project's `config/` directory. **Ensure this file is NOT committed to public repositories.**
+2.  **Secure the JSON Key:** Rename the downloaded JSON file to `sheet-scraper-as.json` and place it in the project's `config/` directory. **Crucially, ensure this file is NOT committed to public repositories. It has been added to `.gitignore` to prevent accidental commits, but if it was previously committed, you must remove it from Git history.**
 3.  **Share Google Sheet:** Share your "Sheet Scraping" Google Sheet with the email address of the newly created service account (found in the JSON key file, typically `your-service-account-name@your-project-id.iam.gserviceaccount.com`).
 
 ### Web Scraping Selectors:
@@ -123,15 +152,20 @@ The `scrape_product_details` function in `sheet_scraper.py` contains generic CSS
     *   `pip` (Python package installer).
     *   Google Cloud Service Account JSON key (`sheet-scraper-as.json`) in the project's `config/` directory.
     *   Google Sheet shared with the service account.
+    *   `proxies.txt` file (optional) in the project root directory, with one proxy per line in `ip:port` format.
+    *   `TWOCAPTCHA_API_KEY` environment variable set if CAPTCHA solving is required.
+    *   `twocaptcha` library installed.
 2.  **Install Dependencies:**
     ```bash
-    pip install -r requirements.txt
+    pip install -e .
+    # This will install all required packages from pyproject.toml
+    pip install twocaptcha
     playwright install
     ```
     The `playwright install` command will download the necessary browser binaries (Chromium, Firefox, WebKit) for Playwright to function.
 3.  **Run the Script:**
     ```bash
-    python src/sheet_scraper.py
+    python src/sheet_scraper/sheet_scraper.py
     ```
     Observe the browser window that opens, console output, and check `logs/price_update_log.txt` for results.
 
@@ -163,12 +197,12 @@ All price update attempts, including successes, failures, and errors, are logged
 ## 7. Limitations & Gotchas
 
 *   **Website Changes:** Websites frequently update their HTML structure, which can break existing CSS selectors and availability indicators. Regular maintenance and updates to `sheet_scraper.py` will be required.
-*   **Anti-Bot Measures:** While local headful browsing significantly improves stealth, some websites employ very sophisticated anti-bot detection or require logins. For such sites, more advanced techniques (e.g., proxies, CAPTCHA solving services, or paid scraping APIs) might still be necessary.
+*   **Anti-Bot Measures:** While local headful browsing significantly improves stealth, some websites employ very sophisticated anti-bot detection or require logins. Specifically, IP-based geolocation is a common detection method. For such sites, more advanced techniques (e.g., proxies, CAPTCHA solving services, or paid scraping APIs) might still be necessary. Implementing proxy support is a high-priority goal.
 *   **Rate Limiting:** Scraping too many pages too quickly can still lead to IP bans or temporary blocks, even with local execution. The `time.sleep()` delays and human-like interaction simulations are designed to mitigate this, but careful monitoring is advised.
 *   **Dynamic Content Loading:** While Playwright handles JavaScript-rendered content, very complex or lazy-loaded content might require more advanced waiting strategies (e.g., `page.wait_for_selector`, `page.wait_for_load_state`).
 *   **Error Handling:** The current error handling is basic. More granular error handling and retry mechanisms could be implemented for robustness.
 *   **Google Sheets API Quotas:** Be mindful of Google Sheets API daily quotas. For very large numbers of updates, batching is crucial to stay within limits.
-*   **No Desktop Notification:** The desktop notification pop-up (using `tkinter`) has been removed as it caused test suite hangs in certain environments. Script completion is indicated by console output and log file updates.
+*   **No Desktop Notification:** The desktop notification pop-up (using `tkinter`) has been removed as it caused test suite hangs in certain environments.
 
 ## 8. Future Enhancements
 
@@ -177,11 +211,39 @@ All price update attempts, including successes, failures, and errors, are logged
 *   **Parallel Scraping:** Implement asynchronous scraping (e.g., using `asyncio` with Playwright's async API) to speed up the process for many URLs, while still respecting rate limits.
 *   **Notification System:** Add notifications (e.g., email, Slack) for successful runs, failures, or significant price changes.
 *   **Database for Products:** For very large sheets, consider moving product data to a local database for faster processing and more complex queries.
-*   **Proxy Rotation:** Integrate with proxy services to avoid IP bans.
 *   **More Robust Availability Detection:** Implement more sophisticated logic for determining in-stock status, potentially using image recognition or machine learning for complex cases.
-
-## 9. Current Development Status and Testing Notes
+*   **Advanced Browser Fingerprinting:** Further enhance browser fingerprinting techniques to make the scraper even more stealthy.
+*   **Dynamic User-Agent Management:** Implement a more sophisticated user-agent rotation strategy, potentially fetching fresh user-agent lists periodically.
+*   **Honeypot Detection:** Implement logic to detect and avoid honeypot traps.
+*   **`robots.txt` Parser:** Add a function to parse and respect `robots.txt` rules.
 
 ## 9. Current Development Status and Testing Notes
 
 The test suite is currently passing, ensuring the stability and correctness of the implemented features.
+
+## 10. Security Best Practices
+
+When working with this project, especially if you intend to share your code on platforms like GitHub, it is crucial to adhere to security best practices to protect sensitive information.
+
+### What to Keep Private (Never Commit to Git):
+
+*   **API Keys and Secrets:** This includes your Google Cloud Service Account JSON key (`config/sheet-scraper-as.json`), any other third-party API keys, authentication tokens, or secret access keys.
+*   **Credentials:** Usernames, passwords, and database connection strings.
+*   **Private Keys:** SSH keys, GPG keys, SSL certificates.
+*   **Personal Identifiable Information (PII):** Any data that could identify individuals if it's part of your code, test data, or configuration.
+*   **Sensitive Configuration Files:** Any configuration files that directly contain the above sensitive data.
+
+### How to Keep Sensitive Data Private:
+
+*   **`.gitignore`:** Use a `.gitignore` file in your project's root directory to tell Git to ignore specific files and directories. This prevents them from being accidentally committed. For this project, `config/sheet-scraper-as.json` and the `logs/` directory are already included in `.gitignore`.
+*   **Environment Variables:** Store sensitive values as environment variables on your system where the code runs. Access them in your code using `os.environ.get()`. This project already uses this for `SPREADSHEET_ID`.
+*   **Example/Template Files:** For configuration files, you can commit a template file (e.g., `config/sheet-scraper-as.json.example`) with placeholder values, so others know what parameters are needed without exposing your actual secrets.
+
+### Removing Already Committed Sensitive Data:
+
+If sensitive files were accidentally committed to your Git history, simply adding them to `.gitignore` will not remove them from past commits. To truly remove them, you must rewrite your Git history.
+
+*   **Tool:** The recommended tool for this is `git filter-repo`.
+*   **Process:** This involves running `git filter-repo` to remove the file from all commits, followed by a **force push** (`git push --force --all`) to your remote repository. This is a destructive operation that alters your repository's history.
+*   **Collaborator Impact:** If you have collaborators, they **MUST** delete their local clones and re-clone the repository after a force push.
+*   **Invalidate Credentials:** **Crucially, immediately invalidate and regenerate any API keys or credentials that were exposed**, as they might have been compromised.

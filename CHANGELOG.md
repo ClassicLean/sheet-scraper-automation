@@ -7,23 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `pyppeteer-stealth` library for enhanced browser fingerprinting.
+- `2captcha-python` library for CAPTCHA solving.
+- `ProxyManager` class for proxy rotation.
+- `CaptchaSolver` class for CAPTCHA solving.
+- `scraping_utils.py` module for helper functions.
+- `twocaptcha` library for CAPTCHA solving.
+
 ### Changed
+- Noted ongoing challenges with reliable item availability detection on dynamic websites (e.g., Amazon, Vivo), requiring further investigation.
+- Refactored `sheet_scraper.py` for modularity and readability.
+- Updated import paths due to project restructuring.
+- Replaced `requirements.txt` with `pyproject.toml`.
 - Shifted execution strategy from GitHub Workflow to local machine for enhanced anti-bot evasion.
 - Configured Playwright to run in headful mode (`headless=False`) for more human-like browsing.
 - Disabled GitHub Actions workflow (`scrape.yml` renamed to `scrape.yml.disabled`).
+- Refactored `sheet_scraper.py` to fix linting errors by moving imports to the top, removing unused ones, and cleaning up constant imports.
+- Corrected `undetected-playwright` import path in `sheet_scraper.py`.
+- Removed incorrect `stealth(page, ...)` call from `sheet_scraper.py`.
 
 ### Fixed
-- Resolved issue where items appeared unavailable due to incorrect location by setting Playwright locale to `en-US`.
-- Fixed Google Sheets `batchUpdate` not sending updates (including coloring, price, VA notes, and last stock check) by correctly populating the `requests` list.
-
-### Added
-
-### Deprecated
+- Corrected "VA Notes" update logic in `sheet_scraper.py`.
+- Resolved `name 'requests' is not defined` error by adding `requests` to `requirements.txt`.
 
 ### Removed
+- Removed `requirements.txt`.
+- Removed `tests/test_sheet_scraper_refactored.py` (renamed).
 - Removed desktop notification pop-up (tkinter) due to test suite hanging issues.
 
 ### Security
+- Removed `config/sheet-scraper-as.json` from Git history.
+
+## [0.1.2] - 2025-08-23
 
 ## [0.1.1] - 2025-08-22
 

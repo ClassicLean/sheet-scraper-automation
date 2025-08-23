@@ -1,0 +1,16 @@
+Metadata-Version: 2.4
+Name: sheet-scraper
+Version: 0.1.2
+Summary: A tool to scrape product prices from supplier websites and update a Google Sheet.
+Author-email: Gemini <gemini@google.com>
+License-File: LICENSE
+Requires-Dist: playwright
+Requires-Dist: undetected-playwright
+Requires-Dist: google-api-python-client
+Requires-Dist: google-auth-httplib2
+Requires-Dist: google-auth-oauthlib
+Requires-Dist: pytest
+Requires-Dist: requests
+Requires-Dist: pyppeteer-stealth
+Requires-Dist: 2captcha-python
+Dynamic: license-file

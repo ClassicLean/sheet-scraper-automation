@@ -1,0 +1,18 @@
+[project]
+name = "sheet-scraper"
+version = "0.1.2"
+description = "A tool to scrape product prices from supplier websites and update a Google Sheet."
+authors = [
+    { name = "Gemini", email = "gemini@google.com" },
+]
+dependencies = [
+    "playwright",
+    "undetected-playwright",
+    "google-api-python-client",
+    "google-auth-httplib2",
+    "google-auth-oauthlib",
+    "pytest",
+    "requests",
+    "pyppeteer-stealth",
+    "2captcha-python",
+]

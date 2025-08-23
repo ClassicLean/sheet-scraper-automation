@@ -1,0 +1,16 @@
+LICENSE
+README.md
+pyproject.toml
+src/sheet_scraper/__init__.py
+src/sheet_scraper/captcha_solver.py
+src/sheet_scraper/connect.py
+src/sheet_scraper/constants.py
+src/sheet_scraper/proxy_manager.py
+src/sheet_scraper/scraping_utils.py
+src/sheet_scraper/sheet_scraper.py
+src/sheet_scraper.egg-info/PKG-INFO
+src/sheet_scraper.egg-info/SOURCES.txt
+src/sheet_scraper.egg-info/dependency_links.txt
+src/sheet_scraper.egg-info/requires.txt
+src/sheet_scraper.egg-info/top_level.txt
+tests/test_sheet_scraper.py
