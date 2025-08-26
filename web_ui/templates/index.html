@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Sheet Scraper Web UI - Updated with Spinner</title>
+    <!-- Template updated: 2025-08-25 with separated CSS/JS architecture -->
+
+    <!-- External CSS file for better maintainability -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Sheet Scraper</h1>
+            <p>Web Interface for Row Range Processing</p>
+        </div>
+
+        <div class="content">
+            <form id="scraperForm">
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="startRow">Start Row (optional)</label>
+                        <input type="number" id="startRow" min="1" placeholder="e.g., 1">
+                    </div>
+                    <div class="form-col">
+                        <label for="endRow">End Row (optional)</label>
+                        <input type="number" id="endRow" min="1" placeholder="e.g., 10">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="showBrowser" checked>
+                            <span class="checkmark"></span>
+                            Show Browser Window (Headful Mode)
+                        </label>
+                        <small class="form-help">Check this to see the browser window during scraping (useful for
+                            monitoring progress)</small>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-primary" id="startBtn">
+                        Start Scraping
+                    </button>
+                    <button type="button" class="btn-secondary" id="stopBtn" disabled>
+                        Stop Script
+                    </button>
+                </div>
+            </form>
+
+            <div class="status-panel">
+                <div class="status-header">
+                    <span class="status-title">Status</span>
+                    <div class="status-indicator" id="statusIndicator"></div>
+                </div>
+
+                <div class="loading-container" id="loadingContainer">
+                    <div class="spinner"></div>
+                    <div class="loading-text" id="loadingText">Processing...</div>
+                </div>
+
+                <div class="status-message" id="statusMessage">Ready to start</div>
+            </div>
+
+            <div class="logs-panel">
+                <div class="logs-header">
+                    <span>Script Output</span>
+                    <button type="button" class="btn-secondary" onclick="clearLogs()"
+                        style="flex: none; padding: 5px 10px; font-size: 12px;">Clear</button>
+                </div>
+                <div class="logs-content" id="logsContent">
+                    <div class="log-entry">Waiting for script to start...</div>
+                </div>
+            </div>
+
+            <div class="example-section">
+                <div class="example-title">Usage Examples:</div>
+                <div class="example-list">
+                    • Leave both fields empty for default behavior (row 66)<br>
+                    • Enter only start row to process from that row to default end<br>
+                    • Enter only end row to process from default start to that row<br>
+                    • Enter both start and end rows to process a specific range<br>
+                    • Example: Start=1, End=10 processes rows 1 through 10<br>
+                    • Check "Show Browser Window" to see scraping progress in real-time
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Enhanced Sheet Scraper Web UI • Version 2.1 (Separated CSS/JS) • August 2025
+        </div>
+    </div>
+
+    <!-- External JavaScript file for better maintainability -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+
+</html>

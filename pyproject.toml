@@ -1,6 +1,6 @@
 [project]
 name = "sheet-scraper"
-version = "0.1.2"
+version = "0.2.0"
 description = "A tool to scrape product prices from supplier websites and update a Google Sheet."
 authors = [
     { name = "Gemini", email = "gemini@google.com" },
@@ -13,6 +13,9 @@ dependencies = [
     "google-auth-oauthlib",
     "pytest",
     "requests",
-    "pyppeteer-stealth",
     "2captcha-python",
+    "flask>=2.3.0",
 ]
+
+[project.scripts]
+sheet-scraper = "sheet_scraper.sheet_scraper:main"

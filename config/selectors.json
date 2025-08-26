@@ -1,0 +1,146 @@
+{
+  "price_selectors": {
+    "amazon": [
+      "span.a-price .a-offscreen",
+      ".a-price .a-offscreen",
+      "#priceblock_dealprice",
+      "#priceblock_ourprice",
+      ".a-price-range .a-price .a-offscreen",
+      "[data-a-color='price']",
+      ".a-price.a-text-price.a-size-medium .a-offscreen",
+      "span.a-price.a-text-price.a-size-medium .a-offscreen",
+      ".apex_desktop .a-price .a-offscreen",
+      "span.a-price-whole",
+      ".a-price-whole"
+    ],
+    "walmart": [
+      "[data-automation-id='product-price']",
+      "[data-automation-id='product-price'] span",
+      ".price-wrap .visuallyhidden",
+      ".price-group .price-display",
+      ".price .visuallyhidden",
+      "[aria-label*='current price']",
+      ".price-wrap .notranslate",
+      "[data-testid*='price']",
+      ".price-display .notranslate"
+    ],
+    "kohls": [
+      ".prod_price_label",
+      ".price_label",
+      ".sale_price",
+      ".original_price"
+    ],
+    "vivo": [
+      ".product__price .price__regular.heading.whitespace-nowrap",
+      "[id*='Price-'] .price__regular.heading.whitespace-nowrap",
+      ".product__price span.price__regular",
+      "[id*='Price-'] span.price__regular",
+      "span.price__regular.heading.whitespace-nowrap:not(:has(small))",
+      "span.price__regular.heading.whitespace-nowrap",
+      "span.price__regular.heading",
+      ".price__regular.heading",
+      "span.price__regular",
+      ".price__regular",
+      ".price",
+      ".product-price",
+      ".price-current",
+      ".money"
+    ],
+    "wayfair": [
+      "[data-test-id='PriceDisplay']",
+      "span[data-test-id='StandardPricingPrice-PRIMARY'] [data-test-id='PriceDisplay']",
+      "span[data-test-id='StandardPricingPrice-SALE'] [data-test-id='PriceDisplay']",
+      "[data-name-id='PriceDisplay']",
+      ".price",
+      ".product-price",
+      ".price-current"
+    ],
+    "generic": [
+      ".price",
+      ".product-price",
+      ".price-current",
+      ".current-price",
+      "[data-price]",
+      "[itemprop='price']",
+      ".price-value",
+      ".sale-price",
+      ".price-now",
+      "[aria-label*='price']",
+      ".notranslate[data-testid*='price']",
+      "*[class*='price']:not([class*='compare']):not([class*='was']):not([class*='old'])"
+    ]
+  },
+  "stock_selectors": {
+    "in_stock": {
+      "amazon": [
+        "div#availability span.a-size-medium.a-color-success",
+        "button#add-to-cart-button:not([disabled])",
+        "input#add-to-cart-button:not([disabled])",
+        "div#availability span.a-text-bold"
+      ],
+      "walmart": [
+        "[data-automation-id='add-to-cart-button']:not([disabled])",
+        ".add-to-cart:not([disabled])",
+        "[aria-label*='Add to cart']:not([disabled])"
+      ],
+      "wayfair": [
+        "button[data-test-id*='add-to-cart']:not([disabled])",
+        "button[aria-label*='Add to Cart']:not([disabled])",
+        ".add-to-cart:not([disabled])",
+        "button[type='submit']:not([disabled])"
+      ],
+      "generic": [
+        ".add-to-cart:not([disabled])",
+        ".in-stock",
+        ".available",
+        "[aria-label*='Add to cart']:not([disabled])",
+        "button[type='submit']:not([disabled])"
+      ]
+    },
+    "out_of_stock": {
+      "amazon": [
+        "div#availability span.a-color-price",
+        "div#availability span.a-color-error",
+        "button#add-to-cart-button[disabled]"
+      ],
+      "walmart": [
+        "[data-automation-id='add-to-cart-button'][disabled]",
+        ".out-of-stock",
+        ".unavailable"
+      ],
+      "wayfair": [
+        "button[data-test-id*='add-to-cart'][disabled]",
+        "button[aria-label*='Add to Cart'][disabled]",
+        ".out-of-stock",
+        ".unavailable",
+        ".sold-out"
+      ],
+      "generic": [
+        ".out-of-stock",
+        ".unavailable",
+        ".sold-out",
+        "button[disabled]"
+      ]
+    }
+  },
+  "blocking_indicators": [
+    "robot or human",
+    "solve captcha",
+    "complete captcha",
+    "verify captcha",
+    "captcha verification",
+    "enter captcha",
+    "access denied",
+    "unusual traffic",
+    "verify you are human",
+    "security check",
+    "bot detection",
+    "please complete the security check",
+    "we detected unusual activity",
+    "automated queries",
+    "sorry, we just need to make sure you're not a robot",
+    "to continue shopping, please complete this security verification",
+    "checking your browser before accessing",
+    "too many requests"
+  ]
+}
