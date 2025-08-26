@@ -28,23 +28,20 @@ backward compatibility with the previous module structure.
 def get_automation_classes():
     """Lazy import of automation classes to avoid circular imports."""
     from ..automation import (
-        # Data models
-        ProductData,
-        SupplierResult,
-        PriceUpdateResult,
-
+        AutomationOrchestrator,
         # Core components
         AutomationStats,
+        PriceUpdateResult,
+        # Data models
+        ProductData,
         ProductProcessor,
-        SheetFormatter,
-        SheetManager,
-
-        # Orchestrators
-        SheetScraperAutomation,
-        AutomationOrchestrator,
-
         # Scrapers
         ProductScraper,
+        SheetFormatter,
+        SheetManager,
+        # Orchestrators
+        SheetScraperAutomation,
+        SupplierResult,
     )
 
     return {

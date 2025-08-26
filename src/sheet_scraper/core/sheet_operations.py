@@ -12,9 +12,10 @@ Best Practices Implemented:
 - Documentation: Clear function purposes and parameters
 """
 
-import time
 import random
-from typing import List, Dict, Any, Optional, Tuple
+import time
+from typing import Any
+
 from googleapiclient.errors import HttpError
 
 from ..scraping_utils import debug_print
@@ -41,7 +42,7 @@ class SheetOperations:
         self.max_retries = 3
         self.base_delay = 1.0
 
-    def read_sheet_data(self, range_name: str = "FBMP!A1:AN1000") -> List[List[str]]:
+    def read_sheet_data(self, range_name: str = "FBMP!A1:AN1000") -> list[list[str]]:
         """
         Read data from a Google Sheet with retry logic.
 
@@ -69,16 +70,16 @@ class SheetOperations:
 
             except HttpError as e:
                 if attempt == self.max_retries - 1:
-                    raise SheetsAPIError(f"Failed to read sheet data after {self.max_retries} attempts: {e}")
+                    raise SheetsAPIError(f"Failed to read sheet data after {self.max_retries} attempts: {e}") from e
 
                 delay = self.base_delay * (2 ** attempt) + random.uniform(0, 1)
                 debug_print(f"DEBUG: Read attempt {attempt + 1} failed, retrying in {delay:.2f}s")
                 time.sleep(delay)
 
             except Exception as e:
-                raise SheetsAPIError(f"Unexpected error reading sheet data: {e}")
+                raise SheetsAPIError(f"Unexpected error reading sheet data: {e}") from e
 
-    def batch_update_cells(self, requests: List[Dict[str, Any]]) -> bool:
+    def batch_update_cells(self, requests: list[dict[str, Any]]) -> bool:
         """
         Perform batch updates on the sheet with retry logic.
 
@@ -125,14 +126,14 @@ class SheetOperations:
                     continue
 
                 if attempt == self.max_retries - 1:
-                    raise SheetsAPIError(f"Failed to update sheet after {self.max_retries} attempts: {e}")
+                    raise SheetsAPIError(f"Failed to update sheet after {self.max_retries} attempts: {e}") from e
 
                 delay = self.base_delay * (2 ** attempt) + random.uniform(0, 1)
                 debug_print(f"DEBUG: Update attempt {attempt + 1} failed, retrying in {delay:.2f}s")
                 time.sleep(delay)
 
             except Exception as e:
-                raise SheetsAPIError(f"Unexpected error updating sheet: {e}")
+                raise SheetsAPIError(f"Unexpected error updating sheet: {e}") from e
 
         return False
 
@@ -168,7 +169,7 @@ class SheetOperations:
             debug_print(f"DEBUG: Failed to update cell {cell_range}: {e}")
             return False
 
-    def format_cells(self, formatting_requests: List[Dict[str, Any]]) -> bool:
+    def format_cells(self, formatting_requests: list[dict[str, Any]]) -> bool:
         """
         Apply formatting to cells.
 
@@ -214,7 +215,7 @@ class SheetOperations:
             debug_print(f"DEBUG: Failed to clear range {range_name}: {e}")
             return False
 
-    def get_sheet_properties(self) -> Dict[str, Any]:
+    def get_sheet_properties(self) -> dict[str, Any]:
         """
         Get sheet properties and metadata.
 
@@ -235,7 +236,7 @@ class SheetOperations:
 
 
 # Convenience functions for backward compatibility
-def read_sheet_data(service, spreadsheet_id: str, range_name: str = "FBMP!A1:AN1000") -> List[List[str]]:
+def read_sheet_data(service, spreadsheet_id: str, range_name: str = "FBMP!A1:AN1000") -> list[list[str]]:
     """
     Backward compatibility function for reading sheet data.
 
@@ -251,7 +252,7 @@ def read_sheet_data(service, spreadsheet_id: str, range_name: str = "FBMP!A1:AN1
     return sheet_ops.read_sheet_data(range_name)
 
 
-def update_sheet(service, spreadsheet_id: str, requests: List[Dict[str, Any]]) -> bool:
+def update_sheet(service, spreadsheet_id: str, requests: list[dict[str, Any]]) -> bool:
     """
     Backward compatibility function for batch updates.
 

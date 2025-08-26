@@ -17,39 +17,38 @@ at the package level.
 """
 
 # Logging utilities
+# Data processing utilities
+from .data_processing import (
+    process_scraped_results,
+)
 from .logs_module import (
     debug_print,
     debug_print_column_x_update,
-    debug_print_sheet_operation,
     debug_print_price_extraction,
-    truncate_log_file,
+    debug_print_sheet_operation,
     log_update,
+    truncate_log_file,
 )
 
 # Pricing utilities
 from .pricing import (
-    parse_price,
     extract_price,
-)
-
-# Web scraping utilities
-from .web_scraping import (
-    is_blocked,
-    extract_shipping_fee,
-    is_in_stock,
-    simulate_human_interaction,
+    parse_price,
 )
 
 # Google Sheets utilities
 from .sheets import (
+    create_color_request,
     read_sheet_data,
     update_sheet,
-    create_color_request,
 )
 
-# Data processing utilities
-from .data_processing import (
-    process_scraped_results,
+# Web scraping utilities
+from .web_scraping import (
+    extract_shipping_fee,
+    is_blocked,
+    is_in_stock,
+    simulate_human_interaction,
 )
 
 # Re-export all utilities for backward compatibility

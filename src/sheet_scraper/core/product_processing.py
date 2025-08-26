@@ -15,9 +15,9 @@ Best Practices Implemented:
 
 import re
 import time
-from decimal import Decimal, InvalidOperation
-from typing import List, Dict, Any, Optional, Tuple, Union
 from dataclasses import dataclass, field
+from decimal import Decimal, InvalidOperation
+from typing import Any
 
 from ..scraping_utils import debug_print
 
@@ -26,14 +26,14 @@ from ..scraping_utils import debug_print
 class ProductData:
     """Data class representing a product with all its attributes."""
     name: str = ""
-    price: Optional[Decimal] = None
+    price: Decimal | None = None
     original_price_text: str = ""
     url: str = ""
     row_index: int = -1
     column_index: int = -1
     availability: str = "Unknown"
-    last_updated: Optional[str] = None
-    error_message: Optional[str] = None
+    last_updated: str | None = None
+    error_message: str | None = None
 
     def __post_init__(self):
         """Validate product data after initialization."""
@@ -48,7 +48,7 @@ class ProcessingStats:
     successful_updates: int = 0
     failed_updates: int = 0
     skipped_items: int = 0
-    errors: List[str] = field(default_factory=list)
+    errors: list[str] = field(default_factory=list)
 
     @property
     def success_rate(self) -> float:
@@ -79,7 +79,7 @@ class PriceExtractor:
     ]
 
     @staticmethod
-    def extract_price(price_text: str) -> Optional[Decimal]:
+    def extract_price(price_text: str) -> Decimal | None:
         """
         Extract price from text using multiple patterns.
 
@@ -129,7 +129,7 @@ class PriceExtractor:
         return None
 
     @staticmethod
-    def validate_price(price: Union[Decimal, float, str]) -> Optional[Decimal]:
+    def validate_price(price: Decimal | float | str) -> Decimal | None:
         """
         Validate and convert price to Decimal.
 
@@ -172,7 +172,7 @@ class ProductDataProcessor:
         self.stats = ProcessingStats()
         self.price_extractor = PriceExtractor()
 
-    def process_product_row(self, row_data: List[str], row_index: int,
+    def process_product_row(self, row_data: list[str], row_index: int,
                           url_column: int = 1, price_column: int = 2) -> ProductData:
         """
         Process a single product row from sheet data.
@@ -214,9 +214,9 @@ class ProductDataProcessor:
 
         return product
 
-    def batch_process_products(self, sheet_data: List[List[str]],
-                             start_row: int = 1, end_row: Optional[int] = None,
-                             url_column: int = 1, price_column: int = 2) -> List[ProductData]:
+    def batch_process_products(self, sheet_data: list[list[str]],
+                             start_row: int = 1, end_row: int | None = None,
+                             url_column: int = 1, price_column: int = 2) -> list[ProductData]:
         """
         Process multiple product rows in batch.
 
@@ -251,7 +251,7 @@ class ProductDataProcessor:
         debug_print(f"DEBUG: Batch processed {len(products)} products")
         return products
 
-    def filter_valid_products(self, products: List[ProductData]) -> List[ProductData]:
+    def filter_valid_products(self, products: list[ProductData]) -> list[ProductData]:
         """
         Filter products to only include those with valid URLs.
 
@@ -329,7 +329,7 @@ class ProductDataProcessor:
             if error_message:
                 self.stats.errors.append(error_message)
 
-    def get_processing_summary(self) -> Dict[str, Any]:
+    def get_processing_summary(self) -> dict[str, Any]:
         """
         Get a summary of processing statistics.
 
@@ -352,7 +352,7 @@ class ProductDataProcessor:
 
 
 # Utility functions for price operations
-def format_price_for_display(price: Optional[Decimal], currency: str = "$") -> str:
+def format_price_for_display(price: Decimal | None, currency: str = "$") -> str:
     """
     Format price for display in sheets.
 
@@ -372,7 +372,7 @@ def format_price_for_display(price: Optional[Decimal], currency: str = "$") -> s
         return "N/A"
 
 
-def compare_prices(old_price: Optional[Decimal], new_price: Optional[Decimal]) -> Dict[str, Any]:
+def compare_prices(old_price: Decimal | None, new_price: Decimal | None) -> dict[str, Any]:
     """
     Compare two prices and return analysis.
 

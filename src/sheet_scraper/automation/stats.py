@@ -6,7 +6,7 @@ metrics and performance data during automation runs.
 """
 
 from datetime import datetime
-from typing import Dict, Any
+from typing import Any
 
 
 class AutomationStats:
@@ -39,7 +39,7 @@ class AutomationStats:
         """Record an out of stock item."""
         self.out_of_stock_count += 1
 
-    def get_summary(self) -> Dict[str, Any]:
+    def get_summary(self) -> dict[str, Any]:
         """Get automation statistics summary."""
         runtime = datetime.now() - self.start_time
         return {

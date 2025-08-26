@@ -8,7 +8,6 @@ checking stock status, extracting shipping fees, and simulating human behavior.
 import random
 import re
 import time
-from typing import Optional
 
 from ..config.constants import (
     IN_STOCK_INDICATORS,
@@ -72,11 +71,11 @@ def is_blocked(content: str, config=None) -> bool:
             debug_print(f"DEBUG: Blocking detected by legacy indicator: '{indicator}' in content")
             return True
 
-    debug_print(f"DEBUG: No blocking indicators found in content")
+    debug_print("DEBUG: No blocking indicators found in content")
     return False
 
 
-def extract_shipping_fee(page, config=None) -> Optional[float]:
+def extract_shipping_fee(page, config=None) -> float | None:
     """
     Extract shipping fee from the page.
 
@@ -204,7 +203,6 @@ def is_in_stock(page, config=None) -> bool:
         ]
 
         found_negative_text = False
-        found_positive_text = False
 
         for selector in availability_selectors:
             try:
@@ -254,8 +252,7 @@ def is_in_stock(page, config=None) -> bool:
                         for pos_indicator in positive_indicators:
                             if pos_indicator in text_content:
                                 print(f"DEBUG: Amazon in-stock detected by text: '{pos_indicator}' in '{text_content}' for {page.url}")
-                                found_positive_text = True
-                                break
+                                return True  # Return directly instead of setting unused variable
 
             except Exception as e:
                 print(f"DEBUG: Error checking Amazon availability text for {selector}: {e}")
@@ -386,7 +383,7 @@ def simulate_human_interaction(page):
     # Simulate human-like scrolling after page load
     scroll_height = page.evaluate("document.body.scrollHeight")
     scroll_steps = random.randint(3, 7)  # Random number of scroll steps
-    for i in range(scroll_steps):
+    for _ in range(scroll_steps):
         # Scroll to a random position within the page
         target_scroll = random.uniform(0, scroll_height)
         page.evaluate(f"window.scrollTo(0, {target_scroll})")

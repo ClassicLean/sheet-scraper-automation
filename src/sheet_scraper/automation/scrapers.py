@@ -6,17 +6,18 @@ handling individual product scraping operations from supplier websites.
 """
 
 import os
+
 from playwright.sync_api import Page
 
+from ..config.config_manager import Config
 from ..logs_module.automation_logging import get_logger
 from ..scraping_utils import (
     debug_print,
-    simulate_human_interaction,
-    is_blocked,
     extract_shipping_fee,
+    is_blocked,
     is_in_stock,
+    simulate_human_interaction,
 )
-from ..config.config_manager import Config
 
 
 class ProductScraper:
@@ -52,9 +53,9 @@ class ProductScraper:
             dict: Scraped product data with keys: price, in_stock, shipping_fee, error
         """
         from sheet_scraper.scraping_utils import (
+            debug_print_price_extraction,
             debug_print_scraping_attempt,
             debug_print_scraping_failure,
-            debug_print_price_extraction
         )
 
         debug_print(f"DEBUG: Scraping details for {url}")

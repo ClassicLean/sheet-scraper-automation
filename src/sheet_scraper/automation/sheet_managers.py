@@ -5,18 +5,23 @@ This module contains the SheetManager class responsible for
 managing Google Sheets operations and data updates.
 """
 
-import time
 import random
+import time
 from datetime import datetime
-from typing import List, Dict
 
-from .data_models import ProductData, PriceUpdateResult
-from .formatters import SheetFormatter
-from ..scraping_utils import log_update
+from ..config.constants import (
+    COL_Z,
+    LAST_STOCK_CHECK_COL,
+    PRICE_COL,
+    PRODUCT_ID_COL,
+    VA_NOTES_COL,
+)
 from ..core.sheet_operations import update_sheet
-from ..config.constants import *
 from ..logs_module.automation_logging import get_logger
+from ..scraping_utils import log_update
 from ..utils.logs_module import debug_print_column_x_update, debug_print_sheet_operation
+from .data_models import PriceUpdateResult, ProductData
+from .formatters import SheetFormatter
 
 
 class SheetManager:
@@ -78,21 +83,48 @@ class SheetManager:
         self.logger.info(f"Sheet update result: {'SUCCESS' if success else 'FAILED'}")
 
         if success:
-            # Log the update
-            log_status = "Success" if update_result.best_supplier_url is not None else "Failed"
-            log_message = (
-                f"Chosen supplier: {update_result.chosen_supplier_name}"
-                if log_status == "Success"
-                else update_result.new_va_note
-            )
+            # Determine log status based on comprehensive criteria
+            price_extracted = update_result.new_price is not None and update_result.new_price > 0
+            price_changed = price_extracted and abs(update_result.new_price - (product_data.old_price or 0)) > 0.01
+            supplier_found = update_result.best_supplier_url is not None
 
-            # Enhanced debugging for log_update
+            # Best practice: Multi-layered success determination
+            if supplier_found and price_extracted:
+                if price_changed:
+                    log_status = "Success"
+                    log_message = f"Price updated: ${product_data.old_price} → ${update_result.new_price} ({update_result.chosen_supplier_name})"
+                else:
+                    log_status = "Success"
+                    log_message = f"Price confirmed unchanged: ${update_result.new_price} ({update_result.chosen_supplier_name})"
+            elif price_extracted and not supplier_found:
+                log_status = "Success"
+                log_message = f"Price found: ${update_result.new_price} (no supplier URL available)"
+            else:
+                log_status = "Failed"
+                log_message = f"Price extraction failed: {update_result.new_va_note or 'No price data available'}"
+
+            # Enhanced debugging for comprehensive status determination
             from ..scraping_utils import debug_print_price_comparison
             debug_print_price_comparison(
                 product_data.old_price or 0.0,
                 update_result.new_price or 0.0,
                 update_result.best_supplier_url or "No URL",
-                f"Logging update: {log_status} - {log_message}"
+                f"Status determination: {log_status} - {log_message}"
+            )
+
+            # Additional debugging for status logic
+            from ..utils.logs_module import debug_print_scraping_attempt
+            debug_print_scraping_attempt(
+                product_data.product_id or "Unknown Product",
+                f"Status Determination: {log_status}",
+                {
+                    "price_extracted": price_extracted,
+                    "price_changed": price_changed,
+                    "supplier_found": supplier_found,
+                    "old_price": product_data.old_price,
+                    "new_price": update_result.new_price,
+                    "message": log_message
+                }
             )
 
             log_update(
@@ -129,11 +161,11 @@ class SheetManager:
 
     def _create_data_update_requests(self, product_data: ProductData,
                                    update_result: PriceUpdateResult,
-                                   current_date: str) -> List[Dict]:
+                                   current_date: str) -> list[dict]:
         """Create data update requests for the sheet."""
         requests = []
 
-        self.logger.info(f"Creating data update requests...")
+        self.logger.info("Creating data update requests...")
         self.logger.info(f"VA_NOTES_COL = {VA_NOTES_COL} (Column A)")
         self.logger.info(f"LAST_STOCK_CHECK_COL = {LAST_STOCK_CHECK_COL} (Column D)")
         self.logger.info(f"Row index (0-based): {product_data.row_index}")
@@ -154,8 +186,8 @@ class SheetManager:
             "Old Price": product_data.old_price,
             "New Price": update_result.new_price,
             "Price Type": type(update_result.new_price).__name__,
-            "Is Valid Number": isinstance(update_result.new_price, (int, float)) and update_result.new_price != float("inf"),
-            "Will Write As": "numberValue" if isinstance(update_result.new_price, (int, float)) and update_result.new_price != float("inf") else "stringValue (empty)"
+            "Is Valid Number": isinstance(update_result.new_price, int | float) and update_result.new_price != float("inf"),
+            "Will Write As": "numberValue" if isinstance(update_result.new_price, int | float) and update_result.new_price != float("inf") else "stringValue (empty)"
         })
 
         requests.append({
@@ -171,7 +203,7 @@ class SheetManager:
                     "values": [{
                         "userEnteredValue": (
                             {"numberValue": update_result.new_price}
-                            if isinstance(update_result.new_price, (int, float)) and update_result.new_price != float("inf")
+                            if isinstance(update_result.new_price, int | float) and update_result.new_price != float("inf")
                             else {"stringValue": ""}
                         )
                     }]
@@ -195,7 +227,7 @@ class SheetManager:
                     "values": [{
                         "userEnteredValue": (
                             {"numberValue": shipping_fee_value}
-                            if isinstance(shipping_fee_value, (int, float))
+                            if isinstance(shipping_fee_value, int | float)
                             else {"stringValue": str(shipping_fee_value) if shipping_fee_value else ""}
                         )
                     }]

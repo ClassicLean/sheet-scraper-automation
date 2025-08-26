@@ -6,9 +6,8 @@ and update logging functionality.
 """
 
 import os
-from pathlib import Path
-from typing import Optional
 from datetime import datetime
+from pathlib import Path
 
 from sheet_scraper.config.constants import DEBUG_MODE
 
@@ -27,7 +26,7 @@ def debug_print_column_x_update(row_index: int, old_price: float, new_price: flo
                                price_col: int, update_success: bool = None) -> None:
     """Enhanced debugging specifically for Column X price updates."""
     if DEBUG_MODE:
-        print(f"[COLUMN X DEBUG]")
+        print("[COLUMN X DEBUG]")
         print(f"   Row: {row_index + 1} (1-based) / {row_index} (0-based)")
         print(f"   Column X Index: {price_col} (0-based) = Column {chr(65 + price_col)}")
         print(f"   Old Price: {old_price}")
@@ -35,36 +34,36 @@ def debug_print_column_x_update(row_index: int, old_price: float, new_price: flo
         print(f"   Price Type: {type(new_price)}")
         print(f"   Update Success: {update_success if update_success is not None else 'Pending...'}")
         print(f"   Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"   ===============================")
+        print("   ===============================")
 
 
 def debug_print_sheet_operation(operation_type: str, details: dict) -> None:
     """Enhanced debugging for sheet operations."""
     if DEBUG_MODE:
-        print(f"[SHEET OPERATION DEBUG]")
+        print("[SHEET OPERATION DEBUG]")
         print(f"   Operation: {operation_type}")
         for key, value in details.items():
             print(f"   {key}: {value}")
         print(f"   Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"   ===============================")
+        print("   ===============================")
 
 
 def debug_print_price_extraction(url: str, extracted_price: float, extraction_method: str = "unknown") -> None:
     """Enhanced debugging for price extraction."""
     if DEBUG_MODE:
-        print(f"[PRICE EXTRACTION DEBUG]")
+        print("[PRICE EXTRACTION DEBUG]")
         print(f"   URL: {url[:100]}{'...' if len(url) > 100 else ''}")
         print(f"   Extracted Price: {extracted_price}")
         print(f"   Price Type: {type(extracted_price)}")
         print(f"   Extraction Method: {extraction_method}")
         print(f"   Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"   ===============================")
+        print("   ===============================")
 
 
 def debug_print_scraping_attempt(url: str, step: str, details: dict) -> None:
     """Enhanced debugging for individual scraping attempts."""
     if DEBUG_MODE:
-        print(f"[SCRAPING ATTEMPT DEBUG]")
+        print("[SCRAPING ATTEMPT DEBUG]")
         print(f"   URL: {url[:80]}{'...' if len(url) > 80 else ''}")
         print(f"   Step: {step}")
         for key, value in details.items():
@@ -72,43 +71,81 @@ def debug_print_scraping_attempt(url: str, step: str, details: dict) -> None:
                 value = value[:100] + "..."
             print(f"   {key}: {value}")
         print(f"   Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"   ===============================")
+        print("   ===============================")
 
 
 def debug_print_price_comparison(old_price: float, new_price: float, url: str, decision: str) -> None:
     """Enhanced debugging for price comparison and selection."""
     if DEBUG_MODE:
-        print(f"[PRICE COMPARISON DEBUG]")
+        print("[PRICE COMPARISON DEBUG]")
         print(f"   URL: {url[:80]}{'...' if len(url) > 80 else ''}")
         print(f"   Old Price: {old_price} ({type(old_price)})")
         print(f"   New Price: {new_price} ({type(new_price)})")
         print(f"   Decision: {decision}")
         print(f"   Price Changed: {old_price != new_price}")
         print(f"   Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"   ===============================")
+        print("   ===============================")
 
 
 def debug_print_scraping_failure(url: str, error_type: str, error_details: str) -> None:
     """Enhanced debugging for scraping failures."""
     if DEBUG_MODE:
-        print(f"[SCRAPING FAILURE DEBUG]")
+        print("[SCRAPING FAILURE DEBUG]")
         print(f"   URL: {url[:80]}{'...' if len(url) > 80 else ''}")
         print(f"   Error Type: {error_type}")
         print(f"   Error Details: {error_details[:200]}{'...' if len(error_details) > 200 else ''}")
         print(f"   Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"   ===============================")
+        print("   ===============================")
 
 
-def debug_print_price_extraction(url: str, extracted_price: float, extraction_method: str = "unknown") -> None:
-    """Enhanced debugging for price extraction."""
+def debug_print_url_processing_start(url: str, supplier_index: int, total_suppliers: int) -> None:
+    """Debug output when starting to process a specific URL."""
     if DEBUG_MODE:
-        print(f"[PRICE EXTRACTION DEBUG]")
-        print(f"   URL: {url[:100]}{'...' if len(url) > 100 else ''}")
-        print(f"   Extracted Price: {extracted_price}")
-        print(f"   Price Type: {type(extracted_price)}")
-        print(f"   Extraction Method: {extraction_method}")
+        print(f"[URL PROCESSING START] ({supplier_index + 1}/{total_suppliers})")
+        print(f"   Current URL: {url}")
+        print(f"   Supplier Index: {supplier_index}")
+        print(f"   Domain: {url.split('/')[2] if len(url.split('/')) > 2 else 'Unknown'}")
+        print(f"   Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print("   ===============================")
+
+
+def debug_print_page_navigation(url: str, status: str, details: dict) -> None:
+    """Debug output for page navigation attempts."""
+    if DEBUG_MODE:
+        print("[PAGE NAVIGATION DEBUG]")
+        print(f"   URL: {url[:80]}{'...' if len(url) > 80 else ''}")
+        print(f"   Navigation Status: {status}")
+        for key, value in details.items():
+            print(f"   {key}: {value}")
         print(f"   Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"   ===============================")
+        print("   ===============================")
+
+
+def debug_print_element_detection(url: str, selector: str, found: bool, element_text: str = "") -> None:
+    """Debug output for HTML element detection attempts."""
+    if DEBUG_MODE:
+        print("[ELEMENT DETECTION DEBUG]")
+        print(f"   URL: {url[:60]}{'...' if len(url) > 60 else ''}")
+        print(f"   Selector: {selector}")
+        print(f"   Element Found: {found}")
+        if found and element_text:
+            print(f"   Element Text: {element_text[:100]}{'...' if len(element_text) > 100 else ''}")
+        print(f"   Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print("   ===============================")
+
+
+def debug_print_supplier_summary(suppliers_processed: int, successful_extractions: int, failed_extractions: int) -> None:
+    """Debug summary of all supplier processing results."""
+    if DEBUG_MODE:
+        print("[SUPPLIER PROCESSING SUMMARY]")
+        print(f"   Total Suppliers: {suppliers_processed}")
+        print(f"   Successful Extractions: {successful_extractions}")
+        print(f"   Failed Extractions: {failed_extractions}")
+        print(f"   Success Rate: {(successful_extractions/suppliers_processed*100) if suppliers_processed > 0 else 0:.1f}%")
+        print(f"   Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print("   ===============================")
+
+
 def truncate_log_file(file_path: str, max_lines: int = 100) -> None:
     """
     Truncate log file to maximum number of lines.
@@ -118,7 +155,7 @@ def truncate_log_file(file_path: str, max_lines: int = 100) -> None:
         max_lines: Maximum number of lines to keep (default: 100)
     """
     try:
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             lines = f.readlines()
         if len(lines) > max_lines:
             with open(file_path, "w") as f:
@@ -135,8 +172,8 @@ def log_update(
     new_price: float,
     status: str,
     message: str,
-    row: Optional[int] = None,
-    log_file_path: Optional[str] = None,
+    row: int | None = None,
+    log_file_path: str | None = None,
 ) -> None:
     """
     Enhanced logging with better error handling and formatting.

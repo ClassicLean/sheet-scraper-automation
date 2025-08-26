@@ -4,8 +4,8 @@ Provides centralized access to selectors, settings, and other configuration data
 """
 
 import json
-from typing import Dict, List, Any
 from pathlib import Path
+from typing import Any
 
 
 class Config:
@@ -19,19 +19,19 @@ class Config:
         self._validate_config()
 
     @property
-    def selectors(self) -> Dict[str, Any]:
+    def selectors(self) -> dict[str, Any]:
         """Load and cache selector configuration."""
         if self._selectors is None:
             selector_file = self.config_dir / "selectors.json"
             try:
-                with open(selector_file, "r", encoding="utf-8") as f:
+                with open(selector_file, encoding="utf-8") as f:
                     self._selectors = json.load(f)
             except FileNotFoundError:
                 print(f"Warning: Selector config file not found at {selector_file}")
                 self._selectors = self._get_default_selectors()
         return self._selectors
 
-    def _get_default_selectors(self) -> Dict[str, Any]:
+    def _get_default_selectors(self) -> dict[str, Any]:
         """Fallback selector configuration."""
         return {
             "price_selectors": {
@@ -44,19 +44,19 @@ class Config:
             "blocking_indicators": ["captcha", "blocked", "access denied"],
         }
 
-    def get_price_selectors(self, site: str = "generic") -> List[str]:
+    def get_price_selectors(self, site: str = "generic") -> list[str]:
         """Get price selectors for a specific site."""
         selectors = self.selectors.get("price_selectors", {})
         return selectors.get(site, selectors.get("generic", []))
 
     def get_stock_selectors(
         self, site: str = "generic", stock_type: str = "in_stock"
-    ) -> List[str]:
+    ) -> list[str]:
         """Get stock selectors for a specific site and stock type."""
         selectors = self.selectors.get("stock_selectors", {}).get(stock_type, {})
         return selectors.get(site, selectors.get("generic", []))
 
-    def get_blocking_indicators(self) -> List[str]:
+    def get_blocking_indicators(self) -> list[str]:
         """Get list of blocking indicators."""
         return self.selectors.get("blocking_indicators", [])
 
@@ -94,7 +94,7 @@ class Config:
         settings_file = self.config_dir / "settings.json"
         if settings_file.exists():
             try:
-                with open(settings_file, "r", encoding="utf-8") as f:
+                with open(settings_file, encoding="utf-8") as f:
                     self._settings = json.load(f)
                 return
             except Exception as e:
@@ -103,7 +103,7 @@ class Config:
         # Fallback to sheet-scraper-as.json (service account file format - not recommended)
         fallback_file = self.config_dir / "sheet-scraper-as.json"
         try:
-            with open(fallback_file, "r", encoding="utf-8") as f:
+            with open(fallback_file, encoding="utf-8") as f:
                 data = json.load(f)
                 # Extract only non-credential settings if they exist
                 self._settings = {

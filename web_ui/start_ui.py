@@ -4,15 +4,16 @@ Startup script for Sheet Scraper Web UI
 """
 
 import os
-import sys
 import subprocess
-import webbrowser
+import sys
 import time
+import webbrowser
+
 
 def check_flask_installed():
     """Check if Flask is installed."""
     try:
-        import flask
+        import flask  # noqa: F401
         return True
     except ImportError:
         return False
@@ -59,7 +60,7 @@ def main():
     # Get template directory for monitoring
     template_dir = os.path.join(web_ui_dir, 'templates')
     template_files = []
-    for root, dirs, files in os.walk(template_dir):
+    for root, _, files in os.walk(template_dir):
         for file in files:
             if file.endswith('.html'):
                 template_files.append(os.path.join(root, file))

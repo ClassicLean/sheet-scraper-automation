@@ -13,21 +13,19 @@ Architecture:
 """
 
 import argparse
-import contextlib
 import os
 import sys
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
-from .core.automation_core import AutomationOrchestrator
 from .config.config_manager import Config
+from .config.constants import DEBUG_MODE, HEADFUL_BROWSER
+from .core.automation_core import AutomationOrchestrator
 from .infrastructure.browser_manager import EnhancedBrowserManager
 from .infrastructure.captcha_solver import CaptchaSolver
 from .infrastructure.proxy_manager import ProxyManager
 from .logs_module.automation_logging import get_logger, setup_logging_directories
-from .config.constants import DEBUG_MODE, HEADFUL_BROWSER
-from .scraping_utils import debug_print
 
 
 class SheetScraperApplication:
@@ -146,7 +144,7 @@ class SheetScraperApplication:
         try:
             proxy_file = Path("proxies.txt")
             if proxy_file.exists():
-                with open(proxy_file, "r") as f:
+                with open(proxy_file) as f:
                     proxies = [line.strip() for line in f.readlines() if line.strip()]
                 self.logger.info(f"Loaded {len(proxies)} proxies")
                 return proxies
@@ -208,7 +206,7 @@ def parse_command_line_arguments():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python -m src.sheet_scraper.sheet_scraper                    # Default: process row 66 only
+  python -m src.sheet_scraper.sheet_scraper                    # Default: process row 7 only
   python -m src.sheet_scraper.sheet_scraper --start-row 1     # Process from row 1 to default end
   python -m src.sheet_scraper.sheet_scraper --start-row 1 --end-row 10  # Process rows 1-10
   python -m src.sheet_scraper.sheet_scraper --end-row 5       # Process from default start to row 5
@@ -221,14 +219,14 @@ Note: Row numbers are 1-based (as shown in Google Sheets).
         "--start-row",
         type=int,
         metavar="N",
-        help="Starting row number (1-based, as shown in Google Sheets). Default: 66"
+        help="Starting row number (1-based, as shown in Google Sheets). Default: 7"
     )
 
     parser.add_argument(
         "--end-row",
         type=int,
         metavar="N",
-        help="Ending row number (1-based, inclusive). Default: 66"
+        help="Ending row number (1-based, inclusive). Default: 7"
     )
 
     args = parser.parse_args()
@@ -262,8 +260,8 @@ def main():
 
     # Step 3: Display execution plan
     logger = get_logger()
-    start_display = args.start_row or "default (66)"
-    end_display = args.end_row or "default (66)"
+    start_display = args.start_row or "default (7)"
+    end_display = args.end_row or "default (7)"
     logger.info(f"Starting Sheet Scraper - Processing rows {start_display} to {end_display}")
 
     # Step 4: Initialize and run application

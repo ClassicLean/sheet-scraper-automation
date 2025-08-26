@@ -20,11 +20,11 @@ Example:
     app.run()
 """
 
-from .sheet_scraper import SheetScraperApplication, run_price_update_automation
-from .config.config_manager import Config
-from .automation.orchestrators import AutomationOrchestrator
 from .automation.data_models import ProductData, SupplierResult
+from .automation.orchestrators import AutomationOrchestrator
+from .config.config_manager import Config
 from .logs_module.automation_logging import get_logger, setup_logging_directories
+from .sheet_scraper import SheetScraperApplication, run_price_update_automation
 
 __version__ = "2.0.0"
 __author__ = "Sheet Scraper Team"

@@ -7,12 +7,12 @@ including batch operations and formatting.
 
 import random
 import time
-from typing import Optional, List, Dict, Any
+from typing import Any
 
 from googleapiclient.errors import HttpError
 
 
-def read_sheet_data(service, spreadsheet_id: str, sheet_name: str) -> Optional[List[List[str]]]:
+def read_sheet_data(service, spreadsheet_id: str, sheet_name: str) -> list[list[str]] | None:
     """
     Read data from a Google Sheet.
 
@@ -40,7 +40,7 @@ def read_sheet_data(service, spreadsheet_id: str, sheet_name: str) -> Optional[L
         return None
 
 
-def update_sheet(service, spreadsheet_id: str, requests: List[Dict[str, Any]]) -> bool:
+def update_sheet(service, spreadsheet_id: str, requests: list[dict[str, Any]]) -> bool:
     """
     Update sheet with exponential backoff and retry logic for quota exhaustion.
 
@@ -92,10 +92,10 @@ def update_sheet(service, spreadsheet_id: str, requests: List[Dict[str, Any]]) -
 
 def create_color_request(
     row_index: int,
-    background_color: Optional[Dict[str, float]] = None,
-    col_index: Optional[int] = None,
-    text_color: Optional[Dict[str, float]] = None
-) -> Dict[str, Any]:
+    background_color: dict[str, float] | None = None,
+    col_index: int | None = None,
+    text_color: dict[str, float] | None = None
+) -> dict[str, Any]:
     """
     Create a color formatting request for a Google Sheet cell or row.
 

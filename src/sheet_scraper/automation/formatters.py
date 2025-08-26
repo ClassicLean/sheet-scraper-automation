@@ -5,11 +5,55 @@ This module contains the SheetFormatter class responsible for
 creating formatting requests for Google Sheets based on update results.
 """
 
-from typing import List, Dict
 
-from .data_models import PriceUpdateResult
+from ..config.constants import (
+    COL_AA,
+    COL_AB,
+    COL_AC,
+    COL_AD,
+    COL_AE,
+    COL_AG,
+    COL_E,
+    COL_F,
+    COL_G,
+    COL_H,
+    COL_I,
+    COL_J,
+    COL_K,
+    COL_L,
+    COL_N,
+    COL_O,
+    COL_P,
+    COL_Q,
+    COL_R,
+    COL_S,
+    COL_V,
+    COL_W,
+    COL_Y,
+    COL_Z,
+    COLOR_BLACK,
+    COLOR_BLUE,
+    COLOR_DARK_CORNFLOWER_BLUE_2,
+    COLOR_DARK_GREEN_2,
+    COLOR_DARK_PURPLE_2,
+    COLOR_DARK_RED_2,
+    COLOR_GRAY,
+    COLOR_GREEN,
+    COLOR_LIGHT_CYAN_3,
+    COLOR_LIGHT_GREEN_3,
+    COLOR_LIGHT_MAGENTA_2,
+    COLOR_LIGHT_RED_1,
+    COLOR_LIGHT_YELLOW_2,
+    COLOR_NOAH_FILL,
+    COLOR_RED,
+    COLOR_WHITE,
+    LAST_STOCK_CHECK_COL,
+    PRICE_COL,
+    PRODUCT_ID_COL,
+    VA_NOTES_COL,
+)
 from ..scraping_utils import create_color_request
-from ..config.constants import *
+from .data_models import PriceUpdateResult
 
 
 class SheetFormatter:
@@ -18,8 +62,8 @@ class SheetFormatter:
     def __init__(self):
         pass
 
-    def create_formatting_requests(self, row_index: int, row: List[str],
-                                 update_result: PriceUpdateResult) -> List[Dict]:
+    def create_formatting_requests(self, row_index: int, row: list[str],
+                                 update_result: PriceUpdateResult) -> list[dict]:
         """
         Create formatting requests for a row based on update results.
 
@@ -60,8 +104,8 @@ class SheetFormatter:
 
         return requests
 
-    def _create_available_item_formatting(self, row_index: int, row: List[str],
-                                        update_result: PriceUpdateResult) -> List[Dict]:
+    def _create_available_item_formatting(self, row_index: int, row: list[str],
+                                        update_result: PriceUpdateResult) -> list[dict]:
         """Create formatting requests for available items."""
         requests = []
 
@@ -81,7 +125,7 @@ class SheetFormatter:
 
         return requests
 
-    def _create_under_299_formatting(self, row_index: int, row: List[str]) -> List[Dict]:
+    def _create_under_299_formatting(self, row_index: int, row: list[str]) -> list[dict]:
         """Create formatting for items under $299.99."""
         requests = []
 
@@ -132,7 +176,7 @@ class SheetFormatter:
 
         return requests
 
-    def _create_noah_formatting(self, row_index: int, row: List[str]) -> List[Dict]:
+    def _create_noah_formatting(self, row_index: int, row: list[str]) -> list[dict]:
         """Create Noah supplier highlighting formatting."""
         requests = []
 
@@ -164,7 +208,7 @@ class SheetFormatter:
 
         return requests
 
-    def _create_standard_text_formatting(self, row_index: int) -> List[Dict]:
+    def _create_standard_text_formatting(self, row_index: int) -> list[dict]:
         """Create standard text color formatting for various columns."""
         return [
             create_color_request(row_index, text_color=COLOR_BLACK, col_index=LAST_STOCK_CHECK_COL),

@@ -6,28 +6,31 @@ processing individual products and scraping supplier data.
 """
 
 import os
-from typing import List, Dict, Any
+from typing import Any
+
 from playwright.sync_api import Page
 
-from .data_models import ProductData, SupplierResult, PriceUpdateResult
+from ..config.config_manager import Config
+from ..infrastructure.browser_manager import EnhancedBrowserManager
+from ..infrastructure.captcha_solver import CaptchaSolver
 from ..scraping_utils import (
     debug_print,
     extract_shipping_fee,
-    is_in_stock,
     is_blocked,
+    is_in_stock,
     simulate_human_interaction,
 )
-from ..infrastructure.captcha_solver import CaptchaSolver
-from ..infrastructure.browser_manager import EnhancedBrowserManager
+from .data_models import PriceUpdateResult, ProductData, SupplierResult
 
 
 class ProductProcessor:
     """Handles individual product processing and supplier scraping."""
 
-    def __init__(self, page: Page, captcha_solver: CaptchaSolver, browser_manager: EnhancedBrowserManager):
+    def __init__(self, page: Page, captcha_solver: CaptchaSolver, browser_manager: EnhancedBrowserManager, config: Config = None):
         self.page = page
         self.captcha_solver = captcha_solver
         self.browser_manager = browser_manager
+        self.config = config or Config()
 
     def process_product(self, product_data: ProductData) -> PriceUpdateResult:
         """
@@ -47,13 +50,24 @@ class ProductProcessor:
         # Analyze results and determine best price
         return self._analyze_supplier_results(product_data, supplier_results)
 
-    def _scrape_all_suppliers(self, product_data: ProductData) -> List[SupplierResult]:
+    def _scrape_all_suppliers(self, product_data: ProductData) -> list[SupplierResult]:
         """Scrape all supplier URLs for a product."""
-        supplier_results = []
+        from sheet_scraper.scraping_utils import (
+            debug_print_supplier_summary,
+            debug_print_url_processing_start,
+        )
 
-        for supplier_url in product_data.supplier_urls:
+        supplier_results = []
+        total_suppliers = len([url for url in product_data.supplier_urls if url and url.strip()])
+        successful_extractions = 0
+        failed_extractions = 0
+
+        for supplier_index, supplier_url in enumerate(product_data.supplier_urls):
             if not supplier_url or supplier_url.strip() == "":
                 continue
+
+            # Debug: Start processing this URL
+            debug_print_url_processing_start(supplier_url, supplier_index, total_suppliers)
 
             try:
                 debug_print(f"DEBUG: Scraping supplier: {supplier_url}")
@@ -71,9 +85,16 @@ class ProductProcessor:
                 )
                 supplier_results.append(result)
 
+                # Track success/failure
+                if result.price is not None:
+                    successful_extractions += 1
+                else:
+                    failed_extractions += 1
+
                 debug_print(f"DEBUG: Supplier result - Price: {result.price}, In Stock: {result.in_stock}, Error: {result.error}")
 
             except Exception as e:
+                failed_extractions += 1
                 debug_print(f"DEBUG: Error scraping {supplier_url}: {str(e)}")
                 error_result = SupplierResult(
                     url=supplier_url,
@@ -85,9 +106,12 @@ class ProductProcessor:
                 )
                 supplier_results.append(error_result)
 
+        # Debug: Summary of all supplier processing
+        debug_print_supplier_summary(total_suppliers, successful_extractions, failed_extractions)
+
         return supplier_results
 
-    def _scrape_single_supplier(self, url: str) -> Dict[str, Any]:
+    def _scrape_single_supplier(self, url: str) -> dict[str, Any]:
         """
         Scrape product details from a single supplier URL.
 
@@ -97,17 +121,37 @@ class ProductProcessor:
         Returns:
             dict: Scraped product data with keys: price, in_stock, shipping_fee, error, supplier_name
         """
+        from sheet_scraper.scraping_utils import (
+            debug_print_element_detection,
+            debug_print_page_navigation,
+        )
+
         debug_print(f"DEBUG: Scraping details for {url}")
 
         try:
-            # Navigate to the URL
-            self.page.goto(url, timeout=60000)  # Increased timeout to 60 seconds
+            # Navigate to the URL with enhanced debugging
+            debug_print_page_navigation(url, "STARTING", {"timeout": "60000ms", "method": "page.goto()"})
+
+            response = self.page.goto(url, timeout=60000)  # Increased timeout to 60 seconds
+
+            # Debug navigation result
+            status_code = response.status if response else "Unknown"
+            page_title = self.page.title() if self.page else "Unknown"
+            debug_print_page_navigation(url, "COMPLETED", {
+                "status_code": status_code,
+                "page_title": page_title[:50] + "..." if len(page_title) > 50 else page_title,
+                "url_after_redirect": self.page.url
+            })
 
             # Simulate human-like interaction
             simulate_human_interaction(self.page)
 
             # Check for blocking using enhanced detection
-            if is_blocked(self.page.content()):
+            page_content = self.page.content()
+            blocked = is_blocked(page_content)
+            debug_print_element_detection(url, "blocking_indicators", not blocked, "Page access status")
+
+            if blocked:
                 debug_print(f"DEBUG: Detected blocked for {url}")
                 # Attempt to solve CAPTCHA if blocked
                 if self.captcha_solver and os.environ.get("TWOCAPTCHA_API_KEY"):
@@ -116,16 +160,15 @@ class ProductProcessor:
                 else:
                     return {"price": None, "in_stock": False, "shipping_fee": None, "error": "Blocked", "supplier_name": "Unknown"}
 
-            # Extract price using the new PriceExtractor
-            from ..core.product_processing import PriceExtractor
+            # Extract price using site-specific selectors
             from ..utils.logs_module import debug_print_price_extraction
+            from ..utils.pricing import extract_price
 
-            price_extractor = PriceExtractor()
-            page_text = self.page.content()  # Get page content for price extraction
-            price = price_extractor.extract_price(page_text)
+            price = extract_price(self.page, self.config)
 
             # Enhanced debugging for price extraction
-            debug_print_price_extraction(url, price, "PriceExtractor.extract_price()")
+            debug_print_price_extraction(url, price, "extract_price() with selectors")
+            debug_print_element_detection(url, "price_selectors", price is not None, f"Found price: {price}" if price else "No price found")
 
             if price is None:
                 debug_print(f"DEBUG: No price found for {url}")
@@ -164,9 +207,12 @@ class ProductProcessor:
         else:
             return "Unknown"
 
-    def _analyze_supplier_results(self, product_data: ProductData, supplier_results: List[SupplierResult]) -> PriceUpdateResult:
+    def _analyze_supplier_results(self, product_data: ProductData, supplier_results: list[SupplierResult]) -> PriceUpdateResult:
         """Analyze supplier results to determine the best price and update strategy."""
-        from sheet_scraper.scraping_utils import debug_print_price_comparison, debug_print_scraping_attempt
+        from sheet_scraper.scraping_utils import (
+            debug_print_price_comparison,
+            debug_print_scraping_attempt,
+        )
 
         debug_print_scraping_attempt("", "Analyzing supplier results", {
             "total_suppliers": len(supplier_results),
@@ -194,7 +240,7 @@ class ProductProcessor:
             chosen_supplier_name = best_result.supplier_name
 
             debug_print_price_comparison(
-                product_data.current_price or 0.0,
+                product_data.old_price or 0.0,
                 lowest_price_found,
                 best_supplier_url,
                 f"Selected {chosen_supplier_name} as best supplier"

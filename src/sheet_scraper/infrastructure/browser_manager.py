@@ -4,8 +4,8 @@ Enhanced browser management with improved anti-detection capabilities.
 
 import random
 import time
-from typing import Optional, Dict
-from playwright.sync_api import Page, Browser, BrowserContext
+
+from playwright.sync_api import Browser, BrowserContext, Page
 from undetected_playwright.ninja import stealth_sync
 
 from sheet_scraper.config.constants import USER_AGENTS
@@ -17,8 +17,8 @@ class EnhancedBrowserManager:
     def __init__(self, browser: Browser, proxy_manager=None):
         self.browser = browser
         self.proxy_manager = proxy_manager
-        self.context: Optional[BrowserContext] = None
-        self.page: Optional[Page] = None
+        self.context: BrowserContext | None = None
+        self.page: Page | None = None
 
     def create_context(self) -> BrowserContext:
         """Create a new browser context with random settings."""
@@ -60,7 +60,7 @@ class EnhancedBrowserManager:
 
         return self.page
 
-    def _get_random_viewport(self) -> Dict[str, int]:
+    def _get_random_viewport(self) -> dict[str, int]:
         """Generate a random but realistic viewport."""
         common_resolutions = [
             (1920, 1080),
@@ -75,7 +75,7 @@ class EnhancedBrowserManager:
         width, height = random.choice(common_resolutions)
         return {"width": width, "height": height}
 
-    def _get_random_location(self) -> Dict[str, float]:
+    def _get_random_location(self) -> dict[str, float]:
         """Generate a random location in the US."""
         locations = [
             {"latitude": 40.7128, "longitude": -74.0060},  # New York

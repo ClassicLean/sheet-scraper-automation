@@ -12,19 +12,20 @@ Best Practices Implemented:
 - File Management: Automatic log rotation and cleanup
 """
 
-import os
-import time
 import json
 import logging as builtin_logging
+import time
 import traceback
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Union
-from dataclasses import dataclass, field
+from typing import Any
+
 import builtin_logging.handlers
-RotatingFileHandler = builtin_logging.handlers.RotatingFileHandler
 
 from ..scraping_utils import debug_print
+
+RotatingFileHandler = builtin_logging.handlers.RotatingFileHandler
 
 
 @dataclass
@@ -32,12 +33,12 @@ class PerformanceMetrics:
     """Track performance metrics for automation operations."""
     operation_name: str
     start_time: float = field(default_factory=time.time)
-    end_time: Optional[float] = None
-    duration: Optional[float] = None
+    end_time: float | None = None
+    duration: float | None = None
     success: bool = False
-    error_message: Optional[str] = None
+    error_message: str | None = None
 
-    def finish(self, success: bool = True, error_message: Optional[str] = None):
+    def finish(self, success: bool = True, error_message: str | None = None):
         """Mark the operation as finished."""
         self.end_time = time.time()
         self.duration = self.end_time - self.start_time
@@ -53,8 +54,8 @@ class LogSummary:
     warning_count: int = 0
     info_count: int = 0
     debug_count: int = 0
-    recent_errors: List[str] = field(default_factory=list)
-    performance_metrics: List[PerformanceMetrics] = field(default_factory=list)
+    recent_errors: list[str] = field(default_factory=list)
+    performance_metrics: list[PerformanceMetrics] = field(default_factory=list)
 
 
 class AutomationLogger:
@@ -76,7 +77,7 @@ class AutomationLogger:
 
         # Initialize logging components
         self.summary = LogSummary()
-        self.active_metrics: Dict[str, PerformanceMetrics] = {}
+        self.active_metrics: dict[str, PerformanceMetrics] = {}
 
         # Setup loggers
         self._setup_loggers()
@@ -172,7 +173,7 @@ class AutomationLogger:
         self.summary.total_entries += 1
         debug_print(f"WARNING: {message}")
 
-    def error(self, message: str, exception: Optional[Exception] = None, **kwargs):
+    def error(self, message: str, exception: Exception | None = None, **kwargs):
         """Log an error message with optional exception details."""
         error_details = message
 
@@ -217,7 +218,7 @@ class AutomationLogger:
         return operation_id
 
     def end_operation(self, operation_id: str, success: bool = True,
-                     error_message: Optional[str] = None):
+                     error_message: str | None = None):
         """
         End tracking of a timed operation.
 
@@ -252,8 +253,8 @@ class AutomationLogger:
                 error_msg += f" - Error: {error_message}"
             self.error(error_msg)
 
-    def log_price_update(self, product_name: str, old_price: Optional[str],
-                        new_price: Optional[str], row_number: int):
+    def log_price_update(self, product_name: str, old_price: str | None,
+                        new_price: str | None, row_number: int):
         """
         Log a price update operation.
 
@@ -274,8 +275,8 @@ class AutomationLogger:
 
         self.info(message)
 
-    def log_scraping_result(self, url: str, success: bool, price: Optional[str] = None,
-                          error: Optional[str] = None):
+    def log_scraping_result(self, url: str, success: bool, price: str | None = None,
+                          error: str | None = None):
         """
         Log the result of a web scraping operation.
 
@@ -314,7 +315,7 @@ class AutomationLogger:
 
         self.info(summary_message)
 
-    def export_logs_summary(self, output_file: Optional[str] = None) -> Dict[str, Any]:
+    def export_logs_summary(self, output_file: str | None = None) -> dict[str, Any]:
         """
         Export a summary of logging activity.
 
@@ -393,7 +394,7 @@ class AutomationLogger:
         if cleaned_count > 0:
             self.info(f"Cleaned up {cleaned_count} old log files")
 
-    def get_recent_errors(self, count: int = 5) -> List[str]:
+    def get_recent_errors(self, count: int = 5) -> list[str]:
         """
         Get recent error messages.
 
@@ -407,7 +408,7 @@ class AutomationLogger:
 
 
 # Global logger instance
-_global_logger: Optional[AutomationLogger] = None
+_global_logger: AutomationLogger | None = None
 
 
 def get_logger() -> AutomationLogger:
@@ -451,7 +452,7 @@ def log_warning(message: str, **kwargs):
     get_logger().warning(message, **kwargs)
 
 
-def log_error(message: str, exception: Optional[Exception] = None, **kwargs):
+def log_error(message: str, exception: Exception | None = None, **kwargs):
     """Log an error message using the global logger."""
     get_logger().error(message, exception, **kwargs)
 

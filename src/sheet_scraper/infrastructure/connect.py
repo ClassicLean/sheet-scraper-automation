@@ -1,6 +1,7 @@
-from googleapiclient.discovery import build
-from google.oauth2 import service_account
 import os  # Import os to use environment variables
+
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
 
 # Path to your service account key file - use absolute path from project root
 PROJECT_ROOT = os.path.dirname(

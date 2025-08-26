@@ -3,6 +3,7 @@ config/sheet-scraper-as.json
 
 # Log files
 logs/
+*.log
 
 # Python cache and compiled files
 __pycache__/
@@ -13,21 +14,39 @@ __pycache__/
 *.pyo
 *.pyd
 *.egg-info/
+.tox/
+.nox/
+build/
+dist/
+*.egg
+.coverage
+htmlcov/
 
 # Temporary and debug files
 *test*.py
 *debug*.py
 *verify*.py
 *check*.py
+*.tmp
+*.temp
+*.html
 
 # Development files
 instructions.txt
 dev_tools/
+backup/
 
 # IDE files
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # OS files
 .DS_Store
 Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env.*.local

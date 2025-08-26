@@ -4,13 +4,13 @@ Web UI for Sheet Scraper - Simple interface for row range specification and scri
 """
 
 import os
+import subprocess
 import sys
 import threading
 import time
-import subprocess
 from datetime import datetime
-from flask import Flask, render_template, request, jsonify, Response
-import json
+
+from flask import Flask, jsonify, render_template, request
 
 # Add the src directory to Python path
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), "src"))
@@ -60,7 +60,6 @@ current_process = None
 def index():
     """Main page with the UI interface."""
     # Add timestamp for cache busting
-    import time
     cache_buster = str(int(time.time()))
     return render_template('index.html', cache_buster=cache_buster)
 

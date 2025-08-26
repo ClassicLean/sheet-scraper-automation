@@ -6,18 +6,20 @@ automation process and manage component interactions.
 """
 
 import os
-from typing import List, Optional, Tuple
 
+from ..config.config_manager import Config
+from ..config.constants import (
+    PRICE_COL,
+    PRODUCT_ID_COL,
+)
+from ..core.product_processing import ProductDataProcessor
+from ..core.sheet_operations import SheetOperations, read_sheet_data
+from ..logs_module.automation_logging import get_logger
+from ..scraping_utils import LOG_FILE, debug_print, parse_price, truncate_log_file
 from .data_models import ProductData
-from .stats import AutomationStats
 from .processors import ProductProcessor
 from .sheet_managers import SheetManager
-from ..logs_module.automation_logging import get_logger
-from ..scraping_utils import debug_print, truncate_log_file, LOG_FILE, parse_price
-from ..core.sheet_operations import SheetOperations, read_sheet_data
-from ..core.product_processing import ProductDataProcessor
-from ..config.config_manager import Config
-from ..config.constants import *
+from .stats import AutomationStats
 
 
 class SheetScraperAutomation:
@@ -37,11 +39,11 @@ class SheetScraperAutomation:
         self.product_processor_util = ProductDataProcessor()
 
         # Initialize components
-        self.product_processor = ProductProcessor(page, captcha_solver, browser_manager)
+        self.product_processor = ProductProcessor(page, captcha_solver, browser_manager, config)
         self.sheet_manager = SheetManager(sheet_service, spreadsheet_id)
 
-    def run_automation(self, start_row_index: Optional[int] = None,
-                      end_row_index: Optional[int] = None):
+    def run_automation(self, start_row_index: int | None = None,
+                      end_row_index: int | None = None):
         """
         Run the complete automation process.
 
@@ -71,7 +73,7 @@ class SheetScraperAutomation:
 
             # Process each row
             row_count = 0
-            self.logger.info(f"[ORCHESTRATOR DEBUG]: Starting row processing loop")
+            self.logger.info("[ORCHESTRATOR DEBUG]: Starting row processing loop")
             for row_index in range(start_idx, end_idx):
                 row_count += 1
                 try:
@@ -94,7 +96,7 @@ class SheetScraperAutomation:
             self.logger.info("[ORCHESTRATOR DEBUG]: About to call _finish_automation()")
             self._finish_automation()
 
-    def _load_sheet_data(self) -> List[List[str]]:
+    def _load_sheet_data(self) -> list[list[str]]:
         """Load data from the Google Sheet with backwards compatibility for tests."""
         try:
             self.logger.info("Loading sheet data...")
@@ -114,7 +116,7 @@ class SheetScraperAutomation:
                     debug_print(f"DEBUG: Retrieved {len(values)} rows from legacy function.")
                     return values
                 else:
-                    debug_print(f"DEBUG: Legacy function returned empty data.")
+                    debug_print("DEBUG: Legacy function returned empty data.")
             except Exception as e:
                 debug_print(f"DEBUG: Legacy function failed: {e}, trying new method...")
 
@@ -138,21 +140,16 @@ class SheetScraperAutomation:
             debug_print(f"DEBUG: {error_msg}")
             raise
 
-        except Exception as e:
-            debug_print(f"DEBUG: Error reading sheet: {e}")
-            print(f"Error loading sheet data: {e}")
-            return []
-
-    def _determine_row_range(self, sheet_data: List[List[str]],
-                           start_row_index: Optional[int],
-                           end_row_index: Optional[int]) -> Tuple[int, int]:
+    def _determine_row_range(self, sheet_data: list[list[str]],
+                           start_row_index: int | None,
+                           end_row_index: int | None) -> tuple[int, int]:
         """Determine the actual row range to process."""
-        # Default to row 66 (index 65) if no range specified
+        # Default to row 7 (index 6) if no range specified
         if start_row_index is None and end_row_index is None:
-            return 65, 66  # Process only row 66
+            return 6, 7  # Process only row 7
 
-        start_idx = start_row_index if start_row_index is not None else 65
-        end_idx = end_row_index if end_row_index is not None else 66
+        start_idx = start_row_index if start_row_index is not None else 6
+        end_idx = end_row_index if end_row_index is not None else 7
 
         # Ensure we don't exceed sheet bounds
         max_rows = len(sheet_data)
@@ -161,7 +158,7 @@ class SheetScraperAutomation:
 
         return start_idx, end_idx
 
-    def _process_single_row(self, sheet_data: List[List[str]], row_index: int):
+    def _process_single_row(self, sheet_data: list[list[str]], row_index: int):
         """Process a single row of the sheet."""
         row = sheet_data[row_index] if row_index < len(sheet_data) else []
 
@@ -180,7 +177,7 @@ class SheetScraperAutomation:
 
         if not product_data.supplier_urls:
             self.logger.info(f"No supplier URLs found for row {row_index + 1}, skipping...")
-            self.logger.info(f"Checked columns 33-42 and 32 for supplier URLs")
+            self.logger.info("Checked columns 33-42 and 32 for supplier URLs")
             self.logger.info(f"Row length: {len(row)}")
             return
 
@@ -208,7 +205,7 @@ class SheetScraperAutomation:
         else:
             self.stats.record_failure()
 
-    def _extract_product_data(self, row: List[str], row_index: int) -> ProductData:
+    def _extract_product_data(self, row: list[str], row_index: int) -> ProductData:
         """Extract product data from a sheet row."""
         debug_print(f"DEBUG: Extracting data from row {row_index + 1} (0-based index {row_index})")
         debug_print(f"DEBUG: Row has {len(row)} columns")
@@ -224,7 +221,7 @@ class SheetScraperAutomation:
         supplier_urls = []
 
         # Check new standard columns (AH through AN: 33-39)
-        debug_print(f"DEBUG: Checking supplier URL columns 33-39...")
+        debug_print("DEBUG: Checking supplier URL columns 33-39...")
         for col_idx in range(33, 40):  # AH to AN
             if len(row) > col_idx and row[col_idx]:
                 supplier_urls.append(row[col_idx])
@@ -234,7 +231,7 @@ class SheetScraperAutomation:
                 debug_print(f"DEBUG: Col {col_idx} empty or missing: '{cell_value}'")
 
         # Check extended range (AO through AQ: 40-42) for more supplier columns
-        debug_print(f"DEBUG: Checking extended supplier URL columns 40-42...")
+        debug_print("DEBUG: Checking extended supplier URL columns 40-42...")
         for col_idx in range(40, 43):  # AO to AQ
             if len(row) > col_idx and row[col_idx]:
                 supplier_urls.append(row[col_idx])
@@ -250,7 +247,7 @@ class SheetScraperAutomation:
         if not supplier_urls:
             debug_print(f"DEBUG: WARNING - No supplier URLs found in row {row_index + 1}")
             # Show some raw data for debugging when no URLs found
-            debug_print(f"DEBUG: Raw row data (first 50 cols with values):")
+            debug_print("DEBUG: Raw row data (first 50 cols with values):")
             for i, cell in enumerate(row[:50]):
                 if cell:
                     debug_print(f"DEBUG:   Col {i}: '{cell}'")
@@ -379,7 +376,7 @@ class AutomationOrchestrator:
 
         return spreadsheet_id
 
-    def _convert_row_parameters(self, start_row: int = None, end_row: int = None) -> Tuple[int, int]:
+    def _convert_row_parameters(self, start_row: int = None, end_row: int = None) -> tuple[int, int]:
         """
         Convert 1-based row parameters to internal format.
 
@@ -390,8 +387,8 @@ class AutomationOrchestrator:
         Returns:
             Tuple of (start_index, end_index) for internal use
         """
-        # Default to row 66 if no parameters provided
-        default_row = 66
+        # Default to row 7 if no parameters provided
+        default_row = 7
 
         # Handle start row
         if start_row is not None:
@@ -399,7 +396,7 @@ class AutomationOrchestrator:
         elif os.environ.get("PROCESS_START_ROW"):
             start_index = max(0, int(os.environ.get("PROCESS_START_ROW")) - 1)
         else:
-            start_index = default_row - 1  # Default to row 66 (0-based index 65)
+            start_index = default_row - 1  # Default to row 7 (0-based index 6)
 
         # Handle end row
         if end_row is not None:
@@ -407,6 +404,6 @@ class AutomationOrchestrator:
         elif os.environ.get("PROCESS_END_ROW"):
             end_index = int(os.environ.get("PROCESS_END_ROW"))
         else:
-            end_index = default_row  # Default to row 66
+            end_index = default_row  # Default to row 7
 
         return start_index, end_index

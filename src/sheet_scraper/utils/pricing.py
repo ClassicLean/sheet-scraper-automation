@@ -6,12 +6,9 @@ various formats and currency symbols.
 """
 
 import re
-from typing import Optional
-
-from .logs_module import debug_print
 
 
-def parse_price(price_text: Optional[str]) -> Optional[float]:
+def parse_price(price_text: str | None) -> float | None:
     """
     Parse price text and extract numeric value.
 
@@ -131,7 +128,7 @@ def is_quantity_element(element) -> bool:
                         indicator in ancestor_id.lower() or
                         indicator in ancestor_class.lower()):
                         return True
-        except:
+        except Exception:
             pass
 
         # Check if element is inside select/option structure
@@ -140,15 +137,15 @@ def is_quantity_element(element) -> bool:
                 return True
             if element.locator("xpath=ancestor::option").first:
                 return True
-        except:
+        except Exception:
             pass
 
         return False
-    except:
+    except Exception:
         return False
 
 
-def extract_price(page, config=None) -> Optional[float]:
+def extract_price(page, config=None) -> float | None:
     """
     Enhanced price extraction with site-specific selectors and better error handling.
 
@@ -250,7 +247,7 @@ def extract_price(page, config=None) -> Optional[float]:
 
     # Amazon-specific handling for split price elements
     if site == "amazon":
-        print(f"DEBUG: Trying Amazon-specific split price extraction")
+        print("DEBUG: Trying Amazon-specific split price extraction")
         try:
             # Get all price-whole and price-fraction elements to find the right ones
             whole_elements = page.query_selector_all("span.a-price-whole")
@@ -264,7 +261,7 @@ def extract_price(page, config=None) -> Optional[float]:
                     continue
 
                 # Find corresponding fraction element nearby
-                for fraction_idx, fraction_element in enumerate(fraction_elements):
+                for _, fraction_element in enumerate(fraction_elements):
                     if is_quantity_element(fraction_element):
                         continue
 
@@ -293,7 +290,7 @@ def extract_price(page, config=None) -> Optional[float]:
             print(f"DEBUG: Error with Amazon split price extraction: {e}")
 
     # Final fallback: search page content for price patterns
-    print(f"DEBUG: Trying final content-based price extraction")
+    print("DEBUG: Trying final content-based price extraction")
     try:
         content = page.content().lower()
         price_match = re.search(r"\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)", content)
@@ -304,7 +301,7 @@ def extract_price(page, config=None) -> Optional[float]:
                 print(f"DEBUG: ✓ VALID PRICE found in content: ${price_text} -> {price}")
                 return price
         else:
-            print(f"DEBUG: No price pattern found in page content")
+            print("DEBUG: No price pattern found in page content")
     except Exception as e:
         print(f"DEBUG: Error searching content for price: {e}")
 

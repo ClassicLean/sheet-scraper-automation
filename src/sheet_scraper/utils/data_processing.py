@@ -5,12 +5,12 @@ This module contains functions for processing and comparing
 scraped data from multiple suppliers.
 """
 
-from typing import List, Dict, Any, Tuple, Optional
+from typing import Any
 
 from sheet_scraper.utils.logs_module import debug_print
 
 
-def process_scraped_results(supplier_results: List[Dict[str, Any]]) -> Tuple[Optional[float], Optional[str], str, Optional[float]]:
+def process_scraped_results(supplier_results: list[dict[str, Any]]) -> tuple[float | None, str | None, str, float | None]:
     """
     Process scraped results from multiple suppliers to find the best option.
 

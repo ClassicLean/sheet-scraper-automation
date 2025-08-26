@@ -1,8 +1,10 @@
 # Sheet Scraper Automation Tool
 
 [![Python 3.13+](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-141%20passing-green.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-147%20passing-green.svg)](tests/)
 [![Code Style](https://img.shields.io/badge/code%20style-PEP%208-blue.svg)](https://www.python.org/dev/peps/pep-0008/)
+[![Security](https://img.shields.io/badge/security-bandit-yellow.svg)](https://bandit.readthedocs.io/)
+[![Type Hints](https://img.shields.io/badge/typing-enabled-blue.svg)](https://docs.python.org/3/library/typing.html)
 
 A sophisticated automated web scraping tool that monitors product prices across multiple supplier websites and updates Google Sheets with real-time data. Features comprehensive site support, intelligent blocking detection, automated retries, and a modern Flask web interface.
 
@@ -111,7 +113,7 @@ src/sheet_scraper/
 
 **Run the comprehensive test suite:**
 ```bash
-# Run all tests (141 passing tests)
+# Run all tests (147 passing tests)
 pytest tests/ -v
 
 # Run specific test categories
@@ -154,3 +156,53 @@ python -m src.sheet_scraper.sheet_scraper    # Run main script
 ruff check --fix                    # Lint code
 python dev_tools/cleanup.py        # Clean codebase
 ```
+
+## 🔒 Security
+
+This project follows security best practices for 2025:
+
+- **Service Account Authentication**: Google Sheets API access via secure service accounts
+- **Environment Variables**: Sensitive data stored in environment variables, not code
+- **Input Validation**: All user inputs and web data are validated and sanitized
+- **Rate Limiting**: Built-in protection against API abuse and blocking
+- **Error Handling**: Secure error messages that don't expose internal information
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these guidelines:
+
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Follow** PEP 8 coding standards
+4. **Add** type hints to all new functions
+5. **Write** tests for new functionality (minimum 90% coverage)
+6. **Run** the test suite: `pytest tests/ -v`
+7. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+8. **Push** to the branch (`git push origin feature/amazing-feature`)
+9. **Open** a Pull Request
+
+### Code Quality Standards
+
+- **Type Hints**: All functions must include proper type annotations
+- **Documentation**: Follow Google-style docstrings
+- **Testing**: New features require comprehensive test coverage
+- **Linting**: Code must pass `ruff check` without errors
+
+## 📚 API Documentation
+
+For detailed API documentation and advanced usage:
+
+- [Automation API Reference](docs/automation_tool_documentation.md)
+- [Row Range Functionality](docs/row_range_functionality.md)
+- [Google Sheets Integration Guide](docs/sheets_integration.md)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Playwright**: For robust browser automation
+- **Google Sheets API**: For seamless spreadsheet integration
+- **pytest**: For comprehensive testing framework
+- **ruff**: For modern Python linting
