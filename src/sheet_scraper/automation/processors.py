@@ -226,9 +226,24 @@ class ProductProcessor:
 
         # Filter valid results
         valid_results = [r for r in supplier_results if r.price is not None and r.in_stock]
+
+        # Enhanced debugging for supplier filtering
+        debug_print_scraping_attempt("", "Detailed supplier analysis", {
+            "total_suppliers": len(supplier_results),
+            "supplier_details": [
+                f"{r.supplier_name}: price={r.price}, in_stock={r.in_stock}, error='{r.error}'"
+                for r in supplier_results
+            ]
+        })
+
         debug_print_scraping_attempt("", "Filtering valid results", {
             "valid_results_count": len(valid_results),
-            "valid_suppliers": [f"{r.supplier_name}: ${r.price}" for r in valid_results]
+            "valid_suppliers": [f"{r.supplier_name}: ${r.price}" for r in valid_results],
+            "filtered_out_suppliers": [
+                f"{r.supplier_name}: price={r.price}, in_stock={r.in_stock} ({'PRICE_MISSING' if r.price is None else 'OUT_OF_STOCK'})"
+                for r in supplier_results
+                if not (r.price is not None and r.in_stock)
+            ]
         })
 
         if valid_results:
@@ -243,12 +258,35 @@ class ProductProcessor:
                 product_data.old_price or 0.0,
                 lowest_price_found,
                 best_supplier_url,
-                f"Selected {chosen_supplier_name} as best supplier"
+                f"Selected {chosen_supplier_name} as best supplier (in stock)"
             )
         else:
-            debug_print_scraping_attempt("", "No valid results found", {
-                "all_results": [f"{r.supplier_name}: price={r.price}, in_stock={r.in_stock}, error={r.error}" for r in supplier_results]
+            # Fallback: If no in-stock items, consider out-of-stock items with prices
+            price_only_results = [r for r in supplier_results if r.price is not None]
+
+            debug_print_scraping_attempt("", "No in-stock items found, checking out-of-stock prices", {
+                "price_only_results_count": len(price_only_results),
+                "price_only_suppliers": [f"{r.supplier_name}: ${r.price} (out-of-stock)" for r in price_only_results]
             })
+
+            if price_only_results:
+                # Find the lowest price among out-of-stock items
+                best_result = min(price_only_results, key=lambda x: x.price)
+                lowest_price_found = best_result.price
+                best_supplier_url = best_result.url
+                chosen_shipping_fee = best_result.shipping_fee
+                chosen_supplier_name = best_result.supplier_name
+
+                debug_print_price_comparison(
+                    product_data.old_price or 0.0,
+                    lowest_price_found,
+                    best_supplier_url,
+                    f"Selected {chosen_supplier_name} as best supplier (out-of-stock but has price)"
+                )
+            else:
+                debug_print_scraping_attempt("", "No valid results found", {
+                    "all_results": [f"{r.supplier_name}: price={r.price}, in_stock={r.in_stock}, error={r.error}" for r in supplier_results]
+                })
 
         # Check for blocking
         suppliers_with_errors = [r for r in supplier_results if r.error is not None]
@@ -273,6 +311,7 @@ class ProductProcessor:
         # Check if all products are out of stock
         has_price_data = any(r.price is not None for r in supplier_results)
         all_out_of_stock = has_price_data and all(not r.in_stock for r in supplier_results if r.price is not None)
+        has_in_stock_items = any(r.price is not None and r.in_stock for r in supplier_results)
 
         # Determine new price and VA note
         if all_blocked:
@@ -280,18 +319,32 @@ class ProductProcessor:
             new_va_note = "Blocked"
         elif lowest_price_found is not None and best_supplier_url is not None:
             new_price_to_update = lowest_price_found
-            if new_price_to_update > product_data.old_price:
-                new_va_note = "Up"
+
+            # Determine price change indicator
+            if new_price_to_update >= 299.99:
+                new_va_note = "$$$"
+            elif new_price_to_update > product_data.old_price:
+                new_va_note = "Up" + ("*" if not has_in_stock_items else "")  # Add * for out-of-stock price
             elif new_price_to_update < product_data.old_price:
-                new_va_note = "Down"
+                new_va_note = "Down" + ("*" if not has_in_stock_items else "")  # Add * for out-of-stock price
             else:
-                new_va_note = ""
+                new_va_note = "*" if not has_in_stock_items else ""  # * indicates out-of-stock price
         elif has_price_data and all_out_of_stock:
             new_price_to_update = product_data.old_price
             new_va_note = ""
         else:
             new_price_to_update = product_data.old_price
             new_va_note = ""
+
+        debug_print_scraping_attempt("", "Final result determination", {
+            "new_price": new_price_to_update,
+            "new_va_note": new_va_note,
+            "best_supplier": chosen_supplier_name,
+            "best_url": best_supplier_url,
+            "has_in_stock_items": has_in_stock_items,
+            "all_out_of_stock": all_out_of_stock,
+            "all_blocked": all_blocked
+        })
 
         return PriceUpdateResult(
             new_price=new_price_to_update,

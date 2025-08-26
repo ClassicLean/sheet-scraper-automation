@@ -89,6 +89,18 @@
         ".add-to-cart:not([disabled])",
         "button[type='submit']:not([disabled])"
       ],
+      "vivo": [
+        ".product-form button[type='submit']:not([disabled])",
+        ".product-form .btn-product-form:not([disabled])",
+        "button[name='add']:not([disabled])",
+        ".btn.product-form__cart-submit:not([disabled])",
+        "form[action*='cart'] button[type='submit']:not([disabled])",
+        ".product__inventory .btn:not([disabled])",
+        ".btn-product-form:not(.btn--unavailable):not([disabled])",
+        ".product-form__buttons button:not([disabled])",
+        "button.btn:contains('Add to cart'):not([disabled])",
+        ".product-inventory-add:not([disabled])"
+      ],
       "generic": [
         ".add-to-cart:not([disabled])",
         ".in-stock",
@@ -114,6 +126,22 @@
         ".out-of-stock",
         ".unavailable",
         ".sold-out"
+      ],
+      "vivo": [
+        ".product-form button[disabled]",
+        ".btn-product-form[disabled]",
+        ".btn--unavailable",
+        ".product-form__cart-submit[disabled]",
+        ".btn.sold-out",
+        ".product__inventory .btn[disabled]",
+        ".product-inventory-unavailable",
+        ".inventory-policy:contains('Sold out')",
+        ".product-form--soldout",
+        ".btn:contains('Sold out')",
+        ".btn:contains('Unavailable')",
+        ".out-of-stock",
+        ".sold-out",
+        ".unavailable"
       ],
       "generic": [
         ".out-of-stock",

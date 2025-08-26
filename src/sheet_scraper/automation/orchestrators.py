@@ -144,12 +144,12 @@ class SheetScraperAutomation:
                            start_row_index: int | None,
                            end_row_index: int | None) -> tuple[int, int]:
         """Determine the actual row range to process."""
-        # Default to row 7 (index 6) if no range specified
+        # Default to row 9 (index 8) if no range specified
         if start_row_index is None and end_row_index is None:
-            return 6, 7  # Process only row 7
+            return 8, 9  # Process only row 9
 
-        start_idx = start_row_index if start_row_index is not None else 6
-        end_idx = end_row_index if end_row_index is not None else 7
+        start_idx = start_row_index if start_row_index is not None else 8
+        end_idx = end_row_index if end_row_index is not None else 9
 
         # Ensure we don't exceed sheet bounds
         max_rows = len(sheet_data)
@@ -387,8 +387,8 @@ class AutomationOrchestrator:
         Returns:
             Tuple of (start_index, end_index) for internal use
         """
-        # Default to row 7 if no parameters provided
-        default_row = 7
+        # Default to row 9 if no parameters provided
+        default_row = 9
 
         # Handle start row
         if start_row is not None:
@@ -396,7 +396,7 @@ class AutomationOrchestrator:
         elif os.environ.get("PROCESS_START_ROW"):
             start_index = max(0, int(os.environ.get("PROCESS_START_ROW")) - 1)
         else:
-            start_index = default_row - 1  # Default to row 7 (0-based index 6)
+            start_index = default_row - 1  # Default to row 9 (0-based index 8)
 
         # Handle end row
         if end_row is not None:
@@ -404,6 +404,6 @@ class AutomationOrchestrator:
         elif os.environ.get("PROCESS_END_ROW"):
             end_index = int(os.environ.get("PROCESS_END_ROW"))
         else:
-            end_index = default_row  # Default to row 7
+            end_index = default_row  # Default to row 9
 
         return start_index, end_index

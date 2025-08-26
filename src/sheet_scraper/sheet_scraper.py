@@ -206,7 +206,7 @@ def parse_command_line_arguments():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python -m src.sheet_scraper.sheet_scraper                    # Default: process row 7 only
+  python -m src.sheet_scraper.sheet_scraper                    # Default: process row 9 only
   python -m src.sheet_scraper.sheet_scraper --start-row 1     # Process from row 1 to default end
   python -m src.sheet_scraper.sheet_scraper --start-row 1 --end-row 10  # Process rows 1-10
   python -m src.sheet_scraper.sheet_scraper --end-row 5       # Process from default start to row 5
