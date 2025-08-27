@@ -37,6 +37,8 @@ test = [
     "pytest-cov>=4.0",
     "pytest-mock>=3.10",
     "pytest-asyncio>=0.21",
+    "pytest-benchmark>=5.0",
+    "pytest-xdist>=3.0",
 ]
 
 [project.scripts]
@@ -61,7 +63,18 @@ markers = [
     "core: Core functionality tests",
     "scraping: Web scraping related tests",
     "infrastructure: Infrastructure component tests",
+    "benchmark: Performance benchmark tests",
 ]
+
+[tool.pytest-benchmark]
+# Benchmark configuration
+min_rounds = 5
+max_time = 5.0
+min_time = 0.000005
+sort = "mean"
+histogram = true
+save = ".benchmarks"
+save_data = true
 
 [tool.coverage.run]
 source = ["src"]

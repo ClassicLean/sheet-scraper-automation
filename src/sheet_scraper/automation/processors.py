@@ -6,6 +6,7 @@ processing individual products and scraping supplier data.
 """
 
 import os
+import logging
 from typing import Any
 
 from playwright.sync_api import Page
@@ -18,6 +19,7 @@ from ..scraping_utils import (
     extract_shipping_fee,
     is_blocked,
     is_in_stock,
+    log_supplier_result,
     simulate_human_interaction,
 )
 from .data_models import PriceUpdateResult, ProductData, SupplierResult
@@ -27,10 +29,16 @@ class ProductProcessor:
     """Handles individual product processing and supplier scraping."""
 
     def __init__(self, page: Page, captcha_solver: CaptchaSolver, browser_manager: EnhancedBrowserManager, config: Config = None):
+        if not page:
+            raise ValueError("Page object cannot be None - browser setup failed")
+
         self.page = page
         self.captcha_solver = captcha_solver
         self.browser_manager = browser_manager
         self.config = config or Config()
+        self.logger = logging.getLogger('automation')
+
+        print(f"DEBUG: ProductProcessor initialized with page: {type(page)}")
 
     def process_product(self, product_data: ProductData) -> PriceUpdateResult:
         """
@@ -69,6 +77,9 @@ class ProductProcessor:
             # Debug: Start processing this URL
             debug_print_url_processing_start(supplier_url, supplier_index, total_suppliers)
 
+            # Log to automation.log for tracking
+            self.logger.info(f"Processing supplier {supplier_index + 1}/{total_suppliers}: {supplier_url}")
+
             try:
                 debug_print(f"DEBUG: Scraping supplier: {supplier_url}")
 
@@ -91,10 +102,37 @@ class ProductProcessor:
                 else:
                     failed_extractions += 1
 
+                # Log individual supplier result to automation.log
+                self.logger.info(f"Supplier result - {result.supplier_name}: Price=${result.price}, In Stock={result.in_stock}, Error='{result.error or 'None'}'")
+
+                # Log supplier result to price update log for tracking
+                log_supplier_result(
+                    row=product_data.row_index + 1,  # Convert to 1-based row number
+                    supplier_name=result.supplier_name,
+                    supplier_url=supplier_url,
+                    price=result.price,
+                    in_stock=result.in_stock,
+                    error=result.error
+                )
+
                 debug_print(f"DEBUG: Supplier result - Price: {result.price}, In Stock: {result.in_stock}, Error: {result.error}")
 
             except Exception as e:
                 failed_extractions += 1
+
+                # Log exception to automation.log
+                self.logger.error(f"Error scraping {supplier_url}: {str(e)}")
+
+                # Log supplier error to price update log
+                log_supplier_result(
+                    row=product_data.row_index + 1,  # Convert to 1-based row number
+                    supplier_name="Unknown",
+                    supplier_url=supplier_url,
+                    price=None,
+                    in_stock=False,
+                    error=str(e)
+                )
+
                 debug_print(f"DEBUG: Error scraping {supplier_url}: {str(e)}")
                 error_result = SupplierResult(
                     url=supplier_url,
@@ -129,14 +167,29 @@ class ProductProcessor:
         debug_print(f"DEBUG: Scraping details for {url}")
 
         try:
+            # Validate page object before navigation
+            if not self.page:
+                raise Exception("Page object is None - cannot navigate")
+
             # Navigate to the URL with enhanced debugging
             debug_print_page_navigation(url, "STARTING", {"timeout": "60000ms", "method": "page.goto()"})
+
+            # Log navigation start to automation.log
+            self.logger.info(f"Navigating to URL: {url}")
+
+            print(f"DEBUG: About to call page.goto() for {url}")
+            print(f"DEBUG: Page object type: {type(self.page)}")
+            print(f"DEBUG: Page object is None: {self.page is None}")
 
             response = self.page.goto(url, timeout=60000)  # Increased timeout to 60 seconds
 
             # Debug navigation result
             status_code = response.status if response else "Unknown"
             page_title = self.page.title() if self.page else "Unknown"
+
+            # Log navigation result to automation.log
+            self.logger.info(f"Navigation completed - Status: {status_code}, Title: {page_title[:50] + '...' if len(page_title) > 50 else page_title}")
+
             debug_print_page_navigation(url, "COMPLETED", {
                 "status_code": status_code,
                 "page_title": page_title[:50] + "..." if len(page_title) > 50 else page_title,
@@ -223,6 +276,7 @@ class ProductProcessor:
         best_supplier_url = None
         chosen_shipping_fee = None
         chosen_supplier_name = ""
+        best_supplier_in_stock = False  # Track if the best supplier is in stock
 
         # Filter valid results
         valid_results = [r for r in supplier_results if r.price is not None and r.in_stock]
@@ -253,6 +307,7 @@ class ProductProcessor:
             best_supplier_url = best_result.url
             chosen_shipping_fee = best_result.shipping_fee
             chosen_supplier_name = best_result.supplier_name
+            best_supplier_in_stock = True  # This result is from in-stock items
 
             debug_print_price_comparison(
                 product_data.old_price or 0.0,
@@ -276,6 +331,7 @@ class ProductProcessor:
                 best_supplier_url = best_result.url
                 chosen_shipping_fee = best_result.shipping_fee
                 chosen_supplier_name = best_result.supplier_name
+                best_supplier_in_stock = False  # This result is from out-of-stock items
 
                 debug_print_price_comparison(
                     product_data.old_price or 0.0,
@@ -324,17 +380,19 @@ class ProductProcessor:
             if new_price_to_update >= 299.99:
                 new_va_note = "$$$"
             elif new_price_to_update > product_data.old_price:
-                new_va_note = "Up" + ("*" if not has_in_stock_items else "")  # Add * for out-of-stock price
+                new_va_note = "Up" if has_in_stock_items else ""  # Leave blank for out-of-stock items
             elif new_price_to_update < product_data.old_price:
-                new_va_note = "Down" + ("*" if not has_in_stock_items else "")  # Add * for out-of-stock price
+                new_va_note = "Down" if has_in_stock_items else ""  # Leave blank for out-of-stock items
             else:
-                new_va_note = "*" if not has_in_stock_items else ""  # * indicates out-of-stock price
+                new_va_note = "" if not has_in_stock_items else ""  # Leave blank for out-of-stock items
         elif has_price_data and all_out_of_stock:
             new_price_to_update = product_data.old_price
             new_va_note = ""
         else:
-            new_price_to_update = product_data.old_price
-            new_va_note = ""
+            # Complete failure: no valid prices found from any supplier
+            # Return None to indicate scraping failure rather than using old price
+            new_price_to_update = None
+            new_va_note = "No Data"
 
         debug_print_scraping_attempt("", "Final result determination", {
             "new_price": new_price_to_update,
@@ -352,5 +410,6 @@ class ProductProcessor:
             best_supplier_url=best_supplier_url,
             chosen_shipping_fee=chosen_shipping_fee,
             chosen_supplier_name=chosen_supplier_name,
-            all_blocked=all_blocked
+            all_blocked=all_blocked,
+            best_supplier_in_stock=best_supplier_in_stock
         )

@@ -127,6 +127,8 @@ OUT_OF_STOCK_INDICATORS = [
     "no longer available",
     "temporarily out of stock",
     "this item is currently unavailable",
+    "discontinue",
+    "discontinued",
 ]
 
 # New: Selector-based stock indicators

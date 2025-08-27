@@ -161,6 +161,12 @@ def extract_price(page, config=None) -> float | None:
         from sheet_scraper.config.config_manager import Config
         config = Config()
 
+    # Check if this is an error page before attempting price extraction
+    from sheet_scraper.utils.web_scraping import is_error_page
+    if is_error_page(page):
+        print(f"DEBUG: Skipping price extraction - detected error page: {page.url}")
+        return None
+
     site = config.detect_site(page.url)
 
     # Wait for page to be properly loaded
@@ -201,7 +207,7 @@ def extract_price(page, config=None) -> float | None:
                             print(f"DEBUG: Skipping price {price} - likely quantity (no currency symbol)")
                             continue
 
-                        print(f"DEBUG: ✓ VALID PRICE FOUND using {site} selector '{selector}': {price_text} -> {price}")
+                        print(f"DEBUG: [SUCCESS] VALID PRICE FOUND using {site} selector '{selector}': {price_text} -> {price}")
                         return price
                     else:
                         print(f"DEBUG: Skipping invalid/zero price: {price}")
@@ -237,7 +243,7 @@ def extract_price(page, config=None) -> float | None:
                                 print(f"DEBUG: Skipping generic price {price} - likely quantity (no currency symbol)")
                                 continue
 
-                            print(f"DEBUG: ✓ VALID PRICE FOUND using generic selector '{selector}': {price_text} -> {price}")
+                            print(f"DEBUG: [SUCCESS] VALID PRICE FOUND using generic selector '{selector}': {price_text} -> {price}")
                             return price
                         else:
                             print(f"DEBUG: Skipping invalid/zero generic price: {price}")
@@ -282,7 +288,7 @@ def extract_price(page, config=None) -> float | None:
                                     print(f"DEBUG: Skipping Amazon split price {price} - likely quantity")
                                     continue
 
-                                print(f"DEBUG: ✓ VALID AMAZON SPLIT PRICE: {whole_price}.{fraction_price} -> {price}")
+                                print(f"DEBUG: [SUCCESS] VALID AMAZON SPLIT PRICE: {whole_price}.{fraction_price} -> {price}")
                                 return price
                     except Exception:
                         continue
@@ -298,12 +304,12 @@ def extract_price(page, config=None) -> float | None:
             price_text = price_match.group(1)
             price = parse_price(price_text)
             if price is not None and price > 0:
-                print(f"DEBUG: ✓ VALID PRICE found in content: ${price_text} -> {price}")
+                print(f"DEBUG: [SUCCESS] VALID PRICE found in content: ${price_text} -> {price}")
                 return price
         else:
             print("DEBUG: No price pattern found in page content")
     except Exception as e:
         print(f"DEBUG: Error searching content for price: {e}")
 
-    print(f"DEBUG: ❌ NO VALID PRICE FOUND for {page.url}")
+    print(f"DEBUG: NO VALID PRICE FOUND for {page.url}")
     return None

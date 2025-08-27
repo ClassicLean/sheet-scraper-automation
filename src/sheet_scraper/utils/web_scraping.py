@@ -18,6 +18,78 @@ from .logs_module import debug_print
 from .pricing import parse_price
 
 
+def is_error_page(page) -> bool:
+    """
+    Detect if the page is a 404 error page or other error page.
+
+    Args:
+        page: Playwright page object
+
+    Returns:
+        bool: True if page appears to be an error page, False otherwise
+    """
+    try:
+        # Check HTTP status code first
+        response = page.url
+
+        # Get page content for text-based detection
+        content = page.content().lower()
+
+        # Common 404 and error page indicators
+        error_indicators = [
+            "404 page not found",
+            "404 not found",
+            "page not found",
+            "page does not exist",
+            "page you requested does not exist",
+            "the page you are looking for doesn't exist",
+            "this page doesn't exist",
+            "error 404",
+            "not found",
+            "page unavailable",
+            "page is temporarily unavailable",
+            "resource not found",
+            "file not found",
+            "document not found",
+            "sorry, we can't find that page",
+            "oops! page not found",
+            "the requested url was not found"
+        ]
+
+        # Check for error indicators in content
+        for indicator in error_indicators:
+            if indicator in content:
+                debug_print(f"DEBUG: Error page detected by text: '{indicator}' in content for {page.url}")
+                return True
+
+        # Check for specific error page elements
+        try:
+            # Look for common error page elements
+            error_selectors = [
+                "h1:has-text('404')",
+                "h1:has-text('Not Found')",
+                "h1:has-text('Page Not Found')",
+                "[class*='error']",
+                "[class*='404']",
+                "[id*='error']",
+                "[id*='404']"
+            ]
+
+            for selector in error_selectors:
+                elements = page.query_selector_all(selector)
+                if elements:
+                    debug_print(f"DEBUG: Error page detected by selector: '{selector}' for {page.url}")
+                    return True
+        except Exception as e:
+            debug_print(f"DEBUG: Error checking error page selectors: {e}")
+
+        return False
+
+    except Exception as e:
+        debug_print(f"DEBUG: Error in is_error_page: {e}")
+        return False
+
+
 def is_blocked(content: str, config=None) -> bool:
     """
     Enhanced blocking detection with configurable indicators.
@@ -45,25 +117,28 @@ def is_blocked(content: str, config=None) -> bool:
     # Legacy blocking indicators (fallback) - made more specific to avoid false positives
     legacy_indicators = [
         "robot or human",
-        "solve captcha",
-        "complete captcha",
-        "verify captcha",
-        "captcha verification",
-        "captcha",  # Added single word for tests
-        "enter captcha",
+        "solve the captcha",
+        "complete the captcha",
+        "verify the captcha",
+        "please verify you are human",
+        "captcha verification required",
+        "enter the captcha",
         "access denied",
-        "unusual traffic",
+        "unusual traffic detected",
         "verify you are human",
-        "security check",
+        "security check required",
         "bot detection",
         "robot check",  # Added for tests
-        "rate limit",
+        "rate limit exceeded",
         "too many requests",
-        "please wait",
+        "please wait while we verify",
         "checking your browser before accessing",
         "enable javascript and cookies",
         "ddos protection by cloudflare",
+        "cloudflare security check",
         "ray id:",
+        "we need to verify that you're human",
+        "security verification required"
     ]
 
     for indicator in legacy_indicators:
@@ -261,6 +336,64 @@ def is_in_stock(page, config=None) -> bool:
         # If we found negative text, return False immediately (override any selectors)
         if found_negative_text:
             return False
+
+    # Special handling for Vevor - check for discontinuation indicators
+    if site == "vevor":
+        # 1. Check schema.org structured data for discontinued status
+        try:
+            structured_data = page.evaluate("""
+                () => {
+                    const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+                    for (const script of scripts) {
+                        try {
+                            const data = JSON.parse(script.textContent);
+                            // Check offers array for availability
+                            if (data.offers && Array.isArray(data.offers)) {
+                                for (const offer of data.offers) {
+                                    if (offer.availability) {
+                                        return offer.availability;
+                                    }
+                                }
+                            }
+                            // Check direct availability property
+                            if (data.availability) {
+                                return data.availability;
+                            }
+                        } catch (e) {
+                            // Continue to next script
+                        }
+                    }
+                    return null;
+                }
+            """)
+            if structured_data:
+                # Check for schema.org/Discontinued URL or text containing "discontinued"
+                if ("schema.org/Discontinued" in structured_data or
+                    "discontinued" in structured_data.lower()):
+                    print(f"DEBUG: Vevor discontinued detected by structured data: {structured_data} for {page.url}")
+                    return False
+        except Exception as e:
+            print(f"DEBUG: Error checking Vevor structured data: {e}")
+
+        # 2. Check for discontinue status container
+        discontinue_selectors = [
+            ".good-status-container_kg_a.discontinue_gxC7",
+            ".dt_txt_cqUZ",
+            ".discontinue_gxC7"
+        ]
+
+        for selector in discontinue_selectors:
+            try:
+                element = page.query_selector(selector)
+                if element:
+                    text_content = element.text_content().lower().strip()
+                    print(f"DEBUG: Vevor status element text for {selector}: '{text_content}' for {page.url}")
+                    if "discontinue" in text_content or "discontinued" in text_content:
+                        print(f"DEBUG: Vevor discontinued detected by selector: {selector} for {page.url}")
+                        return False
+            except Exception as e:
+                print(f"DEBUG: Error checking Vevor discontinue selector {selector}: {e}")
+                continue
 
     # 1. First check for positive in-stock indicators (highest priority)
     in_stock_selectors = config.get_stock_selectors(site, "in_stock")

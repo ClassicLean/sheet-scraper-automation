@@ -55,6 +55,17 @@
       ".product-price",
       ".price-current"
     ],
+    "vevor": [
+      ".p1_fh5X [data-int]",
+      "[data-ga4-goods-details-price] span[data-int]",
+      ".goodsPrice_ybhq .p1_fh5X",
+      "[data-currency-position='prefix']",
+      ".price_bjuf .p1_fh5X",
+      ".goodsPrice .p1_fh5X",
+      "[data-canvas-main-price] span[data-int]",
+      ".price",
+      ".product-price"
+    ],
     "generic": [
       ".price",
       ".product-price",
@@ -101,6 +112,14 @@
         "button.btn:contains('Add to cart'):not([disabled])",
         ".product-inventory-add:not([disabled])"
       ],
+      "vevor": [
+        "button[data-add-to-cart]:not([disabled])",
+        ".SEO_D_T_R-btns-addToCart button:not([disabled])",
+        "button[type='submit']:not([disabled])",
+        ".add-to-cart:not([disabled])",
+        ".btn:not([disabled])",
+        "form button:not([disabled])"
+      ],
       "generic": [
         ".add-to-cart:not([disabled])",
         ".in-stock",
@@ -143,6 +162,17 @@
         ".sold-out",
         ".unavailable"
       ],
+      "vevor": [
+        ".good-status-container_kg_a.discontinue_gxC7",
+        ".dt_txt_cqUZ:contains('Discontinue')",
+        ".discontinue_gxC7",
+        "button[data-add-to-cart][disabled]",
+        ".SEO_D_T_R-btns-addToCart button[disabled]",
+        ".out-of-stock",
+        ".unavailable",
+        ".sold-out",
+        ".discontinued"
+      ],
       "generic": [
         ".out-of-stock",
         ".unavailable",
@@ -153,22 +183,26 @@
   },
   "blocking_indicators": [
     "robot or human",
-    "solve captcha",
-    "complete captcha",
-    "verify captcha",
-    "captcha verification",
-    "enter captcha",
+    "solve the captcha",
+    "complete the captcha",
+    "verify the captcha",
+    "please verify you are human",
+    "captcha verification required",
+    "enter the captcha",
     "access denied",
-    "unusual traffic",
+    "unusual traffic detected",
     "verify you are human",
-    "security check",
+    "security check required",
     "bot detection",
     "please complete the security check",
     "we detected unusual activity",
-    "automated queries",
+    "automated queries detected",
     "sorry, we just need to make sure you're not a robot",
     "to continue shopping, please complete this security verification",
     "checking your browser before accessing",
-    "too many requests"
+    "too many requests",
+    "enable javascript and cookies to continue",
+    "cloudflare security check",
+    "please wait while we check your browser"
   ]
 }

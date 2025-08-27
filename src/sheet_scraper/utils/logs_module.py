@@ -168,8 +168,8 @@ def truncate_log_file(file_path: str, max_lines: int = 100) -> None:
 
 def log_update(
     product_id: str,
-    old_price: float,
-    new_price: float,
+    old_price: float | None,
+    new_price: float | None,
     status: str,
     message: str,
     row: int | None = None,
@@ -180,8 +180,8 @@ def log_update(
 
     Args:
         product_id: Product identifier
-        old_price: Previous price
-        new_price: New price
+        old_price: Previous price (None if no previous price)
+        new_price: New price (None if scraping failed)
         status: Update status (Success/Failed)
         message: Descriptive message
         row: Row number (optional)
@@ -196,9 +196,13 @@ def log_update(
         if len(product_id) > 100:
             display_id = product_id[:50] + "..." + product_id[-47:]
 
+        # Format prices with proper handling of None values
+        old_price_str = str(old_price) if old_price is not None else "No Data"
+        new_price_str = str(new_price) if new_price is not None else "No Data"
+
         log_entry = (
             f"[{timestamp}] {row_info}Product ID: {display_id}, "
-            f"Old Price: {old_price}, New Price: {new_price}, "
+            f"Old Price: {old_price_str}, New Price: {new_price_str}, "
             f"Status: {status}, Message: {message}\n"
         )
 
@@ -215,3 +219,73 @@ def log_update(
         print(f"ERROR: Failed to write to log file: {e}")
         # Fallback: print to console
         print(f"LOG: {product_id} | {old_price} -> {new_price} | {status}: {message}")
+
+
+def log_supplier_result(
+    row: int,
+    supplier_name: str,
+    supplier_url: str,
+    price: float | None,
+    in_stock: bool,
+    error: str | None = None,
+    log_file_path: str | None = None,
+) -> None:
+    """
+    Log individual supplier processing results.
+
+    Args:
+        row: Row number being processed
+        supplier_name: Name of the supplier (Amazon, Vivo, etc.)
+        supplier_url: The supplier URL
+        price: Price found (or None)
+        in_stock: Whether item is in stock
+        error: Error message if any
+        log_file_path: Custom log file path (optional)
+    """
+    try:
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        # Truncate long URLs for readability
+        display_url = supplier_url
+        if len(supplier_url) > 80:
+            display_url = supplier_url[:40] + "..." + supplier_url[-37:]
+
+        # Determine status
+        if error:
+            status = "Error"
+            # Clean error message of problematic characters while preserving readability
+            message = str(error).replace('❌', 'X').replace('✓', 'OK').replace('\u274c', 'X')
+        elif price is not None:
+            status = "Price Found"
+            stock_status = "In Stock" if in_stock else "Out of Stock"
+            message = f"${price} ({stock_status})"
+        else:
+            status = "No Price"
+            message = "Price not found"
+
+        log_entry = (
+            f"[{timestamp}] Row: {row}, Supplier: {supplier_name}, "
+            f"URL: {display_url}, Status: {status}, Result: {message}\n"
+        )
+
+        # Use provided log file path or default
+        actual_log_file = log_file_path or LOG_FILE
+
+        # Ensure log directory exists
+        os.makedirs(os.path.dirname(actual_log_file), exist_ok=True)
+
+        try:
+            with open(actual_log_file, "a", encoding="utf-8") as log_file:
+                log_file.write(log_entry)
+        except UnicodeEncodeError as ue:
+            # Fallback: Remove problematic Unicode characters and retry
+            clean_entry = log_entry.encode('ascii', 'replace').decode('ascii')
+            with open(actual_log_file, "a", encoding="utf-8") as log_file:
+                log_file.write(clean_entry)
+            print(f"WARNING: Unicode encoding issue resolved in log entry: {ue}")
+
+    except Exception as e:
+        print(f"ERROR: Failed to write supplier result to log file: {e}")
+        # Fallback: print to console with clean characters
+        clean_error = str(error).replace('❌', 'X').replace('✓', 'OK') if error else "None"
+        print(f"SUPPLIER LOG: Row {row} | {supplier_name} | {price} | {in_stock} | {clean_error}")

@@ -53,6 +53,7 @@ from ..config.constants import (
     VA_NOTES_COL,
 )
 from ..scraping_utils import create_color_request
+from ..utils.sheets import create_text_format_request
 from .data_models import PriceUpdateResult
 
 
@@ -84,15 +85,13 @@ class SheetFormatter:
                     row_index, COLOR_BLUE, col_index=VA_NOTES_COL, text_color=COLOR_WHITE
                 )
             )
-        elif update_result.best_supplier_url is not None:
-            # Item is available: apply full formatting
+        elif update_result.best_supplier_url is not None and update_result.best_supplier_in_stock:
+            # Item is available and in stock: apply full formatting
             requests.extend(self._create_available_item_formatting(row_index, row, update_result))
         else:
-            # Item is unavailable: entire row red background, white text
+            # Item is unavailable or out of stock: apply out-of-stock formatting
             if not update_result.all_blocked:
-                requests.append(
-                    create_color_request(row_index, COLOR_RED, text_color=COLOR_WHITE)
-                )
+                requests.extend(self._create_out_of_stock_formatting(row_index, row, update_result))
 
         # Column A (VA Notes) formatting for non-blocked items
         if update_result.new_va_note and update_result.new_va_note.strip() and update_result.new_va_note != "Blocked":
@@ -114,7 +113,7 @@ class SheetFormatter:
 
         # Default formatting for specific columns
         requests.extend([
-            create_color_request(row_index, COLOR_BLACK, col_index=COL_AG, text_color=COLOR_WHITE),
+            create_color_request(row_index, COLOR_BLACK, col_index=COL_AG, text_color=COLOR_BLACK),  # AG: always black text and black fill
             create_color_request(row_index, COLOR_BLUE, col_index=COL_AB, text_color=COLOR_WHITE),
             create_color_request(row_index, COLOR_GREEN, col_index=COL_AE, text_color=COLOR_BLACK)
         ])
@@ -210,8 +209,9 @@ class SheetFormatter:
 
     def _create_standard_text_formatting(self, row_index: int) -> list[dict]:
         """Create standard text color formatting for various columns."""
-        return [
+        requests = [
             create_color_request(row_index, text_color=COLOR_BLACK, col_index=LAST_STOCK_CHECK_COL),
+            create_text_format_request(row_index, LAST_STOCK_CHECK_COL),  # Format date column as TEXT
             create_color_request(row_index, text_color=COLOR_BLACK, col_index=COL_P),
             create_color_request(row_index, text_color=COLOR_BLACK, col_index=COL_R),
             create_color_request(row_index, text_color=COLOR_BLACK, col_index=COL_S),
@@ -222,7 +222,7 @@ class SheetFormatter:
             create_color_request(row_index, text_color=COLOR_WHITE, col_index=COL_AC),
             create_color_request(row_index, text_color=COLOR_WHITE, col_index=COL_AD),
             create_color_request(row_index, text_color=COLOR_DARK_CORNFLOWER_BLUE_2, col_index=PRODUCT_ID_COL),
-            create_color_request(row_index, COLOR_BLACK, col_index=COL_AG, text_color=COLOR_WHITE),
+            create_color_request(row_index, COLOR_BLACK, col_index=COL_AG, text_color=COLOR_BLACK),  # AG: always black text
             # Supplier columns (AH-AN)
             create_color_request(row_index, text_color=COLOR_DARK_CORNFLOWER_BLUE_2, col_index=33),  # AH
             create_color_request(row_index, text_color=COLOR_DARK_CORNFLOWER_BLUE_2, col_index=34),  # AI
@@ -234,3 +234,25 @@ class SheetFormatter:
             create_color_request(row_index, text_color=COLOR_BLACK, col_index=COL_Q),
             create_color_request(row_index, COLOR_LIGHT_MAGENTA_2, col_index=COL_Y)
         ]
+        return requests
+
+    def _create_out_of_stock_formatting(self, row_index: int, row: list[str],
+                                       update_result: PriceUpdateResult) -> list[dict]:
+        """Create formatting requests for out-of-stock/unavailable items."""
+        requests = []
+
+        # Entire row red background with white text
+        requests.append(create_color_request(row_index, COLOR_RED, text_color=COLOR_WHITE))
+
+        # Columns F, G, H, I, J, K: Red text color (per requirements)
+        for col_index in [COL_F, COL_G, COL_H, COL_I, COL_J, COL_K]:
+            requests.append(
+                create_color_request(row_index, text_color=COLOR_RED, col_index=col_index)
+            )
+
+        # Column AG: Always black text and black fill (per requirements)
+        requests.append(
+            create_color_request(row_index, COLOR_BLACK, col_index=COL_AG, text_color=COLOR_BLACK)
+        )
+
+        return requests

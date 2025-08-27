@@ -22,43 +22,74 @@ class EnhancedBrowserManager:
 
     def create_context(self) -> BrowserContext:
         """Create a new browser context with random settings."""
-        context_options = {
-            "viewport": self._get_random_viewport(),
-            "user_agent": random.choice(USER_AGENTS),
-            "locale": random.choice(["en-US", "en-GB", "en-CA"]),
-            "timezone_id": random.choice(
-                ["America/New_York", "America/Los_Angeles", "America/Chicago"]
-            ),
-            "permissions": ["geolocation"],
-            "geolocation": self._get_random_location(),
-            "color_scheme": random.choice(["light", "dark"]),
-            "reduced_motion": random.choice(["reduce", "no-preference"]),
-        }
+        try:
+            print("DEBUG: Creating browser context with random settings...")
+            context_options = {
+                "viewport": self._get_random_viewport(),
+                "user_agent": random.choice(USER_AGENTS),
+                "locale": random.choice(["en-US", "en-GB", "en-CA"]),
+                "timezone_id": random.choice(
+                    ["America/New_York", "America/Los_Angeles", "America/Chicago"]
+                ),
+                "permissions": ["geolocation"],
+                "geolocation": self._get_random_location(),
+                "color_scheme": random.choice(["light", "dark"]),
+                "reduced_motion": random.choice(["reduce", "no-preference"]),
+            }
 
-        # Add proxy if available
-        if self.proxy_manager:
-            proxy = self.proxy_manager.get_proxy()
-            if proxy:
-                context_options["proxy"] = {"server": proxy}
+            # Add proxy if available
+            if self.proxy_manager:
+                proxy = self.proxy_manager.get_proxy()
+                if proxy:
+                    context_options["proxy"] = {"server": proxy}
+                    print(f"DEBUG: Using proxy: {proxy}")
 
-        self.context = self.browser.new_context(**context_options)
-        return self.context
+            print(f"DEBUG: Context options: {context_options}")
+            self.context = self.browser.new_context(**context_options)
+
+            if not self.context:
+                raise Exception("Browser failed to create context")
+
+            print(f"DEBUG: Browser context created successfully: {type(self.context)}")
+            return self.context
+
+        except Exception as e:
+            print(f"CRITICAL ERROR: Failed to create browser context: {e}")
+            import traceback
+            print(f"TRACEBACK: {traceback.format_exc()}")
+            raise Exception(f"Browser context creation failed: {e}") from e
 
     def create_page(self) -> Page:
         """Create a new page with stealth features."""
-        if not self.context:
-            self.create_context()
+        try:
+            if not self.context:
+                print("DEBUG: Creating new browser context...")
+                self.create_context()
+                if not self.context:
+                    raise Exception("Failed to create browser context")
 
-        self.page = self.context.new_page()
+            print("DEBUG: Creating new page...")
+            self.page = self.context.new_page()
+            if not self.page:
+                raise Exception("Failed to create browser page")
 
-        # Apply stealth features
-        stealth_sync(self.page)
+            print("DEBUG: Applying stealth features...")
+            # Apply stealth features
+            stealth_sync(self.page)
 
-        # Add additional anti-detection measures
-        self._add_webdriver_overrides()
-        self._add_browser_overrides()
+            # Add additional anti-detection measures
+            print("DEBUG: Adding anti-detection measures...")
+            self._add_webdriver_overrides()
+            self._add_browser_overrides()
 
-        return self.page
+            print(f"DEBUG: Browser page created successfully: {type(self.page)}")
+            return self.page
+
+        except Exception as e:
+            print(f"CRITICAL ERROR: Failed to create browser page: {e}")
+            import traceback
+            print(f"TRACEBACK: {traceback.format_exc()}")
+            raise Exception(f"Browser page creation failed: {e}")from e
 
     def _get_random_viewport(self) -> dict[str, int]:
         """Generate a random but realistic viewport."""

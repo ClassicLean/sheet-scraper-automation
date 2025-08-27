@@ -73,6 +73,8 @@ class Config:
             return "vivo"
         elif "wayfair.com" in url_lower:
             return "wayfair"
+        elif "vevor.com" in url_lower:
+            return "vevor"
         else:
             return "generic"
 

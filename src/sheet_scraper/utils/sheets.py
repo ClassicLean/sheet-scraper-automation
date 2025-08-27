@@ -138,3 +138,35 @@ def create_color_request(
             "fields": fields,
         }
     }
+
+
+def create_text_format_request(row_index: int, col_index: int) -> dict[str, Any]:
+    """
+    Create a text formatting request to prevent Google Sheets from auto-interpreting values.
+
+    Args:
+        row_index: Row index (0-based)
+        col_index: Column index (0-based)
+
+    Returns:
+        Dict: Formatted request for Google Sheets API to set cell as TEXT format
+    """
+    return {
+        "repeatCell": {
+            "range": {
+                "sheetId": 0,
+                "startRowIndex": row_index,
+                "endRowIndex": row_index + 1,
+                "startColumnIndex": col_index,
+                "endColumnIndex": col_index + 1,
+            },
+            "cell": {
+                "userEnteredFormat": {
+                    "numberFormat": {
+                        "type": "TEXT"
+                    }
+                }
+            },
+            "fields": "userEnteredFormat.numberFormat",
+        }
+    }

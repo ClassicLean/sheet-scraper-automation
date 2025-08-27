@@ -44,7 +44,7 @@ class SheetManager:
         Returns:
             bool: True if update was successful
         """
-        current_date = datetime.now().strftime("%m/%d/%Y")
+        current_date = datetime.now().strftime("%m/%d")
         requests = []
 
         self.logger.info(f"Starting sheet update for row {product_data.row_index + 1}")
@@ -68,8 +68,23 @@ class SheetManager:
         self.logger.info(f"Created {len(requests)} update requests total")
         self.logger.info(f"Data requests: {len(data_requests)}")
 
-        # Execute all requests
-        success = update_sheet(self.service, self.spreadsheet_id, requests)
+        # Always update the date, regardless of price scraping success/failure
+        # This provides an audit trail of when we last checked each product
+        date_success = self._update_last_check_date_only(product_data, current_date)
+        self._date_update_succeeded = date_success  # Store for logging
+
+        # Handle price updates based on scraping results
+        if update_result.new_price is None:
+            success = False
+            self.logger.info("Marking as failure: No price data was successfully scraped")
+            self.logger.info(f"Date update {'succeeded' if date_success else 'failed'}")
+        else:
+            # Execute all price/data requests (excluding date since it's already updated)
+            price_requests = [req for req in requests if not self._is_date_update_request(req)]
+            success = update_sheet(self.service, self.spreadsheet_id, price_requests)
+            self.logger.info(f"Price update {'succeeded' if success else 'failed'}, Date update {'succeeded' if date_success else 'failed'}")
+            # Consider overall success if either date or price updates succeeded
+            success = success or date_success
 
         # Final debug output for Column X update result
         debug_print_column_x_update(
@@ -96,9 +111,14 @@ class SheetManager:
                 else:
                     log_status = "Success"
                     log_message = f"Price confirmed unchanged: ${update_result.new_price} ({update_result.chosen_supplier_name})"
-            elif price_extracted and not supplier_found:
-                log_status = "Success"
-                log_message = f"Price found: ${update_result.new_price} (no supplier URL available)"
+            elif not supplier_found:
+                # When no suppliers found valid prices, this should be treated as failure
+                # But note that date update may have succeeded
+                log_status = "Failed"
+                if update_result.new_price is None and hasattr(self, '_date_update_succeeded') and self._date_update_succeeded:
+                    log_message = f"All suppliers failed, but date updated: {update_result.new_va_note or 'No valid price data found'}"
+                else:
+                    log_message = f"All suppliers failed: {update_result.new_va_note or 'No valid price data found'}"
             else:
                 log_status = "Failed"
                 log_message = f"Price extraction failed: {update_result.new_va_note or 'No price data available'}"
@@ -148,12 +168,18 @@ class SheetManager:
                 f"API call failed - new_price: {update_result.new_price}, old_price: {product_data.old_price}"
             )
 
+            # Determine failure message based on what succeeded
+            if hasattr(self, '_date_update_succeeded') and self._date_update_succeeded:
+                failure_message = "Price scraping failed, but date updated successfully"
+            else:
+                failure_message = "Sheet update error (API call failed)"
+
             log_update(
                 product_data.product_id,
                 product_data.old_price,
                 update_result.new_price,
                 "Failed",
-                "Sheet update error (API call failed)",
+                failure_message,
                 row=product_data.row_index + 1,
             )
 
@@ -203,8 +229,8 @@ class SheetManager:
                     "values": [{
                         "userEnteredValue": (
                             {"numberValue": update_result.new_price}
-                            if isinstance(update_result.new_price, int | float) and update_result.new_price != float("inf")
-                            else {"stringValue": ""}
+                            if isinstance(update_result.new_price, (int, float)) and update_result.new_price is not None and update_result.new_price != float("inf")
+                            else {"stringValue": "No Data" if update_result.new_price is None else ""}
                         )
                     }]
                 }],
@@ -288,3 +314,39 @@ class SheetManager:
 
         self.logger.info(f"Created {len(requests)} data update requests total")
         return requests
+
+    def _update_last_check_date_only(self, product_data: ProductData, current_date: str) -> bool:
+        """Update only the last check date column, independent of price updates."""
+        try:
+            date_request = {
+                "updateCells": {
+                    "range": {
+                        "sheetId": 0,
+                        "startRowIndex": product_data.row_index,
+                        "endRowIndex": product_data.row_index + 1,
+                        "startColumnIndex": LAST_STOCK_CHECK_COL,
+                        "endColumnIndex": LAST_STOCK_CHECK_COL + 1,
+                    },
+                    "rows": [{"values": [{"userEnteredValue": {"stringValue": current_date}}]}],
+                    "fields": "userEnteredValue",
+                }
+            }
+
+            self.logger.info(f"Updating last check date for row {product_data.row_index + 1}")
+            result = update_sheet(self.service, self.spreadsheet_id, [date_request])
+            self.logger.info(f"Date update result: {'SUCCESS' if result else 'FAILED'}")
+            return result
+
+        except Exception as e:
+            self.logger.error(f"Failed to update last check date: {e}")
+            return False
+
+    def _is_date_update_request(self, request: dict) -> bool:
+        """Check if a request is for updating the date column."""
+        try:
+            update_cells = request.get("updateCells", {})
+            range_info = update_cells.get("range", {})
+            start_col = range_info.get("startColumnIndex")
+            return start_col == LAST_STOCK_CHECK_COL
+        except:
+            return False

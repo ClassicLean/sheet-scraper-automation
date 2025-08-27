@@ -144,12 +144,12 @@ class SheetScraperAutomation:
                            start_row_index: int | None,
                            end_row_index: int | None) -> tuple[int, int]:
         """Determine the actual row range to process."""
-        # Default to row 9 (index 8) if no range specified
+        # Default to row 5 (index 4) if no range specified
         if start_row_index is None and end_row_index is None:
-            return 8, 9  # Process only row 9
+            return 4, 5  # Process only row 5
 
-        start_idx = start_row_index if start_row_index is not None else 8
-        end_idx = end_row_index if end_row_index is not None else 9
+        start_idx = start_row_index if start_row_index is not None else 4
+        end_idx = end_row_index if end_row_index is not None else 5
 
         # Ensure we don't exceed sheet bounds
         max_rows = len(sheet_data)
@@ -328,7 +328,15 @@ class AutomationOrchestrator:
             self.logger.info(f"Using spreadsheet ID: {spreadsheet_id}")
 
             # Create automation instance
-            page = self.browser_manager.create_page() if self.browser_manager else None
+            print("DEBUG: Creating browser page...")
+            if not self.browser_manager:
+                raise Exception("Browser manager is None - cannot create page")
+
+            page = self.browser_manager.create_page()
+            if not page:
+                raise Exception("Failed to create browser page - page is None")
+
+            print(f"DEBUG: Browser page created successfully: {type(page)}")
 
             self.automation = SheetScraperAutomation(
                 page=page,
@@ -387,8 +395,8 @@ class AutomationOrchestrator:
         Returns:
             Tuple of (start_index, end_index) for internal use
         """
-        # Default to row 9 if no parameters provided
-        default_row = 9
+        # Default to row 20 if no parameters provided
+        default_row = 20
 
         # Handle start row
         if start_row is not None:
@@ -396,7 +404,7 @@ class AutomationOrchestrator:
         elif os.environ.get("PROCESS_START_ROW"):
             start_index = max(0, int(os.environ.get("PROCESS_START_ROW")) - 1)
         else:
-            start_index = default_row - 1  # Default to row 9 (0-based index 8)
+            start_index = default_row - 1  # Default to row 5 (0-based index 4)
 
         # Handle end row
         if end_row is not None:
@@ -404,6 +412,6 @@ class AutomationOrchestrator:
         elif os.environ.get("PROCESS_END_ROW"):
             end_index = int(os.environ.get("PROCESS_END_ROW"))
         else:
-            end_index = default_row  # Default to row 9
+            end_index = default_row  # Default to row 5
 
         return start_index, end_index

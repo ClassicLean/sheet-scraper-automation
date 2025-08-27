@@ -33,9 +33,10 @@ class SupplierResult:
 @dataclass
 class PriceUpdateResult:
     """Data class for price update results."""
-    new_price: float
+    new_price: float | None
     new_va_note: str
     best_supplier_url: str | None
     chosen_shipping_fee: float | None
     chosen_supplier_name: str
     all_blocked: bool
+    best_supplier_in_stock: bool = False  # Track if best supplier is actually in stock

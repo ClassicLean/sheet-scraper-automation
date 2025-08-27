@@ -29,6 +29,7 @@ from sheet_scraper.utils.logs_module import (
     debug_print_supplier_summary,
     debug_print_url_processing_start,
     log_update,
+    log_supplier_result,
     truncate_log_file,
 )
 from sheet_scraper.utils.pricing import (
@@ -53,6 +54,7 @@ __all__ = [
     "debug_print",
     "truncate_log_file",
     "log_update",
+    "log_supplier_result",
     "LOG_FILE",
     "debug_print_price_extraction",
     "debug_print_scraping_attempt",
