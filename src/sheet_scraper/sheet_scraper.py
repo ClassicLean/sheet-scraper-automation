@@ -25,6 +25,7 @@ from .core.automation_core import AutomationOrchestrator
 from .infrastructure.browser_manager import EnhancedBrowserManager
 from .infrastructure.captcha_solver import CaptchaSolver
 from .infrastructure.proxy_manager import ProxyManager
+from .logging.geolocation_logger import GeolocationLogger
 from .logs_module.automation_logging import get_logger, setup_logging_directories
 
 
@@ -181,12 +182,16 @@ def setup_application_environment():
             "price_update_log.txt",
             "automation.log",
             "errors.log",
-            "performance.log"
+            "performance.log",
+            "geolocation.log"
         ]
         for log_file in log_files:
             log_path = Path.cwd() / "logs" / log_file
             log_path.parent.mkdir(exist_ok=True)
             log_path.write_text("")  # Clear the file for fresh run data
+
+        # Initialize geolocation logger (which will also clear its log file)
+        GeolocationLogger()
 
         return True
     except Exception as e:
@@ -206,7 +211,7 @@ def parse_command_line_arguments():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python -m src.sheet_scraper.sheet_scraper                    # Default: process row 5 only
+  python -m src.sheet_scraper.sheet_scraper                    # Default: process row 21 only
   python -m src.sheet_scraper.sheet_scraper --start-row 1     # Process from row 1 to default end
   python -m src.sheet_scraper.sheet_scraper --start-row 1 --end-row 10  # Process rows 1-10
   python -m src.sheet_scraper.sheet_scraper --end-row 8       # Process from default start to row 8
@@ -219,14 +224,14 @@ Note: Row numbers are 1-based (as shown in Google Sheets).
         "--start-row",
         type=int,
         metavar="N",
-        help="Starting row number (1-based, as shown in Google Sheets). Default: 5"
+        help="Starting row number (1-based, as shown in Google Sheets). Default: 21"
     )
 
     parser.add_argument(
         "--end-row",
         type=int,
         metavar="N",
-        help="Ending row number (1-based, inclusive). Default: 5"
+        help="Ending row number (1-based, inclusive). Default: 21"
     )
 
     args = parser.parse_args()

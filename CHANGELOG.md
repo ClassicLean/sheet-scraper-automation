@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Configuration Updates & Enhanced Debugging (2025-08-28)
+- **✅ Default Row Updated** - Changed default processing row from 469 to 21 per updated business requirements
+- **✅ Unlimited Log Storage** - Removed 100-row limit for `price_update_log.txt` to enable unlimited debugging logs
+- **✅ Enhanced Help Text** - Updated command-line help to reflect new default row 21
+
+### Added - Enhanced Business Rules & Stock Detection (2025-08-28)
+- **✅ Costway Stock Detection** - Enhanced stock detection with specific selectors for Costway out-of-stock indicators (`p.oos`, `.instock-subscribe`)
+- **✅ Column A Business Rules** - Items ≥$299.99 automatically get "$$$" in Column A (VA Notes) and red formatting treatment
+- **✅ Price-Based Formatting** - Items ≥$299.99 treated as out-of-stock regardless of actual stock status for pricing compliance
+
+### Fixed - Stock Detection Accuracy (2025-08-28)
+- **❌ → ✅ Resolved**: Costway products incorrectly reported as in-stock when showing "Out of stock" or "Notify me when it's back"
+- **✅ Enhanced**: Added site-specific text-based stock detection for improved accuracy
+- **✅ Enhanced**: Better handling of page content analysis for out-of-stock indicators
+
 ### Added - Advanced Testing Infrastructure & Performance Optimization (2025-08-27)
 - **✅ Performance Benchmarking** - Implemented `pytest-benchmark` with 4 comprehensive benchmark tests measuring microsecond-level performance
 - **✅ Parallel Test Execution** - Added `pytest-xdist` for multi-worker parallel testing (6 workers on 12-core systems)

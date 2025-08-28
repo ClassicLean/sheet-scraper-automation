@@ -17,6 +17,10 @@
 ## 🎯 Current Sprint (Q1 2025)
 
 ### ✅ **Recently Completed (August 2025)**
+- ✅ **Default Row Update (August 28)** - Changed default processing row from 469 to 21 per updated business requirements
+- ✅ **Unlimited Log Storage (August 28)** - Removed 100-row limit for price_update_log.txt to enable unlimited debugging logs
+- ✅ **Enhanced Business Rules (August 28)** - Implemented $299.99+ pricing rules with "$$$" Column A marker and red formatting
+- ✅ **Costway Stock Detection (August 28)** - Enhanced stock detection with specific selectors for accurate out-of-stock identification
 - ✅ **Performance Benchmarking** - Implemented pytest-benchmark with 4 comprehensive tests
 - ✅ **Parallel Test Execution** - Added pytest-xdist for multi-worker testing (3-4x speed improvement)
 - ✅ **Comprehensive Testing Suite** - Created unified testing workflows and utilities

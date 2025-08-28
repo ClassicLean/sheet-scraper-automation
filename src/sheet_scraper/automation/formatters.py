@@ -85,13 +85,23 @@ class SheetFormatter:
                     row_index, COLOR_BLUE, col_index=VA_NOTES_COL, text_color=COLOR_WHITE
                 )
             )
-        elif update_result.best_supplier_url is not None and update_result.best_supplier_in_stock:
-            # Item is available and in stock: apply full formatting
+        elif (update_result.best_supplier_url is not None and update_result.best_supplier_in_stock and
+              update_result.new_price is not None and update_result.new_price < 299.99):
+            # Item is available, in stock, AND under $299.99: apply normal available formatting
             requests.extend(self._create_available_item_formatting(row_index, row, update_result))
         else:
-            # Item is unavailable or out of stock: apply out-of-stock formatting
+            # Item is unavailable, out of stock, OR ≥$299.99: apply out-of-stock formatting
             if not update_result.all_blocked:
                 requests.extend(self._create_out_of_stock_formatting(row_index, row, update_result))
+
+            # Special handling for $299.99+ items: set Column A with "$$$" and red formatting
+            if (update_result.new_price is not None and update_result.new_price >= 299.99 and
+                update_result.new_va_note == "$$$"):
+                requests.append(
+                    create_color_request(
+                        row_index, COLOR_RED, col_index=VA_NOTES_COL, text_color=COLOR_WHITE
+                    )
+                )
 
         # Column A (VA Notes) formatting for non-blocked items
         if update_result.new_va_note and update_result.new_va_note.strip() and update_result.new_va_note != "Blocked":
@@ -105,7 +115,7 @@ class SheetFormatter:
 
     def _create_available_item_formatting(self, row_index: int, row: list[str],
                                         update_result: PriceUpdateResult) -> list[dict]:
-        """Create formatting requests for available items."""
+        """Create formatting requests for available items under $299.99."""
         requests = []
 
         # Entire row white background
@@ -118,9 +128,8 @@ class SheetFormatter:
             create_color_request(row_index, COLOR_GREEN, col_index=COL_AE, text_color=COLOR_BLACK)
         ])
 
-        # Apply special formatting if price is less than $299.99
-        if update_result.new_price < 299.99:
-            requests.extend(self._create_under_299_formatting(row_index, row))
+        # Apply special formatting for items under $299.99
+        requests.extend(self._create_under_299_formatting(row_index, row))
 
         return requests
 

@@ -337,6 +337,60 @@ def is_in_stock(page, config=None) -> bool:
         if found_negative_text:
             return False
 
+    # Special handling for Costway - check text content and specific elements
+    if site == "costway":
+        # Check for specific Costway out-of-stock indicators
+        costway_oos_selectors = [
+            ".out-of-stock-main",
+            ".out-of-stock",
+            "p.oos",
+            ".oos",
+            ".instock-subscribe"
+        ]
+
+        for selector in costway_oos_selectors:
+            try:
+                element = page.query_selector(selector)
+                if element:
+                    text_content = element.text_content().lower().strip()
+                    print(f"DEBUG: Costway out-of-stock element found for {selector}: '{text_content}' for {page.url}")
+
+                    # Check for out-of-stock text indicators
+                    if any(indicator in text_content for indicator in [
+                        "out of stock",
+                        "notify me when it's back",
+                        "unavailable",
+                        "sold out",
+                        "temporarily out of stock"
+                    ]):
+                        print(f"DEBUG: Costway out-of-stock detected by element text: '{text_content}' for {page.url}")
+                        return False
+
+                    # If we find the .instock-subscribe element or "notify me" text, it's definitely out of stock
+                    if "instock-subscribe" in selector or "notify me" in text_content:
+                        print(f"DEBUG: Costway out-of-stock detected by notify element: {selector} for {page.url}")
+                        return False
+            except Exception as e:
+                print(f"DEBUG: Error checking Costway out-of-stock selector {selector}: {e}")
+                continue
+
+        # Also check page content for Costway-specific out-of-stock text
+        try:
+            page_content = page.content().lower()
+            costway_oos_indicators = [
+                "notify me when it's back",
+                '<p class="oos"',
+                'data-v-793063a8="">out of stock</p>',
+                "out of stock"
+            ]
+
+            for indicator in costway_oos_indicators:
+                if indicator in page_content:
+                    print(f"DEBUG: Costway out-of-stock detected by page content: '{indicator}' for {page.url}")
+                    return False
+        except Exception as e:
+            print(f"DEBUG: Error checking Costway page content: {e}")
+
     # Special handling for Vevor - check for discontinuation indicators
     if site == "vevor":
         # 1. Check schema.org structured data for discontinued status

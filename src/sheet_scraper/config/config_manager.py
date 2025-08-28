@@ -75,6 +75,8 @@ class Config:
             return "wayfair"
         elif "vevor.com" in url_lower:
             return "vevor"
+        elif "costway.com" in url_lower:
+            return "costway"
         else:
             return "generic"
 

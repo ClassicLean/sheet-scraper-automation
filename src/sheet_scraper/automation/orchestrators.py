@@ -15,7 +15,7 @@ from ..config.constants import (
 from ..core.product_processing import ProductDataProcessor
 from ..core.sheet_operations import SheetOperations, read_sheet_data
 from ..logs_module.automation_logging import get_logger
-from ..scraping_utils import LOG_FILE, debug_print, parse_price, truncate_log_file
+from ..scraping_utils import debug_print, parse_price
 from .data_models import ProductData
 from .processors import ProductProcessor
 from .sheet_managers import SheetManager
@@ -144,12 +144,12 @@ class SheetScraperAutomation:
                            start_row_index: int | None,
                            end_row_index: int | None) -> tuple[int, int]:
         """Determine the actual row range to process."""
-        # Default to row 5 (index 4) if no range specified
+        # Default to row 469 (index 468) if no range specified
         if start_row_index is None and end_row_index is None:
-            return 4, 5  # Process only row 5
+            return 468, 469  # Process only row 469
 
-        start_idx = start_row_index if start_row_index is not None else 4
-        end_idx = end_row_index if end_row_index is not None else 5
+        start_idx = start_row_index if start_row_index is not None else 468
+        end_idx = end_row_index if end_row_index is not None else 469
 
         # Ensure we don't exceed sheet bounds
         max_rows = len(sheet_data)
@@ -262,7 +262,7 @@ class SheetScraperAutomation:
 
     def _finish_automation(self):
         """Clean up and display final statistics."""
-        truncate_log_file(LOG_FILE)
+        # Removed log truncation to allow unlimited debugging logs
 
         stats = self.stats.get_summary()
         print("=== Automation Complete ===")
@@ -395,8 +395,8 @@ class AutomationOrchestrator:
         Returns:
             Tuple of (start_index, end_index) for internal use
         """
-        # Default to row 20 if no parameters provided
-        default_row = 20
+        # Default to row 21 if no parameters provided
+        default_row = 21
 
         # Handle start row
         if start_row is not None:
@@ -404,7 +404,7 @@ class AutomationOrchestrator:
         elif os.environ.get("PROCESS_START_ROW"):
             start_index = max(0, int(os.environ.get("PROCESS_START_ROW")) - 1)
         else:
-            start_index = default_row - 1  # Default to row 5 (0-based index 4)
+            start_index = default_row - 1  # Default to row 21 (0-based index 20)
 
         # Handle end row
         if end_row is not None:
@@ -412,6 +412,6 @@ class AutomationOrchestrator:
         elif os.environ.get("PROCESS_END_ROW"):
             end_index = int(os.environ.get("PROCESS_END_ROW"))
         else:
-            end_index = default_row  # Default to row 5
+            end_index = default_row  # Default to row 469
 
         return start_index, end_index

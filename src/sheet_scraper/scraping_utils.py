@@ -28,8 +28,8 @@ from sheet_scraper.utils.logs_module import (
     debug_print_scraping_failure,
     debug_print_supplier_summary,
     debug_print_url_processing_start,
-    log_update,
     log_supplier_result,
+    log_update,
     truncate_log_file,
 )
 from sheet_scraper.utils.pricing import (

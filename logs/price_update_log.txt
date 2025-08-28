@@ -1,35 +1,4 @@
-[2025-08-27 14:30:08] Row: 460, Supplier: Unknown, URL: https://www.wayfair.com/outdoor/pdp/lark...brella-w005159635.html?piid=213873894, Status: Error, Result: Price not found
-[2025-08-27 14:30:24] Row: 460, Supplier: Unknown, URL: https://www.walmart.com/ip/Yescom-9-Ft-3...ilt-Button-Aluminum-Outdoor/366132603, Status: Error, Result: Price not found
-[2025-08-27 14:30:28] Row: 460, Product ID: https://www.wayfair.com/outdoor/pdp/lark-manor-9-x...-market-umbrella-w005159635.html?piid=213873894, Old Price: 119.99, New Price: No Data, Status: Failed, Message: Price scraping failed, but date updated successfully
-[2025-08-27 14:30:50] Row: 461, Supplier: Unknown, URL: https://bestchoiceproducts.com/products/...Wq-5Fj7S1HOAbVSkJGIILH5RoC6q4QAvD_BwE, Status: Error, Result: Price not found
-[2025-08-27 14:30:53] Row: 461, Product ID: https://bestchoiceproducts.com/products/10ft-solar...Wq2PG3oc2SWq-5Fj7S1HOAbVSkJGIILH5RoC6q4QAvD_BwE, Old Price: 79.99, New Price: No Data, Status: Failed, Message: Price scraping failed, but date updated successfully
-[2025-08-27 14:31:05] Row: 462, Supplier: Unknown, URL: https://www.walmart.com/ip/Holiday-Time-...eac5aeccb5a&athancid=null&athena=true, Status: Error, Result: Price not found
-[2025-08-27 14:31:08] Row: 462, Product ID: https://www.walmart.com/ip/Holiday-Time-Prelit-Bro...5f-007-174eac5aeccb5a&athancid=null&athena=true, Old Price: 56.99, New Price: No Data, Status: Failed, Message: Price scraping failed, but date updated successfully
-[2025-08-27 14:31:29] Row: 463, Supplier: Unknown, URL: https://www.walmart.com/ip/Springfield-P...tain-s-Wheel-UPG-AA-50-Pack/774927231, Status: Error, Result: Price not found
-[2025-08-27 14:31:34] Row: 463, Product ID: https://www.walmart.com/ip/Springfield-Precision-9...ometer-Captain-s-Wheel-UPG-AA-50-Pack/774927231, Old Price: 34.99, New Price: No Data, Status: Failed, Message: Price scraping failed, but date updated successfully
-[2025-08-27 14:31:42] Row: 464, Supplier: Unknown, URL: https://www.designtoscano.com/products/b...tian-altar-cat-goddess-clock-1-ql2095, Status: Error, Result: Price not found
-[2025-08-27 14:31:45] Row: 464, Product ID: https://www.designtoscano.com/products/bastet-egyptian-altar-cat-goddess-clock-1-ql2095, Old Price: 18.95, New Price: No Data, Status: Failed, Message: Price scraping failed, but date updated successfully
-[2025-08-27 14:32:09] Row: 465, Supplier: Unknown, URL: https://bestchoiceproducts.com/products/...colored-lights?variant=41950153769146, Status: Error, Result: Price not found
-[2025-08-27 14:32:26] Row: 465, Supplier: Unknown, URL: https://www.amazon.com/dp/B09DJNK19V/ref=twister_B0BRQTTM4X?_encoding=UTF8&th=1, Status: Error, Result: Price not found
-[2025-08-27 14:32:35] Row: 465, Supplier: Unknown, URL: https://www.walmart.com/ip/Best-Choice-P...-White-Multicolored-Lights/1532452975, Status: Error, Result: Price not found
-[2025-08-27 14:32:38] Row: 465, Product ID: https://bestchoiceproducts.com/products/pre-lit-sn...ee-w-multicolored-lights?variant=41950153769146, Old Price: 299.99, New Price: No Data, Status: Failed, Message: Price scraping failed, but date updated successfully
-[2025-08-27 14:32:52] Row: 466, Supplier: Unknown, URL: https://www.wayfair.com/decor-pillows/pd...clock-art-decor-w004184345.html?piid=, Status: Error, Result: Price not found
-[2025-08-27 14:33:05] Row: 466, Supplier: Unknown, URL: https://statements2000.com/products/tect...Ma-7XBrsFtWh0v8MNfQTt2mSdxhtuHLLWL9hg, Status: Error, Result: Blocked
-[2025-08-27 14:33:15] Row: 466, Supplier: Unknown, URL: https://www.ebay.com/itm/233194104655?ch...0437cd47a2f30330f0ed03551c4efdaf3409e, Status: Error, Result: Price not found
-[2025-08-27 14:33:27] Row: 466, Supplier: Unknown, URL: https://www.walmart.com/ip/Statements200...-Tectonic-Silver-Brown-Gold/769434280, Status: Error, Result: Price not found
-[2025-08-27 14:33:31] Row: 466, Product ID: https://statements2000.com/products/tectonic-clock...tm_content=sag_organic&utm_campaign=sag_organic, Old Price: 375.0, New Price: No Data, Status: Failed, Message: Price scraping failed, but date updated successfully
-[2025-08-27 14:33:43] Row: 467, Supplier: Unknown, URL: https://www.wayfair.com/outdoor/pdp/arlm...rella-w003035765.html?piid=1086928321, Status: Error, Result: Price not found
-[2025-08-27 14:33:50] Row: 467, Supplier: Unknown, URL: https://www.homedepot.com/p/Outsunny-15-...2893?source=shoppingads&locale=en-US., Status: Error, Result: Blocked
-[2025-08-27 14:34:00] Row: 467, Supplier: Unknown, URL: https://www.aosom.com/item/outside-deck-...ction-easy-crank-brown~84D-085BN.html, Status: Error, Result: Blocked
-[2025-08-27 14:34:05] Row: 467, Product ID: https://www.aosom.com/item/outside-deck-pool-doubl...ther-protection-easy-crank-brown~84D-085BN.html, Old Price: 184.99, New Price: No Data, Status: Failed, Message: Price scraping failed, but date updated successfully
-[2025-08-27 14:34:19] Row: 468, Supplier: Unknown, URL: https://www.wayfair.com/outdoor/pdp/arlm...rella-w003035765.html?piid=1086928320, Status: Error, Result: Price not found
-[2025-08-27 14:34:28] Row: 468, Supplier: Unknown, URL: https://www.homedepot.com/p/Outsunny-15-...Fighting-Material-84D-085GY/313812895, Status: Error, Result: Blocked
-[2025-08-27 14:34:39] Row: 468, Supplier: Unknown, URL: https://www.aosom.com/item/outsunny-outd...shade-w-base-off-white~84D-085CW.html, Status: Error, Result: Blocked
-[2025-08-27 14:34:43] Row: 468, Product ID: https://www.wayfair.com/outdoor/pdp/arlmont-co-goe...ilever-umbrella-w003035765.html?piid=1086928320, Old Price: 409.99, New Price: No Data, Status: Failed, Message: Price scraping failed, but date updated successfully
-[2025-08-27 14:34:57] Row: 469, Supplier: Unknown, URL: https://www.amazon.com/Tangkula-Patiojoy...val+rock+pvc+cover%2Caps%2C134&sr=8-2, Status: Error, Result: Price not found
-[2025-08-27 14:35:12] Row: 469, Supplier: Unknown, URL: https://www.walmart.com/ip/Costway-40-Ro...ace-w-Laval-Rock-PVC-Cover/1336729924, Status: Error, Result: Price not found
-[2025-08-27 14:35:35] Row: 469, Supplier: Unknown, URL: https://www.costway.com/40-inch-round-pr...-with-laval-rock-pvc-cover-26466.html, Status: Price Found, Result: $482.0 (In Stock)
-[2025-08-27 14:35:46] Row: 469, Supplier: Unknown, URL: https://www.ebay.com/itm/275420335775?ch...6zbHvGYmj-KHDuwFfS3BMAgYaAn1oEALw_wcB, Status: Error, Result: Price not found
-[2025-08-27 14:36:12] Row: 470, Supplier: Unknown, URL: https://www.solostove.com/en-us/p/yukon-backyard-bundle, Status: Price Found, Result: $10.0 (Out of Stock)
-[2025-08-27 14:36:22] Row: 470, Supplier: Unknown, URL: https://www.walmart.com/ip/Solo-Stove-Yu...keless-Fire-Pit-with-Stand/1653939321, Status: Error, Result: Price not found
-[2025-08-27 14:36:36] Row: 470, Supplier: Unknown, URL: https://www.amazon.com/Solo-Stove-Smokeless-Fire-Stand/dp/B0B79ZJ2VG, Status: Error, Result: Price not found
+[2025-08-28 15:25:14] Row: 21, Supplier: Amazon, URL: https://www.amazon.com/dp/B09MFRG51L/ref...esktop_295?ie=UTF8&pd_rd_plhdr=t&th=1, Status: Price Found, Result: $47.99 (Out of Stock)
+[2025-08-28 15:25:22] Row: 21, Supplier: Unknown, URL: https://www.homedepot.com/p/VEVOR-11-in-...k-Green-XTXTYLPJL28CMA5LJV1/320200263, Status: Error, Result: Blocked
+[2025-08-28 15:25:44] Row: 21, Supplier: Unknown, URL: https://www.vevor.com/pottery-wheel-c_11...fb929c0-92c4-11ed-b975-856a8aa5c047.1, Status: Price Found, Result: $129.0 (In Stock)
+[2025-08-28 15:25:53] Row: 21, Product ID: https://www.vevor.com/pottery-wheel-c_11146/vevor-...cB&v_tag=7fb929c0-92c4-11ed-b975-856a8aa5c047.1, Old Price: 129.0, New Price: 129.0, Status: Success, Message: Price confirmed unchanged: $129.0 (Unknown)

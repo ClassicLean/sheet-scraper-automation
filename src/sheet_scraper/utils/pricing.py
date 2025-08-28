@@ -163,9 +163,13 @@ def extract_price(page, config=None) -> float | None:
 
     # Check if this is an error page before attempting price extraction
     from sheet_scraper.utils.web_scraping import is_error_page
-    if is_error_page(page):
+    # Skip error page detection for Amazon after geolocation setup since we've already handled location
+    is_amazon = 'amazon.com' in page.url.lower()
+    if not is_amazon and is_error_page(page):
         print(f"DEBUG: Skipping price extraction - detected error page: {page.url}")
         return None
+    elif is_amazon:
+        print(f"DEBUG: Amazon URL detected - proceeding with price extraction despite error page detection: {page.url}")
 
     site = config.detect_site(page.url)
 
@@ -188,6 +192,22 @@ def extract_price(page, config=None) -> float | None:
         try:
             elements = page.query_selector_all(selector)
             print(f"DEBUG: Selector #{selector_idx+1} '{selector}' found {len(elements)} elements")
+
+            # Special handling for Amazon hidden inputs
+            if site == "amazon" and "input" in selector and "customerVisiblePrice" in selector:
+                for element_idx, element in enumerate(elements):
+                    try:
+                        value = element.get_attribute("value")
+                        if value:
+                            price = parse_price(value)
+                            print(f"DEBUG: Amazon input element #{element_idx+1} value: '{value}' -> parsed: {price}")
+                            if price is not None and price > 0:
+                                print(f"DEBUG: [SUCCESS] VALID PRICE FOUND using Amazon input '{selector}': {value} -> {price}")
+                                return price
+                    except Exception as e:
+                        print(f"DEBUG: Error with Amazon input element #{element_idx+1}: {e}")
+                        continue
+                continue
 
             for element_idx, element in enumerate(elements):
                 # Enhanced filtering for quantity/form elements
@@ -298,8 +318,41 @@ def extract_price(page, config=None) -> float | None:
     # Final fallback: search page content for price patterns
     print("DEBUG: Trying final content-based price extraction")
     try:
-        content = page.content().lower()
-        price_match = re.search(r"\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)", content)
+        content = page.content()
+
+        # Amazon-specific: Look for JSON price data first
+        if site == "amazon":
+            print("DEBUG: Searching for Amazon JSON price data")
+            # Look for displayPrice in JSON
+            json_price_match = re.search(r'"displayPrice"\s*:\s*"?\$?([0-9,]+\.?[0-9]*)"?', content, re.IGNORECASE)
+            if json_price_match:
+                price_text = json_price_match.group(1)
+                price = parse_price(price_text)
+                if price is not None and price > 0:
+                    print(f"DEBUG: [SUCCESS] VALID PRICE found in Amazon JSON: {price_text} -> {price}")
+                    return price
+
+            # Look for priceAmount in JSON
+            json_amount_match = re.search(r'"priceAmount"\s*:\s*([0-9,]+\.?[0-9]*)', content, re.IGNORECASE)
+            if json_amount_match:
+                price_text = json_amount_match.group(1)
+                price = parse_price(price_text)
+                if price is not None and price > 0:
+                    print(f"DEBUG: [SUCCESS] VALID PRICE found in Amazon JSON priceAmount: {price_text} -> {price}")
+                    return price
+
+            # Look for hidden input values
+            input_price_match = re.search(r'name="[^"]*customerVisiblePrice[^"]*"\s+value="?\$?([0-9,]+\.?[0-9]*)"?', content, re.IGNORECASE)
+            if input_price_match:
+                price_text = input_price_match.group(1)
+                price = parse_price(price_text)
+                if price is not None and price > 0:
+                    print(f"DEBUG: [SUCCESS] VALID PRICE found in Amazon hidden input: {price_text} -> {price}")
+                    return price
+
+        # Generic price pattern search
+        content_lower = content.lower()
+        price_match = re.search(r"\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)", content_lower)
         if price_match:
             price_text = price_match.group(1)
             price = parse_price(price_text)

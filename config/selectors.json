@@ -1,6 +1,8 @@
 {
   "price_selectors": {
     "amazon": [
+      "#tp_price_block_total_price_ww .a-offscreen",
+      "#tp_price_block_total_price_ww span.a-offscreen",
       "span.a-price .a-offscreen",
       ".a-price .a-offscreen",
       "#priceblock_dealprice",
@@ -10,6 +12,9 @@
       ".a-price.a-text-price.a-size-medium .a-offscreen",
       "span.a-price.a-text-price.a-size-medium .a-offscreen",
       ".apex_desktop .a-price .a-offscreen",
+      "[data-asin] .a-price .a-offscreen",
+      "#desktop_unifiedPrice .a-price .a-offscreen",
+      "input[name*='customerVisiblePrice'][name*='displayString']",
       "span.a-price-whole",
       ".a-price-whole"
     ],
@@ -63,6 +68,14 @@
       ".price_bjuf .p1_fh5X",
       ".goodsPrice .p1_fh5X",
       "[data-canvas-main-price] span[data-int]",
+      ".price",
+      ".product-price"
+    ],
+    "costway": [
+      ".special-price",
+      ".price-row .special-price",
+      ".regular-price",
+      ".old-price",
       ".price",
       ".product-price"
     ],
@@ -120,6 +133,13 @@
         ".btn:not([disabled])",
         "form button:not([disabled])"
       ],
+      "costway": [
+        ".add-to-cart:not([disabled])",
+        "button[type='submit']:not([disabled])",
+        ".qty_box.button-min-group.isinstock",
+        ".btn:not([disabled])",
+        "form button:not([disabled])"
+      ],
       "generic": [
         ".add-to-cart:not([disabled])",
         ".in-stock",
@@ -172,6 +192,18 @@
         ".unavailable",
         ".sold-out",
         ".discontinued"
+      ],
+      "costway": [
+        ".out-of-stock-main",
+        ".out-of-stock",
+        "p.oos",
+        ".oos",
+        ".instock-subscribe",
+        "div:contains('Notify me when it\\'s back')",
+        "div:contains('Out of stock')",
+        ".unavailable",
+        ".sold-out",
+        "button[disabled]"
       ],
       "generic": [
         ".out-of-stock",

@@ -5,8 +5,8 @@ This module contains the ProductProcessor class responsible for
 processing individual products and scraping supplier data.
 """
 
-import os
 import logging
+import os
 from typing import Any
 
 from playwright.sync_api import Page
@@ -14,6 +14,7 @@ from playwright.sync_api import Page
 from ..config.config_manager import Config
 from ..infrastructure.browser_manager import EnhancedBrowserManager
 from ..infrastructure.captcha_solver import CaptchaSolver
+from ..logging.geolocation_logger import log_geolocation_debug, log_geolocation_info, log_geolocation_warning, log_geolocation_error
 from ..scraping_utils import (
     debug_print,
     extract_shipping_fee,
@@ -195,6 +196,19 @@ class ProductProcessor:
                 "page_title": page_title[:50] + "..." if len(page_title) > 50 else page_title,
                 "url_after_redirect": self.page.url
             })
+
+            # Set Amazon location to US if this is an Amazon URL
+            if "amazon.com" in url.lower():
+                log_geolocation_info("Detected Amazon URL - setting US delivery location...")
+                try:
+                    # Get browser manager from the page context if available
+                    if hasattr(self, 'browser_manager') and self.browser_manager:
+                        self.browser_manager.set_amazon_us_location(self.page)
+                    else:
+                        # Fallback: set location directly
+                        self._set_amazon_location_fallback()
+                except Exception as e:
+                    log_geolocation_warning(f"Could not set Amazon location: {e}")
 
             # Simulate human-like interaction
             simulate_human_interaction(self.page)
@@ -413,3 +427,36 @@ class ProductProcessor:
             all_blocked=all_blocked,
             best_supplier_in_stock=best_supplier_in_stock
         )
+
+    def _set_amazon_location_fallback(self):
+        """Fallback method to set Amazon location when browser manager is not available."""
+        try:
+            log_geolocation_debug("Setting Amazon location via fallback method...")
+
+            # Wait for page to load
+            self.page.wait_for_timeout(2000)
+
+            # Try to set location via JavaScript
+            self.page.evaluate("""
+                try {
+                    // Set Amazon location preferences in localStorage
+                    localStorage.setItem('amazon-location', JSON.stringify({
+                        zipCode: '10001',
+                        city: 'New York',
+                        state: 'NY',
+                        country: 'US'
+                    }));
+
+                    // Set location in session storage as well
+                    sessionStorage.setItem('amazon-delivery-location', '10001');
+
+                    console.log('Amazon location preferences set via fallback');
+                } catch (e) {
+                    console.log('Fallback location setting failed:', e);
+                }
+            """)
+
+            log_geolocation_debug("Amazon location fallback completed")
+
+        except Exception as e:
+            log_geolocation_error(f"Amazon location fallback failed: {e}")
